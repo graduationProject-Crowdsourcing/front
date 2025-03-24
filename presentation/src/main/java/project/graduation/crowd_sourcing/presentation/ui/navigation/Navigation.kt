@@ -13,14 +13,30 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.login.LoginView
 fun Navigation(
     navController: NavHostController,
     pd: PaddingValues
-){
+) {
     NavHost(
         navController = navController,
         startDestination = Screen.LoginScreen.route,
         modifier = Modifier.padding(pd)
-    ){
-        composable(route = Screen.LoginScreen.route){
+    ) {
+        composable(route = Screen.LoginScreen.route) {
             LoginView()
         }
+
+        composable(route = Screen.BottomScreen.HomeScreen.bRoute) {
+
+        }
+
+        composable(route = Screen.BottomScreen.SearchScreen.bRoute) {
+
+        }
+
+        composable(route = Screen.BottomScreen.RequestScreen.bRoute) {
+
+        }
+        composable(route = Screen.BottomScreen.MyScreen.bRoute) {
+
+        }
+
     }
 }

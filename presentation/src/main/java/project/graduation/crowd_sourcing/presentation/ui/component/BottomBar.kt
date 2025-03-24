@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.navigation.screensInBottom
 import project.graduation.crowd_sourcing.presentation.ui.screen.base.BaseUiState
 import project.graduation.crowd_sourcing.presentation.utils.navigateBottom
 
@@ -28,29 +29,28 @@ fun BottomBar(navController: NavController, uiState: BaseUiState) {
         val currentRoute =
             navController.currentBackStackEntryAsState().value?.destination?.route
 
-
-        // example NavigationBarItem
-        val screen = uiState.currentScreen
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_launcher_foreground),
-                    contentDescription = screen.title,
-                    modifier = Modifier.height(16.dp)
+        screensInBottom.forEach { screen ->
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(screen.icon),
+                        contentDescription = screen.title,
+                        modifier = Modifier.height(16.dp)
+                    )
+                },
+                label = { Text(screen.title) },
+                selected = currentRoute == screen.route,
+                onClick = {
+                    navController.navigateBottom(screen)
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color.Black,
+                    unselectedIconColor = Color.Gray,
+                    selectedTextColor = Color.Black,
+                    unselectedTextColor = Color.Gray,
+                    indicatorColor = Color.Transparent
                 )
-            },
-            label = { Text(screen.title) },
-            selected = currentRoute == screen.route,
-            onClick = {
-                navController.navigateBottom(screen)
-            },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color.Black,
-                unselectedIconColor = Color.Gray,
-                selectedTextColor = Color.Black,
-                unselectedTextColor = Color.Gray,
-                indicatorColor = Color.Transparent
             )
-        )
+        }
     }
 }
