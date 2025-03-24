@@ -13,7 +13,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState : StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    // 쿼리리 업데이트
+    // 쿼리 업데이트
     fun updateSearchQuery(query: String) {
         _uiState.update { it.copy(searchQuery = query) }
     }

@@ -2,7 +2,6 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -14,7 +13,6 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.M
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RequestsSection
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.SearchSection
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeView() {
     val viewModel: HomeViewModel = hiltViewModel()
@@ -34,7 +32,13 @@ fun HomeView() {
             .padding(16.dp)
     ) {
         item { MapSection(isGoogleMapsAvailable, uiState) }
-        item { SearchSection(uiState.value.searchQuery, viewModel::updateSearchQuery) }
+        item { 
+            SearchSection(
+                searchQuery = uiState.value.searchQuery, 
+                onSearchQueryChange = viewModel::updateSearchQuery,
+                requests = uiState.value.requests
+            ) 
+        }
         item {
             RequestsSection(viewModel = viewModel, uiState = uiState)
         }

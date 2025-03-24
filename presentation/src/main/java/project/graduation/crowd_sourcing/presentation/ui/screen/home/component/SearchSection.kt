@@ -13,14 +13,25 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import project.graduation.crowd_sourcing.presentation.ui.screen.home.Request
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchSection(searchQuery: String, onSearchQueryChange: (String) -> Unit) {
+fun SearchSection(
+    searchQuery: String, 
+    onSearchQueryChange: (String) -> Unit,
+    requests: List<Request>
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,7 +55,7 @@ fun SearchSection(searchQuery: String, onSearchQueryChange: (String) -> Unit) {
         )
 
         Button(
-            onClick = {},
+            onClick = { showDialog = true },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp)
@@ -57,5 +68,16 @@ fun SearchSection(searchQuery: String, onSearchQueryChange: (String) -> Unit) {
         ) {
             Text(text = "검색", fontSize = 16.sp)
         }
+    }
+
+    if (showDialog) {
+        SearchResultDialog(
+            requests = requests.filter { 
+                it.place.contains(searchQuery, ignoreCase = true) || 
+                it.title.contains(searchQuery, ignoreCase = true)
+            },
+            onDismiss = { showDialog = false },
+            searchQuery = searchQuery
+        )
     }
 }
