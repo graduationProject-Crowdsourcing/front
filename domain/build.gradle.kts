@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "project.graduation.crowd_sourcing.domain"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 24

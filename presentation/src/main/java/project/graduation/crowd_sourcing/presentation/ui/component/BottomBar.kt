@@ -1,6 +1,7 @@
 package project.graduation.crowd_sourcing.presentation.ui.component
 
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -11,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import project.graduation.crowd_sourcing.presentation.R
@@ -35,10 +38,10 @@ fun BottomBar(navController: NavController, uiState: BaseUiState) {
                     Icon(
                         painter = painterResource(screen.icon),
                         contentDescription = screen.title,
-                        modifier = Modifier.height(16.dp)
+                        modifier = Modifier.size(30.dp)
                     )
                 },
-                label = { Text(screen.title) },
+                label = { Text(text = screen.title, style = TextStyle(fontSize = 10.sp)) },
                 selected = currentRoute == screen.route,
                 onClick = {
                     navController.navigateBottom(screen)
