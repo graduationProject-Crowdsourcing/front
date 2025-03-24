@@ -29,9 +29,6 @@ fun BottomBar(navController: NavController, uiState: BaseUiState) {
         containerColor = Color.White,
         contentColor = Color.Black
     ) {
-        val currentRoute =
-            navController.currentBackStackEntryAsState().value?.destination?.route
-
         screensInBottom.forEach { screen ->
             NavigationBarItem(
                 icon = {
@@ -42,7 +39,7 @@ fun BottomBar(navController: NavController, uiState: BaseUiState) {
                     )
                 },
                 label = { Text(text = screen.title, style = TextStyle(fontSize = 10.sp)) },
-                selected = currentRoute == screen.route,
+                selected = uiState.currentScreen.route == screen.route,
                 onClick = {
                     navController.navigateBottom(screen)
                 },
