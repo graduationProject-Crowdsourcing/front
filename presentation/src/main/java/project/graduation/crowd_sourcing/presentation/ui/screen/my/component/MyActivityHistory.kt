@@ -27,9 +27,9 @@ import project.graduation.crowd_sourcing.presentation.utils.textStyleSmall
 @Composable
 fun MyActivityHistory() {
     val historyList = listOf(
-        "작업 기록" to R.drawable.ic_history_work,
-        "의뢰 기록" to R.drawable.ic_history_request,
-        "포인트 내역" to R.drawable.ic_history_point
+        (R.drawable.ic_history_work to "작업 기록") to {},
+        (R.drawable.ic_history_request to "의뢰 기록") to {},
+        (R.drawable.ic_history_point to "포인트 내역") to {}
     )
 
     Column(
@@ -51,21 +51,21 @@ fun MyActivityHistory() {
                     modifier = Modifier
                         .border(1.dp, color = colorResource(R.color.gray))
                         .weight(1f)
-                        .clickable { },
+                        .clickable { history.second.invoke() },
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
                         modifier = Modifier.padding(vertical = spaceSmall())
                     ) {
                         Icon(
-                            painter = painterResource(history.second),
+                            painter = painterResource(history.first.first),
                             contentDescription = null
                         )
 
                         Spacer(modifier = Modifier.height(spaceSmall()))
 
                         Text(
-                            text = history.first,
+                            text = history.first.second,
                             style = textStyleSmall()
                         )
                     }
