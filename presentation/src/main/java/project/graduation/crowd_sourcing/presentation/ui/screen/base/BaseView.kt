@@ -6,12 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.ui.component.BottomBar
 import project.graduation.crowd_sourcing.presentation.ui.component.TopBar
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Navigation
-import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 
 @Composable
 fun BaseView() {
@@ -44,6 +45,9 @@ fun BaseView() {
                 uiState = uiState.value)
         }
     ) { paddingValues ->
-        Navigation(navController = navController, pd = paddingValues)
+        Navigation(
+            navController = navController,
+            pd = paddingValues
+        )
     }
 }

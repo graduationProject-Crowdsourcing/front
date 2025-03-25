@@ -1,101 +1,56 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.my
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
+import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyActivityHistory
+import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyEtc
+import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyProfile
+import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyRecentActivity
 
 @Composable
 fun MyView() {
     val viewModel: MyViewModel = hiltViewModel()
     val navController = rememberNavController()
 
+    val uiState = viewModel.uiState.collectAsState()
 
-    val textStyleLarge = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp)
-    val textStyleMedium = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_medium).value.sp)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(dimensionResource(id = R.dimen.space_medium))
+            .verticalScroll(rememberScrollState())
     ) {
+        MyProfile(uiState.value)
+        GrayDivider()
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(R.drawable.ic_my),
-                contentDescription = "profile image",
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(CircleShape)
-                    .border(1.dp, colorResource(R.color.gray), CircleShape),
-                alignment = Alignment.Center
-            )
+        MyActivityHistory()
+        GrayDivider()
 
-            Column(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.space_small))) {
-                Text(
-                    text = "user name",
-                    style = textStyleLarge
-                )
-                Text(
-                    text = "Points: nnn",
-                    color = colorResource(R.color.darker_gary),
-                    style = textStyleMedium
-                )
-            }
+        MyRecentActivity(uiState.value)
+        GrayDivider()
 
-            Box(
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(32.dp)
-                    .clickable { }
-                    .background(colorResource(R.color.gray))
-                    .clip(RoundedCornerShape(8.dp))
-            ) {
-                Text(
-                    text = "프로필 수정",
-                    style = textStyleMedium,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
-        }
+        MyEtc()
     }
 }
+
 
 @Preview
 @Composable
