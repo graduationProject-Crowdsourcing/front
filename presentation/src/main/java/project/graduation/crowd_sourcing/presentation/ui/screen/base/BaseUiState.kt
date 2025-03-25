@@ -7,7 +7,7 @@ data class BaseUiState(
 ){
     companion object{
         fun init() = BaseUiState(
-            currentScreen = Screen.LoginScreen
+            currentScreen = Screen.BottomScreen.HomeScreen
         )
     }
 }

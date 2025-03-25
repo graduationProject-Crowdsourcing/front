@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.ui.component.BottomBar
 import project.graduation.crowd_sourcing.presentation.ui.component.TopBar
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Navigation
+import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 
 @Composable
 fun BaseView() {
@@ -32,7 +33,10 @@ fun BaseView() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopBar()
+            TopBar(
+                uiState = uiState.value,
+                navController = navController
+            )
         },
         bottomBar = {
             BottomBar(
