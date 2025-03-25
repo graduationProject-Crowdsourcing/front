@@ -1,6 +1,6 @@
 ---
-name: yeongkkuel issue template
-about: 영끌 안드로이드 이슈 템플릿
+name: issue template
+about: 이슈 템플릿
 title: ''
 labels: ''
 assignees: ''
