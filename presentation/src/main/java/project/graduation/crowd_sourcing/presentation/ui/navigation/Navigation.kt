@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import project.graduation.crowd_sourcing.presentation.ui.screen.login.LoginView
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeView
+import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyView
 
 @Composable
 fun Navigation(
@@ -36,7 +37,7 @@ fun Navigation(
 
         }
         composable(route = Screen.BottomScreen.MyScreen.bRoute) {
-
+            MyView()
         }
 
     }
