@@ -39,9 +39,12 @@ fun BaseView() {
             )
         },
         bottomBar = {
-            BottomBar(
-                navController = navController,
-                uiState = uiState.value)
+            if (uiState.value.currentScreen is Screen.BottomScreen) {
+                BottomBar(
+                    navController = navController,
+                    uiState = uiState.value
+                )
+            }
         }
     ) { paddingValues ->
         Navigation(navController = navController, pd = paddingValues)

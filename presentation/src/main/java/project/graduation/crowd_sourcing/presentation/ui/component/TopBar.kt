@@ -78,16 +78,19 @@ fun TopBar(
             },
 
             actions = {
-                IconButton(onClick = { }) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_bell),
-                        contentDescription = "notification"
-                    )
+                if (uiState.currentScreen !is Screen.NotificationScreen){
+                    IconButton(onClick = {
+                        navController.navigate(Screen.NotificationScreen.route)
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_bell),
+                            contentDescription = "notification"
+                        )
+                    }
                 }
+
             }
         )
-
-
 
         HorizontalDivider(color = colorResource(R.color.gray), thickness = 1.dp)
     }
