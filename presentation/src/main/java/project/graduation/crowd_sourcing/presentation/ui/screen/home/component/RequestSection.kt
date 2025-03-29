@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,18 +39,18 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.home.Request
 @Composable
 fun RequestsSection(
     viewModel: HomeViewModel,
-    uiState: State<HomeUiState>
+    state: HomeUiState.Success
 ) {
     // 현재 의뢰 목록
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
+            .heightIn(max = 300.dp)
             .padding(top = 24.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            CurrentRequestsList(viewModel = viewModel, uiState = uiState)
+        Column(modifier = Modifier.wrapContentSize()) {
+            CurrentRequestsList(viewModel = viewModel, state = state)
         }
     }
 
@@ -55,12 +58,12 @@ fun RequestsSection(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
+            .heightIn(max = 300.dp)
             .padding(top = 24.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            RecommendedRequestsList(viewModel = viewModel, uiState = uiState)
+        Column(modifier = Modifier.wrapContentSize()) {
+            RecommendedRequestsList(viewModel = viewModel, state = state)
         }
     }
 }
@@ -68,7 +71,7 @@ fun RequestsSection(
 @Composable
 fun CurrentRequestsList(
     viewModel: HomeViewModel,
-    uiState: State<HomeUiState>
+    state: HomeUiState.Success
 ) {
     Row(
         modifier = Modifier.fillMaxWidth()
@@ -85,10 +88,9 @@ fun CurrentRequestsList(
         }
     }
     LazyColumn {
-        // todo 데이터 받아와서 item넘겨주기
-        items(uiState.value.requests.size) { index ->
-            HomeListItem(request = uiState.value.requests[index])
-            if (index < uiState.value.requests.size - 1) { // 마지막 아이템 제외하고 구분선 추가
+        items(state.requests.size) { index ->
+            HomeListItem(request = state.requests[index])
+            if (index < state.requests.size - 1) {
                 Divider(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     color = MaterialTheme.colorScheme.outlineVariant,
@@ -102,7 +104,7 @@ fun CurrentRequestsList(
 @Composable
 fun RecommendedRequestsList(
     viewModel: HomeViewModel,
-    uiState: State<HomeUiState>
+    state: HomeUiState.Success
 ){
     Row(modifier = Modifier.fillMaxWidth()
         .padding(),
@@ -118,10 +120,9 @@ fun RecommendedRequestsList(
         }
     }
     LazyColumn {
-        // todo 데이터 받아와서 item넘겨주기
-        items(uiState.value.requests.size) { index ->
-            HomeListItem(request = uiState.value.requests[index])
-            if (index < uiState.value.requests.size - 1) { // 마지막 아이템 제외하고 구분선 추가
+        items(state.requests.size) { index ->
+            HomeListItem(request = state.requests[index])
+            if (index < state.requests.size - 1) {
                 Divider(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     color = MaterialTheme.colorScheme.outlineVariant,
