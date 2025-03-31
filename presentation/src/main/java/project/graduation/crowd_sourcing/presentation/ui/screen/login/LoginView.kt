@@ -8,13 +8,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,7 +32,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 
 @Composable
 fun LoginScreenContent(
@@ -56,18 +61,40 @@ fun LoginScreenContent(
 
         Spacer(modifier = Modifier.height(100.dp))
 
+        Text(
+            "Email",
+            fontWeight = FontWeight.Bold
+        )
         OutlinedTextField(
             value = state.email,
             onValueChange = onEmailChange,
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color.Gray,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = Color.Black
+            ),
+            shape = RoundedCornerShape(8.dp)
         )
 
+        Text(
+            "Password",
+            fontWeight = FontWeight.Bold
+        )
         OutlinedTextField(
             value = state.password,
             onValueChange = onPasswordChange,
-            label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color.Gray,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = Color.Black
+            ),
+            shape = RoundedCornerShape(8.dp)
         )
 
         state.errorMessage?.let {
@@ -97,7 +124,10 @@ fun LoginScreenContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginView(viewModel: LoginViewModel = hiltViewModel()) {
+fun LoginView(
+    navController: NavHostController,
+    viewModel: LoginViewModel = hiltViewModel()
+) {
     val state = viewModel.uiState
     val context = LocalContext.current
     var isSignUpSheetVisible by remember { mutableStateOf(false) }
@@ -111,6 +141,14 @@ fun LoginView(viewModel: LoginViewModel = hiltViewModel()) {
         onLoginClick = viewModel::onLoginClick,
         onSignUpClick = { isSignUpSheetVisible = true }
     )
+
+    LaunchedEffect(viewModel.isLoginSuccess) {
+        if (viewModel.isLoginSuccess) {
+            navController.navigate(Screen.BottomScreen.HomeScreen.bRoute) {
+                popUpTo(Screen.LoginScreen.route) { inclusive = true }
+            }
+        }
+    }
 
     if (isSignUpSheetVisible) {
         ModalBottomSheet(onDismissRequest = { isSignUpSheetVisible = false }) {

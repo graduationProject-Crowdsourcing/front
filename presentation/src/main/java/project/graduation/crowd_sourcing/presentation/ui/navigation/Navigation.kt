@@ -4,11 +4,16 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import project.graduation.crowd_sourcing.presentation.ui.screen.login.LoginView
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyView
+import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeView
+import project.graduation.crowd_sourcing.presentation.ui.screen.notification.NotificationView
 
 @Composable
 fun Navigation(
@@ -21,11 +26,11 @@ fun Navigation(
         modifier = Modifier.padding(pd)
     ) {
         composable(route = Screen.LoginScreen.route) {
-            LoginView()
+            LoginView(navController = navController)
         }
 
         composable(route = Screen.BottomScreen.HomeScreen.bRoute) {
-
+            HomeView()
         }
 
         composable(route = Screen.BottomScreen.SearchScreen.bRoute) {
@@ -35,9 +40,13 @@ fun Navigation(
         composable(route = Screen.BottomScreen.RequestScreen.bRoute) {
 
         }
+
         composable(route = Screen.BottomScreen.MyScreen.bRoute) {
             MyView()
         }
 
+        composable(route = Screen.NotificationScreen.route) {
+            NotificationView()
+        }
     }
 }

@@ -29,9 +29,18 @@ class LoginViewModel @Inject constructor(
         validate()
     }
 
+    var isLoginSuccess by mutableStateOf(false)
+        private set
+
     fun onLoginClick() {
-        // TODO: UseCase 연동 후 처리
-        uiState = uiState.copy(errorMessage = "로그인 실패!") // 테스트용
+        val success = (uiState.email == "test" && uiState.password == "1234")
+        isLoginSuccess = success
+
+        uiState = if (success) {
+            uiState.copy(errorMessage = null)
+        } else {
+            uiState.copy(errorMessage = "이메일 또는 비밀번호가 올바르지 않습니다.")
+        }
     }
 
     fun onSignUpSuccess() {
