@@ -18,17 +18,24 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.utils.spaceMedium
 import project.graduation.crowd_sourcing.presentation.utils.spaceSmall
 import project.graduation.crowd_sourcing.presentation.utils.textStyleLarge
 import project.graduation.crowd_sourcing.presentation.utils.textStyleSmall
 
 @Composable
-fun MyActivityHistory() {
+fun MyActivityHistory(navController: NavController) {
+
     val historyList = listOf(
-        (R.drawable.ic_history_work to "작업 기록") to {},
-        (R.drawable.ic_history_request to "의뢰 기록") to {},
+        (R.drawable.ic_history_work to "작업 기록") to {
+            navController.navigate(Screen.HistoryWorkScreen.route)
+        },
+        (R.drawable.ic_history_request to "의뢰 기록") to {
+            navController.navigate(Screen.HistoryRequestScreen.route)},
         (R.drawable.ic_history_point to "포인트 내역") to {}
     )
 
@@ -79,5 +86,5 @@ fun MyActivityHistory() {
 @Preview
 @Composable
 fun MyActivityHistoryPrev() {
-    MyActivityHistory()
+    MyActivityHistory(rememberNavController())
 }

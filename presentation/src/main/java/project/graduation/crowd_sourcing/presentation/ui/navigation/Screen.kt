@@ -6,28 +6,31 @@ import project.graduation.crowd_sourcing.presentation.R
 sealed class Screen(val title: String, val route: String) {
     data object LoginScreen : Screen(title = "Login", route = "login")
 
+    data object HistoryWorkScreen: Screen(title = "의뢰 기록", route = "history/work")
+    data object HistoryRequestScreen: Screen(title = "작업 기록", route = "history/request")
+
     sealed class BottomScreen(
         val bTitle: String, val bRoute: String, @DrawableRes val icon: Int
-    ) : Screen(title = bTitle, route = bRoute){
-        data object HomeScreen: BottomScreen(
+    ) : Screen(title = bTitle, route = bRoute) {
+        data object HomeScreen : BottomScreen(
             bTitle = "홈",
             bRoute = "home",
             icon = R.drawable.ic_home
         )
 
-        data object SearchScreen: BottomScreen(
+        data object SearchScreen : BottomScreen(
             bTitle = "검색",
             bRoute = "search",
             icon = R.drawable.ic_search
         )
 
-        data object RequestScreen: BottomScreen(
+        data object RequestScreen : BottomScreen(
             bTitle = "의뢰",
             bRoute = "reqeust",
             icon = R.drawable.ic_request
         )
 
-        data object MyScreen: BottomScreen(
+        data object MyScreen : BottomScreen(
             bTitle = "마이 페이지",
             bRoute = "my",
             icon = R.drawable.ic_my
@@ -39,7 +42,10 @@ sealed class Screen(val title: String, val route: String) {
             return when (route) {
                 LoginScreen.route -> LoginScreen
 
-                BottomScreen.HomeScreen.bRoute ->  BottomScreen.HomeScreen
+                HistoryWorkScreen.route -> HistoryWorkScreen
+                HistoryRequestScreen.route->HistoryRequestScreen
+
+                BottomScreen.HomeScreen.bRoute -> BottomScreen.HomeScreen
                 BottomScreen.SearchScreen.bRoute -> BottomScreen.SearchScreen
                 BottomScreen.RequestScreen.bRoute -> BottomScreen.RequestScreen
                 BottomScreen.MyScreen.bRoute -> BottomScreen.MyScreen
