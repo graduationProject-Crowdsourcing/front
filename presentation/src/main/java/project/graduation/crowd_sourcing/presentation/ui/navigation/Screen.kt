@@ -5,6 +5,7 @@ import project.graduation.crowd_sourcing.presentation.R
 
 sealed class Screen(val title: String, val route: String) {
     data object LoginScreen : Screen(title = "Login", route = "login")
+    data object NotificationScreen : Screen(title = "알림", route = "notification")
 
     sealed class BottomScreen(
         val bTitle: String, val bRoute: String, @DrawableRes val icon: Int
@@ -38,6 +39,7 @@ sealed class Screen(val title: String, val route: String) {
         fun fromRoute(route: String?): Screen {
             return when (route) {
                 LoginScreen.route -> LoginScreen
+                NotificationScreen.route -> NotificationScreen
 
                 BottomScreen.HomeScreen.bRoute ->  BottomScreen.HomeScreen
                 BottomScreen.SearchScreen.bRoute -> BottomScreen.SearchScreen
