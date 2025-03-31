@@ -16,6 +16,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.Gra
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyActivityHistory
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyEtc
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyProfile
+import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyProfileEditDialog
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyRecentActivity
 import project.graduation.crowd_sourcing.presentation.utils.spaceMedium
 
@@ -31,7 +32,12 @@ fun MyView(navController: NavController) {
             .padding(spaceMedium())
             .verticalScroll(rememberScrollState())
     ) {
-        MyProfile(uiState.value)
+        MyProfile(
+            myUiState = uiState.value,
+            profileEdit = {
+                viewModel.setDialogVisibility(true)
+            }
+        )
         GrayDivider()
 
         MyActivityHistory(navController)
@@ -41,7 +47,16 @@ fun MyView(navController: NavController) {
         GrayDivider()
 
         MyEtc()
+
     }
+
+    MyProfileEditDialog(
+        onDismiss = { viewModel.setDialogVisibility(false) },
+        onSave = { nickname, profileImage ->
+            viewModel.setDialogVisibility(false)
+        },
+        uiState = uiState.value
+    )
 }
 
 

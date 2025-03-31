@@ -32,7 +32,10 @@ import project.graduation.crowd_sourcing.presentation.utils.textStyleLarge
 import project.graduation.crowd_sourcing.presentation.utils.textStyleSmall
 
 @Composable
-fun MyProfile(myUiState: MyUiState) {
+fun MyProfile(
+    myUiState: MyUiState,
+    profileEdit: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -73,7 +76,9 @@ fun MyProfile(myUiState: MyUiState) {
             modifier = Modifier
                 .width(100.dp)
                 .height(32.dp)
-                .clickable { }
+                .clickable {
+                    profileEdit()
+                }
                 .clip(RoundedCornerShape(8.dp))
                 .background(colorResource(R.color.gray))
                 .weight(1f)
@@ -91,5 +96,5 @@ fun MyProfile(myUiState: MyUiState) {
 @Preview
 @Composable
 fun MyProfilePrev() {
-    MyProfile(MyUiState.init())
+    MyProfile(MyUiState.init(), profileEdit = {})
 }
