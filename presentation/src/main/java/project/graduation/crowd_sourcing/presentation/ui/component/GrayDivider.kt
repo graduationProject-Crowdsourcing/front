@@ -1,4 +1,4 @@
-package project.graduation.crowd_sourcing.presentation.ui.screen.my.component
+package project.graduation.crowd_sourcing.presentation.ui.component
 
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable

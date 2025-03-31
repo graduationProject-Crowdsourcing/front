@@ -5,14 +5,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import project.graduation.crowd_sourcing.presentation.R
@@ -24,13 +27,15 @@ import project.graduation.crowd_sourcing.presentation.utils.textStyleSmall
 fun CommonListItem(
     mainText: String,
     subText: String,
+    leftText: String = "",
     @DrawableRes icon: Int,
     onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
-            .clickable {  }
-            .padding(vertical = spaceSmall())
+            .clickable { }
+            .padding(vertical = spaceSmall()),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_list_box),
@@ -57,16 +62,23 @@ fun CommonListItem(
                 overflow = TextOverflow.Ellipsis
             )
         }
+
+        Text(
+            text = leftText,
+            style = textStyleLarge(),
+            fontWeight = FontWeight.Bold,
+        )
     }
 }
 
 @Preview
 @Composable
-fun ListItemPrev(){
+fun ListItemPrev() {
     CommonListItem(
         "main",
         "sub",
-        R.drawable.ic_list_box,
-        {}
+        leftText = "left",
+        icon = R.drawable.ic_list_box,
+        onClick = {}
     )
 }

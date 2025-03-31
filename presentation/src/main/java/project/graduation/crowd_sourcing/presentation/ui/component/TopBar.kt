@@ -21,7 +21,6 @@ import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.base.BaseUiState
-import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.GrayDivider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

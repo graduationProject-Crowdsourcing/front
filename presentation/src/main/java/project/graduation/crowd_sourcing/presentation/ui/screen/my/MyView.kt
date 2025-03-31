@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.GrayDivider
+import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyActivityHistory
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyEtc
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyProfile
