@@ -15,6 +15,7 @@ import project.graduation.crowd_sourcing.presentation.R
 
 @Composable
 fun CancelButton(
+    modifier: Modifier = Modifier,
     text: String,
     onConfirm: () -> Unit
 ) {
@@ -32,6 +33,6 @@ fun CancelButton(
 @Composable
 fun CancelButtonPrev(){
     CancelButton(
-        "cancel"
+        text = "cancel"
     ) { }
 }
