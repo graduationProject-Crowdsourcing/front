@@ -10,7 +10,7 @@ import project.graduation.crowd_sourcing.presentation.R
 fun textStyleLarge() = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp)
 
 @Composable
-fun textStyleMedium() = TextStyle(fontSize = dimensionResource(id = R.dimen.space_medium).value.sp)
+fun textStyleMedium() = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_medium).value.sp)
 
 @Composable
 fun textStyleSmall() = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_small).value.sp)

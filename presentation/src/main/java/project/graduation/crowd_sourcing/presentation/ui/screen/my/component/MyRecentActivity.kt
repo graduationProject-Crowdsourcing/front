@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.component.CommonListItem
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyUiState
 import project.graduation.crowd_sourcing.presentation.utils.spaceSmall
 import project.graduation.crowd_sourcing.presentation.utils.textStyleLarge
@@ -39,7 +40,14 @@ fun MyRecentActivity(myUiState: MyUiState) {
 
 
         myUiState.recentWork.forEach { work->
-            RecentHistoryItem(work)
+            work.run {
+                CommonListItem(
+                    mainText = name,
+                    subText = getTimeAgo(date),
+                    icon = R.drawable.ic_list_box,
+                    onClick = {}
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(spaceSmall()))
@@ -50,47 +58,18 @@ fun MyRecentActivity(myUiState: MyUiState) {
         )
 
         myUiState.recentRequest.forEach { request->
-            RecentHistoryItem(request)
+            request.run {
+                CommonListItem(
+                    mainText = name,
+                    subText = getTimeAgo(date),
+                    icon = R.drawable.ic_list_box,
+                    onClick = {}
+                )
+            }
         }
     }
 }
 
-@Composable
-fun RecentHistoryItem(
-    item: MyUiState.RecentListItem
-){
-    Row(
-        modifier = Modifier
-            .clickable {  }
-            .padding(vertical = spaceSmall())
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_list_box),
-            contentDescription = null
-        )
-
-        Spacer(modifier = Modifier.width(spaceSmall()))
-
-        Column(
-            modifier = Modifier
-                .weight(1f)
-        ) {
-            Text(
-                text = item.name,
-                style = textStyleLarge(),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = getTimeAgo(item.date),
-                color = colorResource(R.color.darker_gary),
-                style = textStyleSmall(),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
 
 
 fun getTimeAgo(date: Date): String {

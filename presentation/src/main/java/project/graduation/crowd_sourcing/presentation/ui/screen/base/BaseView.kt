@@ -15,6 +15,7 @@ import project.graduation.crowd_sourcing.presentation.ui.component.TopBar
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Navigation
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 
+
 @Composable
 fun BaseView() {
     val navController = rememberNavController()
@@ -41,7 +42,7 @@ fun BaseView() {
             )
         },
         bottomBar = {
-            if (uiState.value.currentScreen is Screen.BottomScreen) {
+            if(uiState.value.currentScreen is Screen.BottomScreen) {
                 BottomBar(
                     navController = navController,
                     uiState = uiState.value
