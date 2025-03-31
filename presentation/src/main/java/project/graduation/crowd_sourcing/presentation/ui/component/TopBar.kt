@@ -81,11 +81,8 @@ fun TopBar(
             }
         )
 
-<<<<<<< HEAD
         GrayDivider()
-=======
-        HorizontalDivider(color = colorResource(R.color.gray), thickness = 1.dp)
->>>>>>> ccd0cbaacbe01b469b115cccb501ccfcadcde8f1
+
     }
 }
 
