@@ -14,3 +14,6 @@ fun spaceMedium() = dimensionResource(R.dimen.space_medium)
 
 @Composable
 fun spaceLarge() = dimensionResource(R.dimen.space_large)
+
+@Composable
+fun roundCommon() = dimensionResource(R.dimen.round_common)

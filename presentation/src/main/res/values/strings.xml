@@ -1,3 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app">PRICE-IT</string>
+    <string name="google_maps_api_key" tools:ignore="ResourceCycle">@string/google_maps_api_key</string>
 </resources>

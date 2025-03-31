@@ -31,6 +31,8 @@ import com.google.maps.android.compose.*
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeUiState
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.Location
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.Request
+import project.graduation.crowd_sourcing.presentation.utils.roundCommon
+import project.graduation.crowd_sourcing.presentation.utils.spaceSmall
 
 private fun Location.toLatLng(): LatLng = LatLng(latitude, longitude)
 
@@ -47,8 +49,8 @@ fun MapSection(
             modifier = Modifier
                 .width(width)
                 .height(width)
-                .padding(bottom = 8.dp),
-            shape = RoundedCornerShape(8.dp)
+                .padding(bottom = spaceSmall()),
+            shape = RoundedCornerShape(roundCommon())
         ) {
             if (isGoogleMapsAvailable) {
                 GoogleMapContent(state)

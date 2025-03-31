@@ -21,6 +21,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.S
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RadiusButton
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RadiusSettingDialog
 import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingTheme
+import project.graduation.crowd_sourcing.presentation.utils.spaceMedium
 
 // TODO: Domain Layer 구현 필요
 // 1. Google Maps 관련 UseCase 구현
@@ -83,7 +84,7 @@ fun HomeView() {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp)
+                        .padding(spaceMedium())
                 ) {
                     item { 
                         Box {
@@ -95,7 +96,7 @@ fun HomeView() {
                                 Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 16.dp),
+                                    .padding(top = spaceMedium()),
                                 contentAlignment = Alignment.TopCenter
                             ) {
                                 RadiusButton(
