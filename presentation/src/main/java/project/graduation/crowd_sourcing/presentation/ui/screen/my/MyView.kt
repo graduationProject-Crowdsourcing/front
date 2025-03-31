@@ -22,7 +22,6 @@ import project.graduation.crowd_sourcing.presentation.utils.spaceMedium
 
 @Composable
 fun MyView(navController: NavController) {
-
     val viewModel: MyViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
 
