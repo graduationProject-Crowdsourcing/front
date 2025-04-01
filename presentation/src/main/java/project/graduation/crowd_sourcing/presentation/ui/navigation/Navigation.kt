@@ -45,10 +45,10 @@ fun Navigation(
         }
 
         composable(route = Screen.HistoryWorkScreen.route) {
-            HistoryView(HistoryType.Work)
+            HistoryView(HistoryType.WORK, navController)
         }
         composable(route = Screen.HistoryRequestScreen.route) {
-            HistoryView(HistoryType.Request)
+            HistoryView(HistoryType.REQUEST, navController)
         }
 
         composable(route = Screen.NotificationScreen.route) {

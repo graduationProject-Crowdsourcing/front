@@ -14,10 +14,7 @@ import androidx.compose.ui.unit.sp
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.component.CommonListItem
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyUiState
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.concurrent.TimeUnit
+import project.graduation.crowd_sourcing.presentation.utils.getTimeAgo
 
 @Composable
 fun MyRecentActivity(myUiState: MyUiState) {
@@ -32,7 +29,7 @@ fun MyRecentActivity(myUiState: MyUiState) {
         )
 
 
-        myUiState.recentWork.forEach { work->
+        myUiState.recentWork.forEach { work ->
             work.run {
                 CommonListItem(
                     mainText = name,
@@ -50,7 +47,7 @@ fun MyRecentActivity(myUiState: MyUiState) {
             style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp)
         )
 
-        myUiState.recentRequest.forEach { request->
+        myUiState.recentRequest.forEach { request ->
             request.run {
                 CommonListItem(
                     mainText = name,
@@ -64,22 +61,8 @@ fun MyRecentActivity(myUiState: MyUiState) {
 }
 
 
-
-fun getTimeAgo(date: Date): String {
-    val now = System.currentTimeMillis()
-    val time = date.time
-    val diff = now - time
-
-    return when {
-        diff < TimeUnit.MINUTES.toMillis(1) -> "방금 전"
-        diff < TimeUnit.HOURS.toMillis(1) -> "${TimeUnit.MILLISECONDS.toMinutes(diff)}분 전"
-        diff < TimeUnit.DAYS.toMillis(1) -> "${TimeUnit.MILLISECONDS.toHours(diff)}시간 전"
-        diff < TimeUnit.DAYS.toMillis(7) -> "${TimeUnit.MILLISECONDS.toDays(diff)}일 전"
-        else -> SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(date)
-    }
-}
 @Preview
 @Composable
-fun MyRecentActivityPrev(){
+fun MyRecentActivityPrev() {
     MyRecentActivity(myUiState = MyUiState.init())
 }

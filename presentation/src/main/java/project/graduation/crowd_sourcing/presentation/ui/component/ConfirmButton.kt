@@ -21,7 +21,8 @@ fun ConfirmButton(
     Button(
         onClick = { onConfirm() },
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.primary)),
-        shape = RoundedCornerShape(6.dp)
+        shape = RoundedCornerShape(6.dp),
+        modifier = modifier
     ) {
         Text(text, color = Color.White)
     }

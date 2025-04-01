@@ -12,4 +12,5 @@
     <color name="gray">#E7E7E7</color>
     <color name="darker_gary">#80000000</color>
     <color name="black50">#80000000</color>
+    <color name="black5">#0D000000</color>
 </resources>
