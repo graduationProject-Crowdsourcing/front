@@ -14,17 +14,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.HistoryUiState
-import project.graduation.crowd_sourcing.presentation.utils.spaceSmall
-import project.graduation.crowd_sourcing.presentation.utils.textStyleLarge
-import project.graduation.crowd_sourcing.presentation.utils.textStyleMedium
-import project.graduation.crowd_sourcing.presentation.utils.textStyleSmall
 
 @Composable
 fun HistoryStats(type: HistoryUiState.StatsType) {
@@ -41,13 +39,13 @@ fun HistoryStats(type: HistoryUiState.StatsType) {
 
                 HistoryUiState.StatsType.Init -> ""
             },
-            style = textStyleLarge()
+            style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp)
         )
 
-        Spacer(modifier = Modifier.height(spaceSmall()))
+        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_small)))
 
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(spaceSmall())
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.space_small))
         ) {
             items(list) { item ->
                 Box(
@@ -56,17 +54,17 @@ fun HistoryStats(type: HistoryUiState.StatsType) {
                         .border(1.dp, color = colorResource(R.color.gray), shape = RoundedCornerShape(6.dp))
                 ) {
                     Column(
-                        Modifier.padding(spaceSmall())
+                        Modifier.padding(dimensionResource(R.dimen.space_small))
                     ) {
                         Text(
                             text = item.first,
-                            style = textStyleSmall(),
+                            style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_small).value.sp),
                             color = colorResource(R.color.black50)
                         )
-                        Spacer(modifier = Modifier.height(spaceSmall()))
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_small)))
                         Text(
                             text = item.second.toString(),
-                            style = textStyleMedium(),
+                            style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_medium).value.sp),
                             fontWeight = FontWeight.Bold
                         )
                     }

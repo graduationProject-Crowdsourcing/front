@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
@@ -14,14 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import project.graduation.crowd_sourcing.presentation.R
-import project.graduation.crowd_sourcing.presentation.utils.spaceSmall
-import project.graduation.crowd_sourcing.presentation.utils.textStyleLarge
-import project.graduation.crowd_sourcing.presentation.utils.textStyleSmall
 
 @Composable
 fun CommonListItem(
@@ -34,7 +33,7 @@ fun CommonListItem(
     Row(
         modifier = Modifier
             .clickable { }
-            .padding(vertical = spaceSmall()),
+            .padding(vertical = dimensionResource(R.dimen.space_small)),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -42,7 +41,7 @@ fun CommonListItem(
             contentDescription = null
         )
 
-        Spacer(modifier = Modifier.width(spaceSmall()))
+        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.space_small)))
 
         Column(
             modifier = Modifier
@@ -50,14 +49,14 @@ fun CommonListItem(
         ) {
             Text(
                 text = mainText,
-                style = textStyleLarge(),
+                style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = subText,
                 color = colorResource(R.color.darker_gary),
-                style = textStyleSmall(),
+                style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_small).value.sp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -65,7 +64,7 @@ fun CommonListItem(
 
         Text(
             text = leftText,
-            style = textStyleLarge(),
+            style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp),
             fontWeight = FontWeight.Bold,
         )
     }

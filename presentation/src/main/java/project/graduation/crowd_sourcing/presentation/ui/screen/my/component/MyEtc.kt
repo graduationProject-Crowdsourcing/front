@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,14 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import project.graduation.crowd_sourcing.presentation.R
-import project.graduation.crowd_sourcing.presentation.utils.spaceMedium
-import project.graduation.crowd_sourcing.presentation.utils.spaceSmall
-import project.graduation.crowd_sourcing.presentation.utils.textStyleMedium
 
 @Composable
 fun MyEtc() {
@@ -37,14 +36,14 @@ fun MyEtc() {
     )
 
     Column(
-        modifier = Modifier.padding(vertical = spaceSmall())
+        modifier = Modifier.padding(vertical = dimensionResource(R.dimen.space_small))
     ) {
         list.forEach { item ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { item.second.invoke() }
-                    .padding(vertical = spaceSmall()),
+                    .padding(vertical = dimensionResource(R.dimen.space_small)),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (item.first.first == R.drawable.img_withdraw) {
@@ -61,11 +60,11 @@ fun MyEtc() {
                     )
                 }
 
-                Spacer(modifier = Modifier.width(spaceSmall()))
+                Spacer(modifier = Modifier.width(dimensionResource(R.dimen.space_small)))
 
                 Text(
                     text = item.first.second,
-                    style = textStyleMedium(),
+                    style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_medium).value.sp),
                     modifier = Modifier.weight(1f)
                 )
 

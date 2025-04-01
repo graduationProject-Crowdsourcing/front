@@ -8,17 +8,18 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyActivityHistory
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyEtc
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyProfile
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyProfileEditDialog
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyRecentActivity
-import project.graduation.crowd_sourcing.presentation.utils.spaceMedium
 
 @Composable
 fun MyView(navController: NavController) {
@@ -28,7 +29,7 @@ fun MyView(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(spaceMedium())
+            .padding(dimensionResource(R.dimen.space_medium))
             .verticalScroll(rememberScrollState())
     ) {
         MyProfile(
