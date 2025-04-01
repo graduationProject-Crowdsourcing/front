@@ -22,17 +22,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyUiState
-import project.graduation.crowd_sourcing.presentation.utils.textStyleLarge
-import project.graduation.crowd_sourcing.presentation.utils.textStyleSmall
 
 @Composable
-fun MyProfile(myUiState: MyUiState) {
+fun MyProfile(
+    myUiState: MyUiState,
+    profileEdit: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -56,14 +59,14 @@ fun MyProfile(myUiState: MyUiState) {
         ) {
             Text(
                 text = myUiState.nickname,
-                style = textStyleLarge(),
+                style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = "Points: ${myUiState.point}",
                 color = colorResource(R.color.darker_gary),
-                style = textStyleSmall(),
+                style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_small).value.sp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -73,14 +76,16 @@ fun MyProfile(myUiState: MyUiState) {
             modifier = Modifier
                 .width(100.dp)
                 .height(32.dp)
-                .clickable { }
+                .clickable {
+                    profileEdit()
+                }
                 .clip(RoundedCornerShape(8.dp))
                 .background(colorResource(R.color.gray))
                 .weight(1f)
         ) {
             Text(
                 text = "프로필 수정",
-                style = textStyleSmall(),
+                style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_small).value.sp),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.align(Alignment.Center)
             )
@@ -91,5 +96,5 @@ fun MyProfile(myUiState: MyUiState) {
 @Preview
 @Composable
 fun MyProfilePrev() {
-    MyProfile(MyUiState.init())
+    MyProfile(MyUiState.init(), profileEdit = {})
 }
