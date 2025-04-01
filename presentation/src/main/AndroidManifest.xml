@@ -8,6 +8,6 @@
         <!-- Google Maps API 키 설정 -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_API_KEY" />
+            android:value="@string/google_maps_api_key" />
     </application>
 </manifest>
