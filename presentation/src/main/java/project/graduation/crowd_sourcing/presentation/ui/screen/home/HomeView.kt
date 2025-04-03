@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.home
 
+import android.Manifest
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
@@ -12,6 +13,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.maps.model.LatLng
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.CurrentRequestsList
@@ -48,11 +51,20 @@ import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingThem
 //    - 상태에 따른 조건부 렌더링
 //    - 컴포넌트 간 일관된 스타일 적용
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeView() {
     val viewModel: HomeViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    
+    val locationPermissionState = rememberPermissionState(
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
+
+    LaunchedEffect(Unit) {
+        locationPermissionState.launchPermissionRequest()
+    }
     
     // TODO: Data Layer 구현 후 UseCase로 이동 필요
     val isGoogleMapsAvailable = remember {

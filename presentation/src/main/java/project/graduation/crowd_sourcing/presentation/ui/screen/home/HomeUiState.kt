@@ -15,7 +15,7 @@ sealed class HomeUiState {
         val searchQuery: String = "",
         val currentLocation: Location? = null,
         val requests: List<Request> = emptyList(),
-        val searchRadius: Float = 5000f,
+        val searchRadius: Float = 0.5f,
         val isRadiusDialogVisible: Boolean = false
     ) : HomeUiState()
     data class Error(val message: String) : HomeUiState()

@@ -61,17 +61,17 @@ fun RadiusSettingDialog(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Text("100m")
+                        Text(if (currentRadius >= 1f) "${currentRadius.toInt()}km" else "${(currentRadius * 1000).toInt()}m")
                         Text("1km")
-                        Text("${currentRadius.toInt()}km")
-                        Text("50km")
                     }
                 }
 
                 Slider(
                     value = currentRadius,
                     onValueChange = onRadiusChange,
-                    valueRange = 1f..50f,
-                    steps = 48
+                    valueRange = 0.1f..1f,
+                    steps = 18  // (1000m - 100m) / 50m = 18 steps
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

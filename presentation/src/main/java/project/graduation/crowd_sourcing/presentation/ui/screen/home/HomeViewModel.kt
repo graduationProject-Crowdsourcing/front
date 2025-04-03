@@ -1,8 +1,14 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.home
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,7 +42,9 @@ import javax.inject.Inject
 //    - 일관된 네이밍 컨벤션 적용
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : ViewModel() {
+class HomeViewModel @Inject constructor(
+    @ApplicationContext private val context: Context
+) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
@@ -61,6 +69,27 @@ class HomeViewModel @Inject constructor() : ViewModel() {
 
     init {
         loadInitialData()
+        getCurrentLocation()
+    }
+
+    private fun getCurrentLocation() {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        
+        try {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                
+                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                    location?.let {
+                        updateCurrentLocation(it.latitude, it.longitude)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            _uiState.update { 
+                HomeUiState.Error("위치 정보를 가져오는데 실패했습니다: ${e.message}")
+            }
+        }
     }
 
     private fun loadInitialData() {

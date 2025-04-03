@@ -72,8 +72,20 @@ private fun GoogleMapContent(state: HomeUiState.Success) {
     val uiSettings by remember {
         mutableStateOf(
             MapUiSettings(
-                zoomControlsEnabled = false, // ➖➕ 버튼 비활성화
-//                myLocationButtonEnabled = false, // 내 위치 버튼도 필요 없으면 끄기
+                zoomControlsEnabled = true,
+                myLocationButtonEnabled = true,
+                mapToolbarEnabled = true
+            )
+        )
+    }
+    val mapProperties by remember {
+        mutableStateOf(
+            MapProperties(
+                isMyLocationEnabled = true,
+                mapType = MapType.NORMAL,
+                isBuildingEnabled = true,
+                isIndoorEnabled = true,
+                isTrafficEnabled = true
             )
         )
     }
@@ -82,14 +94,19 @@ private fun GoogleMapContent(state: HomeUiState.Success) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            properties = MapProperties(isMyLocationEnabled = false),
-            uiSettings = uiSettings
+            properties = mapProperties,
+            uiSettings = uiSettings,
+            onMapLoaded = {
+                // 지도가 로드되면 현재 위치로 카메라 이동
+                cameraPositionState.position = CameraPosition.fromLatLngZoom(currentLocationLatLng, 15f)
+            }
         ) {
             if (currentLocation != null) {
                 // 현재 위치 마커
                 Marker(
                     state = rememberMarkerState(position = currentLocationLatLng),
-                    title = "현재 위치"
+                    title = "현재 위치",
+                    snippet = "위도: ${currentLocation.latitude}, 경도: ${currentLocation.longitude}"
                 )
 
                 // 검색 반경 원
@@ -107,7 +124,8 @@ private fun GoogleMapContent(state: HomeUiState.Success) {
                 state.requests.forEach { request ->
                     Marker(
                         state = rememberMarkerState(position = request.location.toLatLng()),
-                        title = request.title
+                        title = request.title,
+                        snippet = "장소: ${request.place}, 보상: ${request.reward}원"
                     )
                 }
             }
