@@ -3,12 +3,17 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.history.compone
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -60,7 +65,9 @@ fun HistorySearch(
                         onClick = { onCategorySelected(category) },
                         label = { Text(text = category) },
                         colors = FilterChipDefaults.filterChipColors().copy(
-                            containerColor = if( category == selectedCategory) colorResource(R.color.black50) else colorResource(R.color.black5),
+                            containerColor = if (category == selectedCategory) colorResource(R.color.black50) else colorResource(
+                                R.color.black5
+                            ),
                         ),
                         border = BorderStroke(0.dp, Color.Transparent)
                     )
@@ -103,22 +110,24 @@ fun HistorySearch(
                 singleLine = true,
                 modifier = Modifier.weight(1f)
             )
-            IconButton(
-                onClick = onSearchClicked,
+
+            Box(
                 modifier = Modifier
+                    .wrapContentHeight()
                     .padding(4.dp)
                     .background(
-                        colorResource(R.color.primary),
+                        color = colorResource(R.color.primary),
                         shape = RoundedCornerShape(dimensionResource(R.dimen.round_common))
                     )
+                    .clickable { onSearchClicked },
+                contentAlignment = Alignment.Center
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_search),
                     contentDescription = "search_button",
-                    tint = Color.White
+                    tint = Color.White,
                 )
             }
-
         }
     }
 }
