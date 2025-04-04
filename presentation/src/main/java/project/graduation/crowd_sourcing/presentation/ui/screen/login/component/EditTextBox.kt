@@ -24,6 +24,7 @@ fun EditTextBox(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
+        singleLine = true,
         modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),

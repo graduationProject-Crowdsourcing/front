@@ -1,17 +1,14 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.login
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
 import project.graduation.crowd_sourcing.presentation.ui.screen.login.component.EditTextBox
 
@@ -28,17 +25,18 @@ fun SignUpView(onSignUpSuccess: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // 1. 아이디
+        Text(text = "아이디", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp))
         InputWithButton(label = "아이디")
 
         // 2. 비밀번호
+        Text(text = "비밀번호", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp))
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp)
                 .widthIn(max = 400.dp)
         ) {
-            Text(text = "비밀번호", fontWeight = FontWeight.Bold)
-
             EditTextBox(
                 value = "",
                 onValueChange = {},
@@ -48,9 +46,13 @@ fun SignUpView(onSignUpSuccess: () -> Unit) {
         Spacer(modifier = Modifier.height(12.dp)) // 입력칸 간격
 
         // 3. 비밀번호 확인
+        Text(text = "비밀번호 확인", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp))
+
         InputWithButton(label = "비밀번호 확인")
 
         // 4. 닉네임
+        Text(text = "닉네임", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp))
+
         InputWithButton(label = "닉네임")
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -73,8 +75,6 @@ fun InputWithButton(label: String) {
             .padding(horizontal = 10.dp)
             .widthIn(max = 400.dp)
     ) {
-        Text(text = label, fontWeight = FontWeight.Bold)
-
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
