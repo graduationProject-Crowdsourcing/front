@@ -7,8 +7,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -34,7 +37,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.component.CancelButton
+import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
+import project.graduation.crowd_sourcing.presentation.ui.screen.login.component.EditTextBox
 
 @Composable
 fun LoginScreenContent(
@@ -61,73 +67,53 @@ fun LoginScreenContent(
 
         Spacer(modifier = Modifier.height(100.dp))
 
-        Text(
-            "Email",
-            fontWeight = FontWeight.Bold
-        )
-        OutlinedTextField(
+        EditTextBox(
             value = state.email,
             onValueChange = onEmailChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color.Gray,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = Color.Black
-            ),
-            shape = RoundedCornerShape(8.dp)
+            label = "Email"
         )
 
-        Text(
-            "Password",
-            fontWeight = FontWeight.Bold
-        )
-        OutlinedTextField(
+        Spacer(modifier = Modifier.height(10.dp))
+
+        EditTextBox(
             value = state.password,
             onValueChange = onPasswordChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color.Gray,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = Color.Black
-            ),
-            shape = RoundedCornerShape(8.dp)
+            label = "Password"
         )
 
         state.errorMessage?.let {
             Text(text = it, color = Color.Red, modifier = Modifier.padding(top = 8.dp))
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
-        Button(
-            onClick = onLoginClick,
-            enabled = state.isLoginEnabled,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("로그인")
-        }
+        ConfirmButton(
+            text = "로그인",
+            onConfirm = onLoginClick,
+            modifier = Modifier.fillMaxWidth().height(45.dp)
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
 
         if (!isSignUpCompleted) {
-            OutlinedButton(
-                onClick = onSignUpClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("회원가입")
-            }
+            CancelButton(
+                text = "회원가입",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp),
+                textColor = colorResource(id = R.color.primary),
+                borderColor = colorResource(id = R.color.primary),
+                onConfirm = onSignUpClick
+            )
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginView(
-    navController: NavHostController,
-    viewModel: LoginViewModel = hiltViewModel()
-) {
+fun LoginView(navController: NavHostController) {
+
+    val viewModel:LoginViewModel = hiltViewModel()
     val state = viewModel.uiState
     val context = LocalContext.current
     var isSignUpSheetVisible by remember { mutableStateOf(false) }
@@ -142,6 +128,7 @@ fun LoginView(
         onSignUpClick = { isSignUpSheetVisible = true }
     )
 
+    // 로그인 성공 시 홈으로 이동
     LaunchedEffect(viewModel.isLoginSuccess) {
         if (viewModel.isLoginSuccess) {
             navController.navigate(Screen.BottomScreen.HomeScreen.bRoute) {
@@ -150,15 +137,24 @@ fun LoginView(
         }
     }
 
+    // 회원가입 바텀시트
     if (isSignUpSheetVisible) {
         ModalBottomSheet(onDismissRequest = { isSignUpSheetVisible = false }) {
-            SignUpView(
-                onSignUpSuccess = {
-                    viewModel.onSignUpSuccess()
-                    Toast.makeText(context, "회원가입 완료!", Toast.LENGTH_SHORT).show()
-                    isSignUpSheetVisible = false
-                }
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()) // 스크롤 가능
+                    .imePadding()                          // 키보드 안 가림
+                    .padding(16.dp)
+            ) {
+                SignUpView(
+                    onSignUpSuccess = {
+                        viewModel.onSignUpSuccess()
+                        Toast.makeText(context, "회원가입 완료!", Toast.LENGTH_SHORT).show()
+                        isSignUpSheetVisible = false
+                    }
+                )
+            }
         }
     }
 }

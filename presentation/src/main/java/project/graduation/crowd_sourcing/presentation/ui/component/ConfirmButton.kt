@@ -20,6 +20,7 @@ fun ConfirmButton(
 ) {
     Button(
         onClick = { onConfirm() },
+        modifier = modifier,
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.primary)),
         shape = RoundedCornerShape(6.dp)
     ) {
