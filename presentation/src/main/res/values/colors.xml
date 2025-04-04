@@ -10,6 +10,7 @@
 
     <color name="primary">#1785E4</color>
     <color name="gray">#E7E7E7</color>
+    <color name="light_gray">#E3E3E3</color>
     <color name="darker_gary">#80000000</color>
     <color name="black50">#80000000</color>
     <color name="black5">#0D000000</color>
