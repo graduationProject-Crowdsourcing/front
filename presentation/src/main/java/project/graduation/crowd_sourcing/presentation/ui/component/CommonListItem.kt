@@ -33,7 +33,8 @@ fun CommonListItem(
     Row(
         modifier = Modifier
             .clickable { }
-            .padding(vertical = dimensionResource(R.dimen.space_small)),
+            .padding(vertical = dimensionResource(R.dimen.space_small))
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

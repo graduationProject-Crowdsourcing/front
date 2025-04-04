@@ -10,6 +10,8 @@ sealed class Screen(val title: String, val route: String) {
     data object HistoryWorkScreen: Screen(title = "의뢰 기록", route = "history/work")
     data object HistoryRequestScreen: Screen(title = "작업 기록", route = "history/request")
 
+    data object DetailStatsScreen: Screen(title = "세부 통계", route = "detail_stats")
+
     sealed class BottomScreen(
         val bTitle: String, val bRoute: String, @DrawableRes val icon: Int
     ) : Screen(title = bTitle, route = bRoute) {

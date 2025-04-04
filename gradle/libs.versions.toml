@@ -20,7 +20,8 @@ gson-converter = "2.9.0"
 logging-interceptor = "4.10.0"
 foundationLayoutAndroid = "1.6.6"
 composeMaterial = "1.4.1"
-composeChart = "1.7.0"
+composeTesting = "1.0.0-alpha03"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -55,11 +56,8 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 hilt-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt_nav"}
 androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
+androidx-compose-testing = { group = "androidx.xr.compose", name = "compose-testing", version.ref = "composeTesting" }
 
-# Chart
-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "composeChart" }
-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "composeChart" }
-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics", version.ref = "composeChart" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

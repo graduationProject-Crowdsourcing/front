@@ -11,13 +11,16 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.component.CommonListItem
+import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyUiState
 import project.graduation.crowd_sourcing.presentation.utils.getTimeAgo
 
 @Composable
-fun MyRecentActivity(myUiState: MyUiState) {
+fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
     Column(
         modifier = Modifier.padding(vertical = dimensionResource(R.dimen.space_small))
     ) {
@@ -53,7 +56,7 @@ fun MyRecentActivity(myUiState: MyUiState) {
                     mainText = name,
                     subText = getTimeAgo(date),
                     icon = R.drawable.ic_list_box,
-                    onClick = {}
+                    onClick = {navController.navigate(Screen.DetailStatsScreen.route)}
                 )
             }
         }
@@ -64,5 +67,5 @@ fun MyRecentActivity(myUiState: MyUiState) {
 @Preview
 @Composable
 fun MyRecentActivityPrev() {
-    MyRecentActivity(myUiState = MyUiState.init())
+    MyRecentActivity(myUiState = MyUiState.init(), navController = rememberNavController())
 }
