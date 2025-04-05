@@ -17,11 +17,11 @@ android {
 
     defaultConfig {
         minSdk = 24
-        targetSdk = 34
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         resValue( "string", "google_maps_api_key", localProperties.getProperty("google_maps_api_key"))
+        resValue( "string", "KAKAO_NATIVE_APP_KEY", localProperties.getProperty("KAKAO_NATIVE_APP_KEY"))
     }
 
     buildTypes {
@@ -75,10 +75,14 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     // Google Maps
-    implementation("com.google.maps.android:maps-compose:2.11.4")
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
-    implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location.v2120)
+
+    implementation("io.github.fornewid:naver-map-compose:1.7.3")
+    implementation("io.github.fornewid:naver-map-location:21.0.2")
     
     // Permissions
-    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+    implementation(libs.accompanist.permissions)
+
 }

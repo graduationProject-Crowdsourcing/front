@@ -12,7 +12,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import project.graduation.crowd_sourcing.presentation.ui.screen.base.BaseView
 import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingTheme
 
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

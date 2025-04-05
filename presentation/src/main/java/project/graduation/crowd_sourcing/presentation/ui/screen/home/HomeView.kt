@@ -50,6 +50,8 @@ import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingThem
 // 4. 컴포넌트 구조 개선
 //    - 상태에 따른 조건부 렌더링
 //    - 컴포넌트 간 일관된 스타일 적용
+// 5. Kakao Map 지원 추가
+//    - 구글맵 또는 카카오맵 중 선택하여 사용 가능
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -67,6 +69,7 @@ fun HomeView() {
     }
     
     // TODO: Data Layer 구현 후 UseCase로 이동 필요
+    // Google Maps는 사용하지 않지만 참조용으로 코드 남겨둠
     val isGoogleMapsAvailable = remember {
         val availability = GoogleApiAvailability.getInstance()
         val resultCode = availability.isGooglePlayServicesAvailable(context)
@@ -99,23 +102,25 @@ fun HomeView() {
                 ) {
                     item { 
                         Box {
-                            MapSection(isGoogleMapsAvailable, state)
+                            // 카카오맵을 사용하여 지도 표시
+                            // 참고: 구글맵 사용 시에는 MapSection 컴포넌트 사용 가능
+                             MapSection(isGoogleMapsAvailable = isGoogleMapsAvailable, state = state)
+//                            KakaoMapSection(isMapAvailable = true, state = state)
 
-                            // 구글 맵스 사용 가능하고 현재 위치정보가 있으면 반경 버튼 표시
-                            // 구글 맵스 사용 불가능하면 반경 버튼 표시 안함 => 테스트 하고 싶으면 if문 없애고 반경 버튼 표시
-                            if(isGoogleMapsAvailable && state.currentLocation != null){
+                            // 현재 위치정보가 있으면 반경 버튼 표시
+                            if (state.currentLocation != null) {
                                 Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 16.dp),
-                                contentAlignment = Alignment.TopCenter
-                            ) {
-                                RadiusButton(
-                                    radius = state.searchRadius,
-                                    onClick = viewModel::showRadiusDialog,
-                                    modifier = Modifier.zIndex(1f)
-                                )
-                            }
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 16.dp),
+                                    contentAlignment = Alignment.TopCenter
+                                ) {
+                                    RadiusButton(
+                                        radius = state.searchRadius,
+                                        onClick = viewModel::showRadiusDialog,
+                                        modifier = Modifier.zIndex(1f)
+                                    )
+                                }
                             }
                             
                         }
