@@ -9,10 +9,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.common.GoogleApiAvailability
@@ -69,6 +72,34 @@ fun HomeView() {
     val viewModel: HomeViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    
+    // 화면 콘텐츠 표시 여부를 제어하는 상태
+    val showContent = remember { mutableStateOf(true) }
+    
+    // 화면 생명주기에 따라 콘텐츠 관리
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> {
+                    // 화면이 백그라운드로 이동할 때 모든 콘텐츠를 숨김
+                    showContent.value = false
+                }
+                Lifecycle.Event.ON_RESUME -> {
+                    // 화면이 포그라운드로 돌아올 때 모든 콘텐츠를 다시 표시
+                    showContent.value = true
+                }
+                else -> {}
+            }
+        }
+        
+        lifecycleOwner.lifecycle.addObserver(observer)
+        
+        onDispose {
+            // 컴포지션이 해제될 때 옵저버 제거
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
     
     val locationPermissionState = rememberPermissionState(
         Manifest.permission.ACCESS_FINE_LOCATION
@@ -105,54 +136,57 @@ fun HomeView() {
                 }
             }
             is HomeUiState.Success -> {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                ) {
-                    item { 
-                        Box {
-                            // 카카오맵을 사용하여 지도 표시
-                            // 참고: 구글맵 사용 시에는 MapSection 컴포넌트 사용 가능
-                            MapSection(isMapServiceAvailable = isMapServiceAvailable, state = state)
-//                            KakaoMapSection(isMapAvailable = true, state = state)
+                // showContent 상태에 따라 모든 콘텐츠 조건부 렌더링
+                if (showContent.value) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        item { 
+                            Box {
+                                // 맵 표시
+                                MapSection(isMapServiceAvailable = isMapServiceAvailable, state = state)
 
-                            // 현재 위치정보가 있으면 반경 버튼 표시
-                            if (state.currentLocation != null) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 16.dp),
-                                    contentAlignment = Alignment.TopCenter
-                                ) {
-                                    RadiusButton(
-                                        radius = state.searchRadius,
-                                        onClick = viewModel::showRadiusDialog,
-                                        modifier = Modifier.zIndex(1f)
-                                    )
+                                // 현재 위치정보가 있으면 반경 버튼 표시
+                                if (state.currentLocation != null) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 16.dp),
+                                        contentAlignment = Alignment.TopCenter
+                                    ) {
+                                        RadiusButton(
+                                            radius = state.searchRadius,
+                                            onClick = viewModel::showRadiusDialog,
+                                            modifier = Modifier.zIndex(1f)
+                                        )
+                                    }
                                 }
                             }
-                            
+                        }
+                        item { 
+                            SearchSection(
+                                searchQuery = state.searchQuery, 
+                                onSearchQueryChange = viewModel::updateSearchQuery,
+                                requests = state.requests
+                            ) 
+                        }
+                        item {
+                            RequestsSection(viewModel = viewModel, state = state)
                         }
                     }
-                    item { 
-                        SearchSection(
-                            searchQuery = state.searchQuery, 
-                            onSearchQueryChange = viewModel::updateSearchQuery,
-                            requests = state.requests
-                        ) 
-                    }
-                    item {
-                        RequestsSection(viewModel = viewModel, state = state)
-                    }
-                }
 
-                if (state.isRadiusDialogVisible) {
-                    RadiusSettingDialog(
-                        currentRadius = state.searchRadius,
-                        onRadiusChange = viewModel::updateSearchRadius,
-                        onDismiss = viewModel::hideRadiusDialog
-                    )
+                    if (state.isRadiusDialogVisible) {
+                        RadiusSettingDialog(
+                            currentRadius = state.searchRadius,
+                            onRadiusChange = viewModel::updateSearchRadius,
+                            onDismiss = viewModel::hideRadiusDialog
+                        )
+                    }
+                } else {
+                    // 화면 전환 중일 때는 빈 화면 표시
+                    Box(modifier = Modifier.fillMaxSize())
                 }
             }
         }

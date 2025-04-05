@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -108,6 +109,14 @@ private fun NaverMapView(state: HomeUiState.Success) {
     // 카메라 위치 상태
     val cameraPositionState: CameraPositionState = rememberCameraPositionState {
         position = CameraPosition(mapCenterLocation, MapConstants.DEFAULT_ZOOM)
+    }
+
+    // 명시적인 메모리 관리를 위한 DisposableEffect
+    DisposableEffect(key1 = currentLocation) {
+        onDispose {
+            // 리소스 명시적 정리
+            cameraPositionState.position = CameraPosition(mapCenterLocation, 0.0)
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
