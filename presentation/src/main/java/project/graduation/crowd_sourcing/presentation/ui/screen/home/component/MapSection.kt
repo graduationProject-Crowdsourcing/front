@@ -1,10 +1,7 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.home.component
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,54 +13,77 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-//import com.google.android.gms.maps.model.CameraPosition
-//import com.google.android.gms.maps.model.LatLng
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
-import com.google.maps.android.compose.*
-import com.naver.maps.map.compose.ExperimentalNaverMapApi
-import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.CameraPositionState
-import com.naver.maps.map.compose.rememberCameraPositionState
+import com.naver.maps.map.compose.CircleOverlay
+import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.naver.maps.map.compose.LocationTrackingMode
 import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MapUiSettings
-import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.Marker
-import com.naver.maps.map.compose.CircleOverlay
-import com.naver.maps.map.compose.LocationTrackingMode
+import com.naver.maps.map.compose.MarkerState
+import com.naver.maps.map.compose.NaverMap
+import com.naver.maps.map.compose.rememberCameraPositionState
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeUiState
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.Location
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.Request
 
-private fun Location.toLatLng(): LatLng = LatLng(latitude, longitude)
+/** 위치 정보를 LatLng 객체로 변환하는 확장 함수 */
+fun Location.toLatLng(): LatLng = LatLng(latitude, longitude)
 
+/**
+ * 지도 관련 상수 값 정의
+ * 
+ * - DEFAULT_ZOOM: 기본 확대/축소 레벨
+ * - DEFAULT_LOCATION: 기본 위치 (서울시청)
+ * - CIRCLE_FILL_COLOR: 반경 원 내부 색상
+ * - CIRCLE_OUTLINE_COLOR: 반경 원 외곽선 색상
+ * - CIRCLE_OUTLINE_WIDTH: 반경 원 외곽선 두께
+ * - MARKER_ZINDEX: 마커 Z-인덱스
+ * - CIRCLE_ZINDEX: 원 Z-인덱스
+ * - METERS_PER_KM: KM당 미터 변환 상수
+ */
+private object MapConstants {
+    const val DEFAULT_ZOOM = 15.0
+    val DEFAULT_LOCATION = LatLng(37.5665, 126.9780) // 서울시청
+    val CIRCLE_FILL_COLOR = Color(0x220000FF)
+    val CIRCLE_OUTLINE_COLOR = Color(0xFF0000FF)
+    val CIRCLE_OUTLINE_WIDTH = 2.dp
+    const val MARKER_ZINDEX = 2
+    const val CIRCLE_ZINDEX = 1
+    const val METERS_PER_KM = 1000.0
+}
+
+/**
+ * 홈 화면의 지도 섹션 컴포넌트
+ * 
+ * @param isMapServiceAvailable 지도 서비스 사용 가능 여부
+ * @param state 홈 화면 상태
+ */
 @Composable
 fun MapSection(
-    isGoogleMapsAvailable: Boolean,
+    isMapServiceAvailable: Boolean,
     state: HomeUiState.Success
 ) {
     BoxWithConstraints(
         modifier = Modifier.fillMaxWidth()
     ) {
-        val width = maxWidth
+        val mapWidth = maxWidth
         Surface(
             modifier = Modifier
-                .width(width)
-                .height(width)
+                .width(mapWidth)
+                .height(mapWidth)
                 .padding(bottom = 8.dp),
             shape = RoundedCornerShape(8.dp)
         ) {
-            if (isGoogleMapsAvailable) {
-                NaverMapContent(state)
+            if (isMapServiceAvailable) {
+                NaverMapView(state)
             } else {
                 MapFallbackContent(state)
             }
@@ -71,214 +91,168 @@ fun MapSection(
     }
 }
 
-//@Composable
-//private fun GoogleMapContent(state: HomeUiState.Success) {
-//    val currentLocation = state.currentLocation
-//    val defaultLocation = LatLng(37.5665, 126.9780) // 서울시청 좌표를 기본값으로 사용
-//
-//    val currentLocationLatLng = currentLocation?.toLatLng() ?: defaultLocation
-//
-//    val cameraPositionState = rememberCameraPositionState {
-//        position = CameraPosition.fromLatLngZoom(currentLocationLatLng, 12f)
-//    }
-//    val uiSettings by remember {
-//        mutableStateOf(
-//            MapUiSettings(
-//                zoomControlsEnabled = true,
-//                myLocationButtonEnabled = true,
-//                mapToolbarEnabled = true
-//            )
-//        )
-//    }
-//    val mapProperties by remember {
-//        mutableStateOf(
-//            MapProperties(
-//                isMyLocationEnabled = true,
-//                mapType = MapType.NORMAL,
-//                isBuildingEnabled = true,
-//                isIndoorEnabled = true,
-//                isTrafficEnabled = true
-//            )
-//        )
-//    }
-//
-//    Box(modifier = Modifier.fillMaxSize()) {
-//        GoogleMap(
-//            modifier = Modifier.fillMaxSize(),
-//            cameraPositionState = cameraPositionState,
-//            properties = mapProperties,
-//            uiSettings = uiSettings,
-//            onMapLoaded = {
-//                // 지도가 로드되면 현재 위치로 카메라 이동
-//                cameraPositionState.position = CameraPosition.fromLatLngZoom(currentLocationLatLng, 15f)
-//            }
-//        ) {
-//            if (currentLocation != null) {
-//                // 현재 위치 마커
-//                Marker(
-//                    state = rememberMarkerState(position = currentLocationLatLng),
-//                    title = "현재 위치",
-//                    snippet = "위도: ${currentLocation.latitude}, 경도: ${currentLocation.longitude}"
-//                )
-//
-//                // 검색 반경 원
-//                Circle(
-//                    center = currentLocationLatLng,
-//                    clickable = false,
-//                    fillColor = Color(0x220000FF),
-//                    radius = state.searchRadius * 1000.0, // km를 미터로 변환
-//                    strokeColor = Color(0xFF0000FF),
-//                    strokeWidth = 2f,
-//                    visible = true
-//                )
-//
-//                // 의뢰 위치 마커들
-//                state.requests.forEach { request ->
-//                    Marker(
-//                        state = rememberMarkerState(position = request.location.toLatLng()),
-//                        title = request.title,
-//                        snippet = "장소: ${request.place}, 보상: ${request.reward}원"
-//                    )
-//                }
-//            }
-//        }
-//
-//        if (currentLocation == null) {
-//            Box(
-//                modifier = Modifier.fillMaxSize(),
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Surface(
-//                    modifier = Modifier
-//                        .padding(16.dp)
-//                        .wrapContentWidth(),
-//                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.9f),
-//                    shape = RoundedCornerShape(8.dp)
-//                ) {
-//                    Text(
-//                        text = "위치 정보를 가져올 수 없습니다.",
-//                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-//                        style = MaterialTheme.typography.bodyMedium,
-//                        color = MaterialTheme.colorScheme.onErrorContainer,
-//                        textAlign = TextAlign.Center
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
-
+/**
+ * 네이버 맵 컴포넌트
+ * 
+ * @param state 홈 화면 상태
+ */
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
-private fun NaverMapContent(state: HomeUiState.Success) {
+private fun NaverMapView(state: HomeUiState.Success) {
     val currentLocation = state.currentLocation
-    val defaultLocation = LatLng(37.5665, 126.9780) // 서울시청
+    val defaultLocation = MapConstants.DEFAULT_LOCATION
 
-    val currentLocationLatLng = currentLocation?.toLatLng() ?: defaultLocation
+    // 사용자 위치 또는 기본 위치
+    val mapCenterLocation = currentLocation?.toLatLng() ?: defaultLocation
 
-    val cameraPositionState : CameraPositionState = rememberCameraPositionState() {
-        position = CameraPosition(currentLocationLatLng, 15.0)
+    // 카메라 위치 상태
+    val cameraPositionState: CameraPositionState = rememberCameraPositionState {
+        position = CameraPosition(mapCenterLocation, MapConstants.DEFAULT_ZOOM)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
         NaverMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            properties = MapProperties(
-                isBuildingLayerGroupEnabled = true,
-                isTransitLayerGroupEnabled = false,
-                locationTrackingMode = LocationTrackingMode.Follow
-            ),
-            uiSettings = MapUiSettings(
-                isZoomControlEnabled = true,
-                isLocationButtonEnabled = true,
-                isCompassEnabled = true,
-                isScaleBarEnabled = true
-            ),
+            properties = createMapProperties(),
+            uiSettings = createMapUiSettings(),
             onMapLoaded = {
-                // 지도가 로드되면 현재 위치로 카메라 이동
+                // 지도 로드 완료 시 현재 위치로 카메라 이동
                 if (currentLocation != null) {
-                    cameraPositionState.position = CameraPosition(currentLocationLatLng, 15.0)
+                    cameraPositionState.position = CameraPosition(
+                        mapCenterLocation, 
+                        MapConstants.DEFAULT_ZOOM
+                    )
                 }
             }
         ) {
             if (currentLocation != null) {
-                // 현재 위치 마커
-                Marker(
-                    state = MarkerState(position = currentLocationLatLng),
-                    captionText = "현재 위치"
-                )
-
+                // 현재 위치 LatLng 캐싱
+                val currentLatLng = currentLocation.toLatLng()
+                
+                // 사용자 위치 마커
+                DrawUserLocationMarker(currentLocation)
+                
                 // 검색 반경 원
-                CircleOverlay(
-                    center = currentLocationLatLng,
-                    radius = state.searchRadius * 1000.0, // km -> m
-                    color = Color(0x220000FF),
-                    outlineColor = Color(0xFF0000FF),
-                    outlineWidth = 2.dp,
-                    zIndex = 1
+                DrawSearchRadiusCircle(
+                    center = currentLatLng,
+                    radiusInKm = state.searchRadius
                 )
 
                 // 의뢰 위치 마커들
-                state.requests.forEach { request ->
-                    Marker(
-                        state = MarkerState(position = request.location.toLatLng()),
-                        captionText = request.title,
-                        zIndex = 2
-                    )
-                }
+                DrawRequestMarkers(state.requests)
             }
         }
 
         // 위치 정보 없을 때 경고 메시지
         if (currentLocation == null) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Surface(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .wrapContentWidth(),
-                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.9f),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(
-                        text = "위치 정보를 가져올 수 없습니다.",
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
+            ShowLocationErrorMessage()
         }
     }
 }
 
+/**
+ * 지도 속성 생성
+ */
+@Composable
+private fun createMapProperties() = MapProperties(
+    isBuildingLayerGroupEnabled = true,
+    isTransitLayerGroupEnabled = false,
+    locationTrackingMode = LocationTrackingMode.Follow
+)
+
+/**
+ * 지도 UI 설정 생성
+ */
+@Composable
+private fun createMapUiSettings() = MapUiSettings(
+    isZoomControlEnabled = true,
+    isLocationButtonEnabled = true,
+    isCompassEnabled = true,
+    isScaleBarEnabled = true
+)
+
+/**
+ * 사용자 위치 마커 표시
+ */
+@OptIn(ExperimentalNaverMapApi::class)
+@Composable
+private fun DrawUserLocationMarker(location: Location) {
+    Marker(
+        state = MarkerState(position = location.toLatLng()),
+        captionText = "현재 위치"
+    )
+}
+
+/**
+ * 검색 반경 원 표시
+ */
+@Composable
+private fun DrawSearchRadiusCircle(center: LatLng, radiusInKm: Float) {
+    CircleOverlay(
+        center = center,
+        radius = radiusInKm * MapConstants.METERS_PER_KM, // km -> m
+        color = MapConstants.CIRCLE_FILL_COLOR,
+        outlineColor = MapConstants.CIRCLE_OUTLINE_COLOR,
+        outlineWidth = MapConstants.CIRCLE_OUTLINE_WIDTH,
+        zIndex = MapConstants.CIRCLE_ZINDEX
+    )
+}
+
+/**
+ * 의뢰 위치 마커들 표시
+ */
+@OptIn(ExperimentalNaverMapApi::class)
+@Composable
+private fun DrawRequestMarkers(requests: List<Request>) {
+    requests.forEach { request ->
+        Marker(
+            state = MarkerState(position = request.location.toLatLng()),
+            captionText = request.title,
+            zIndex = MapConstants.MARKER_ZINDEX
+        )
+    }
+}
+
+/**
+ * 위치 정보 오류 메시지 표시
+ */
+@Composable
+private fun ShowLocationErrorMessage() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Surface(
+            modifier = Modifier
+                .padding(16.dp)
+                .wrapContentWidth(),
+            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.9f),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Text(
+                text = "위치 정보를 가져올 수 없습니다.",
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onErrorContainer,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+/**
+ * 지도 대체 콘텐츠 (지도 서비스 불가능 시)
+ */
 @Composable
 private fun MapFallbackContent(state: HomeUiState.Success) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        Column(
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "지도를 불러올 수 없습니다.\n잠시 후 다시 시도해주세요.",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "현재 위치: ${state.currentLocation!!.latitude}, ${state.currentLocation.longitude}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        Text(
+            text = "지도 서비스를 사용할 수 없습니다.",
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 }

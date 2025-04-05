@@ -41,6 +41,10 @@ import javax.inject.Inject
 //    - companion object를 사용한 더미 데이터 관리
 //    - 일관된 네이밍 컨벤션 적용
 
+/**
+ * 홈 화면의 비즈니스 로직을 처리하는 ViewModel
+ * 위치 정보, 검색 결과, 의뢰 목록 등의 상태 관리
+ */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     @ApplicationContext private val context: Context
@@ -49,6 +53,10 @@ class HomeViewModel @Inject constructor(
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     companion object {
+        /**
+         * 테스트용 더미 의뢰 데이터
+         * Domain 계층 구현 시 실제 데이터로 교체 필요
+         */
         private val DUMMY_REQUESTS = listOf(
             Request(
                 id = "1",
@@ -72,6 +80,10 @@ class HomeViewModel @Inject constructor(
         getCurrentLocation()
     }
 
+    /**
+     * 현재 위치 정보를 가져와 상태를 업데이트
+     * 위치 권한이 있는 경우에만 동작
+     */
     private fun getCurrentLocation() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         
@@ -92,6 +104,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 초기 데이터를 로드하여 상태를 설정
+     * 현재는 더미 데이터를 사용하지만 향후 실제 데이터로 교체 필요
+     */
     private fun loadInitialData() {
         viewModelScope.launch {
             try {
@@ -108,6 +124,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 검색어를 업데이트
+     * 
+     * @param query 새로운 검색어
+     */
     fun updateSearchQuery(query: String) {
         _uiState.update { currentState ->
             when (currentState) {
@@ -117,6 +138,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 현재 위치 정보를 업데이트
+     * 
+     * @param latitude 위도
+     * @param longitude 경도
+     */
     fun updateCurrentLocation(latitude: Double, longitude: Double) {
         _uiState.update { currentState ->
             when (currentState) {
@@ -128,6 +155,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 의뢰 목록을 업데이트
+     * 
+     * @param requests 새로운 의뢰 목록
+     */
     fun updateRequests(requests: List<Request>) {
         _uiState.update { currentState ->
             when (currentState) {
@@ -137,6 +169,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 반경 설정 다이얼로그를 표시
+     */
     fun showRadiusDialog() {
         _uiState.update { currentState ->
             when (currentState) {
@@ -146,6 +181,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 반경 설정 다이얼로그를 숨김
+     */
     fun hideRadiusDialog() {
         _uiState.update { currentState ->
             when (currentState) {
@@ -155,6 +193,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 검색 반경을 업데이트
+     * 
+     * @param radius 새로운 검색 반경 (km 단위)
+     */
     fun updateSearchRadius(radius: Float) {
         _uiState.update { currentState ->
             when (currentState) {

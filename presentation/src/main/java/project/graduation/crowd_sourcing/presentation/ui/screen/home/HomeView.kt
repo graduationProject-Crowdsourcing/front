@@ -16,7 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.maps.model.LatLng
+import com.naver.maps.geometry.LatLng
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.CurrentRequestsList
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.MapSection
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RequestsSection
@@ -53,6 +53,16 @@ import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingThem
 // 5. Kakao Map 지원 추가
 //    - 구글맵 또는 카카오맵 중 선택하여 사용 가능
 
+/**
+ * 홈 화면 UI 구성
+ * 
+ * 주요 기능:
+ * 1. 네이버 맵을 사용한 지도 표시
+ * 2. 사용자 현재 위치 표시
+ * 3. 주변 의뢰 목록 표시
+ * 4. 검색 반경 설정
+ * 5. 검색 기능
+ */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeView() {
@@ -70,7 +80,7 @@ fun HomeView() {
     
     // TODO: Data Layer 구현 후 UseCase로 이동 필요
     // Google Maps는 사용하지 않지만 참조용으로 코드 남겨둠
-    val isGoogleMapsAvailable = remember {
+    val isMapServiceAvailable = remember {
         val availability = GoogleApiAvailability.getInstance()
         val resultCode = availability.isGooglePlayServicesAvailable(context)
         resultCode == com.google.android.gms.common.ConnectionResult.SUCCESS
@@ -104,7 +114,7 @@ fun HomeView() {
                         Box {
                             // 카카오맵을 사용하여 지도 표시
                             // 참고: 구글맵 사용 시에는 MapSection 컴포넌트 사용 가능
-                             MapSection(isGoogleMapsAvailable = isGoogleMapsAvailable, state = state)
+                            MapSection(isMapServiceAvailable = isMapServiceAvailable, state = state)
 //                            KakaoMapSection(isMapAvailable = true, state = state)
 
                             // 현재 위치정보가 있으면 반경 버튼 표시
@@ -147,13 +157,6 @@ fun HomeView() {
             }
         }
     }
-}
-
-// TODO: Domain Layer로 이동 필요
-// - Location 데이터 모델 변환 로직을 Domain Layer의 mapper로 분리
-// - 현재는 Presentation Layer에서 직접 처리하고 있음
-fun Location.toLatLng(): LatLng {
-    return LatLng(this.latitude, this.longitude)
 }
 
 @Preview(showBackground = true)
