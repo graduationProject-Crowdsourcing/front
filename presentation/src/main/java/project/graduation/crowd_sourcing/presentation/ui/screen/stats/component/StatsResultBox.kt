@@ -26,7 +26,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
@@ -42,10 +44,12 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.stats.StatsUiSta
 
 @Composable
 fun StatsResultBox(
-    dataList: List<StatsUiState.StatsListItem>,
-    type: StatsType,
+    uiState: StatsUiState,
     switchOtherType: () -> Unit = {}
 ) {
+    val dataList = uiState.dataList
+    val type = uiState.type
+
     Column {
         StatsSwitchType(
             switchOtherType = switchOtherType,
@@ -141,18 +145,25 @@ fun StatsHorizontalChart(chartList: List<StatsUiState.StatsListItem>) {
                     size = Size(width, barThicknessPx)
                 )
 
-                val splitLabel = labels[index].split(" ")
-                splitLabel.forEachIndexed { lineIndex, lineText ->
-                    val totalTextHeight = (splitLabel.size - 1) * 45f
-                    val textBlockCenterOffset = totalTextHeight / 2
-
-                    drawContext.canvas.nativeCanvas.drawText(
-                        lineText,
-                        dividerX - 20f,
-                        yOffset + barThicknessPx / 2 - textBlockCenterOffset + (lineIndex * 45f) + 15f, // 중앙에 배치되도록 위치 조정
-                        textPaint
-                    )
-                }
+//                val splitLabel = labels[index].split(" ")
+//                splitLabel.forEachIndexed { lineIndex, lineText ->
+//                    val totalTextHeight = (splitLabel.size - 1) * 45f
+//                    val textBlockCenterOffset = totalTextHeight / 2
+//
+//                    drawContext.canvas.nativeCanvas.drawText(
+//                        lineText,
+//                        dividerX - 20f,
+//                        yOffset + barThicknessPx / 2 - textBlockCenterOffset + (lineIndex * 45f) + 15f, // 중앙에 배치되도록 위치 조정
+//                        textPaint
+//                    )
+//                }
+                val label = labels[index]
+                drawContext.canvas.nativeCanvas.drawText(
+                    label,
+                    dividerX - 20f,
+                    yOffset + barThicknessPx / 2 + 15f,
+                    textPaint
+                )
             }
         }
     }
@@ -195,20 +206,18 @@ fun StatsResultList(
             style = TextStyle(fontSize = dimensionResource(R.dimen.sp_large).value.sp),
             color = Color.Black,
 
-        )
+            )
 
         Spacer(Modifier.height(dimensionResource(R.dimen.space_small)))
         GrayDivider()
         Spacer(Modifier.height(dimensionResource(R.dimen.space_small)))
 
-        LazyColumn {
-            items(dataList.take(visibleCount)) { item ->
-                Text(
-                    text = "${item.name} ${item.price}",
-                    style = TextStyle(fontSize = dimensionResource(R.dimen.sp_medium).value.sp),
-                    color = Color.Black
-                )
-            }
+        dataList.take(visibleCount).forEach { item ->
+            Text(
+                text = "${item.name} ${item.price}",
+                style = TextStyle(fontSize = dimensionResource(R.dimen.sp_medium).value.sp),
+                color = Color.Black
+            )
         }
 
         Text(
@@ -229,7 +238,7 @@ fun StatsResultList(
 fun StatsSwitchType(
     switchOtherType: () -> Unit,
     type: StatsType
-){
+) {
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.CenterEnd
@@ -261,9 +270,9 @@ fun StatsSwitchType(
 
 @Preview
 @Composable
-fun StatsResultBoxPrev(){
+fun StatsResultBoxPrev() {
     val uiState = StatsUiState.test()
-    StatsResultBox(uiState.dataList, uiState.type)
+    StatsResultBox(uiState)
 }
 
 @Preview

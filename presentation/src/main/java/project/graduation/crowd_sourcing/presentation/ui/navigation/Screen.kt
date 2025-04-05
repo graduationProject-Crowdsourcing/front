@@ -49,6 +49,8 @@ sealed class Screen(val title: String, val route: String) {
                 HistoryWorkScreen.route -> HistoryWorkScreen
                 HistoryRequestScreen.route->HistoryRequestScreen
 
+                DetailStatsScreen.route->DetailStatsScreen
+
                 BottomScreen.HomeScreen.bRoute -> BottomScreen.HomeScreen
                 BottomScreen.SearchScreen.bRoute -> BottomScreen.SearchScreen
                 BottomScreen.RequestScreen.bRoute -> BottomScreen.RequestScreen

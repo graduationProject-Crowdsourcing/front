@@ -23,10 +23,10 @@ data class StatsUiState (
             requestCompleteDate = Date(),
             requestProduct = "라면",
             dataList = listOf(
-                StatsListItem(name = "Apple Juice", price = 200),
-                StatsListItem(name = "Banana Smoothie", price = 150),
-                StatsListItem(name = "Cherry Pie", price = 100),
-                StatsListItem(name = "Date Cookies", price = 280)
+                StatsListItem(name = "a mart", price = 200),
+                StatsListItem(name = "b mart", price = 150),
+                StatsListItem(name = "c mart", price = 100),
+                StatsListItem(name = "d mart", price = 280)
             ),
             type = StatsType.MART
         )

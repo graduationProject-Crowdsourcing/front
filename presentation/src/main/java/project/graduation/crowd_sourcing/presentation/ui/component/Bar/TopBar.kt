@@ -61,7 +61,7 @@ fun TopBar(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_left),
-                            contentDescription = "Menu"
+                            contentDescription = "Back"
                         )
                     }
                 }

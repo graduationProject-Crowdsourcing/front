@@ -14,4 +14,7 @@
     <color name="darker_gary">#80000000</color>
     <color name="black50">#80000000</color>
     <color name="black5">#0D000000</color>
+
+    <color name="green">#43A047</color>
+    <color name="red">#EE0505</color>
 </resources>
