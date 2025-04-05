@@ -79,6 +79,9 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location.v2120)
 
+    // Material icons extended
+    implementation("androidx.compose.material:material-icons-extended:1.6.1")
+
     implementation("io.github.fornewid:naver-map-compose:1.7.3")
     implementation("io.github.fornewid:naver-map-location:21.0.2")
     
