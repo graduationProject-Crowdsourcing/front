@@ -21,10 +21,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         resValue( "string", "google_maps_api_key", localProperties.getProperty("google_maps_api_key"))
-<<<<<<< HEAD
-//        resValue( "string", "KAKAO_NATIVE_APP_KEY", localProperties.getProperty("KAKAO_NATIVE_APP_KEY"))
-=======
->>>>>>> develop
     }
 
     buildTypes {

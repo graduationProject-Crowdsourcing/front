@@ -13,13 +13,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-<<<<<<< HEAD
 import androidx.compose.runtime.DisposableEffect
-=======
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
->>>>>>> develop
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +38,7 @@ import com.naver.maps.map.compose.rememberCameraPositionState
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeUiState
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.Location
 import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.screen.home.Request
 
 /** 위치 정보를 LatLng 객체로 변환하는 확장 함수 */
 fun Location.toLatLng(): LatLng = LatLng(latitude, longitude)
@@ -85,17 +83,10 @@ fun MapSection(
         val mapWidth = maxWidth
         Surface(
             modifier = Modifier
-<<<<<<< HEAD
                 .width(mapWidth)
                 .height(mapWidth)
                 .padding(bottom = 8.dp),
             shape = RoundedCornerShape(8.dp)
-=======
-                .width(width)
-                .height(width)
-                .padding(bottom = dimensionResource(R.dimen.space_small)),
-            shape = RoundedCornerShape(dimensionResource(R.dimen.round_common))
->>>>>>> develop
         ) {
             if (isMapServiceAvailable) {
                 NaverMapView(state)

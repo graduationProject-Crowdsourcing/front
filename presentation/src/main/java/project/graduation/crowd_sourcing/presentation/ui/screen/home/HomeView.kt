@@ -1,29 +1,23 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.home
 
-<<<<<<< HEAD
 import android.Manifest
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
-=======
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
->>>>>>> develop
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-<<<<<<< HEAD
 import androidx.compose.ui.platform.LocalLifecycleOwner
-=======
-import androidx.compose.ui.res.dimensionResource
->>>>>>> develop
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -31,13 +25,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.common.GoogleApiAvailability
-<<<<<<< HEAD
 import com.naver.maps.geometry.LatLng
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.CurrentRequestsList
-=======
-import com.google.android.gms.maps.model.LatLng
-import project.graduation.crowd_sourcing.presentation.R
->>>>>>> develop
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.MapSection
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RadiusButton
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RadiusSettingDialog
@@ -83,6 +72,7 @@ import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingThem
  * 4. 검색 반경 설정
  * 5. 검색 기능
  */
+@SuppressLint("RememberReturnType")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeView() {
@@ -153,7 +143,6 @@ fun HomeView() {
                 }
             }
             is HomeUiState.Success -> {
-<<<<<<< HEAD
                 // showContent 상태에 따라 모든 콘텐츠 조건부 렌더링
                 if (showContent.value) {
                     LazyColumn(
@@ -181,31 +170,6 @@ fun HomeView() {
                                         )
                                     }
                                 }
-=======
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.space_medium))
-                ) {
-                    item { 
-                        Box {
-                            MapSection(isGoogleMapsAvailable, state)
-
-                            // 구글 맵스 사용 가능하고 현재 위치정보가 있으면 반경 버튼 표시
-                            // 구글 맵스 사용 불가능하면 반경 버튼 표시 안함 => 테스트 하고 싶으면 if문 없애고 반경 버튼 표시
-                            if(isGoogleMapsAvailable && state.currentLocation != null){
-                                Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = dimensionResource(R.dimen.space_medium)),
-                                contentAlignment = Alignment.TopCenter
-                            ) {
-                                RadiusButton(
-                                    radius = state.searchRadius,
-                                    onClick = viewModel::showRadiusDialog,
-                                    modifier = Modifier.zIndex(1f)
-                                )
->>>>>>> develop
                             }
                         }
                         item { 

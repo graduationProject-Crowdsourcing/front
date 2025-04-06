@@ -48,11 +48,8 @@ fun BaseView() {
             )
         },
         bottomBar = {
-<<<<<<< HEAD
-            if(uiState.value.currentScreen is Screen.BottomScreen) {
-=======
+
             if (uiState.value.currentScreen is Screen.BottomScreen) {
->>>>>>> develop
                 BottomBar(
                     navController = navController,
                     uiState = uiState.value
