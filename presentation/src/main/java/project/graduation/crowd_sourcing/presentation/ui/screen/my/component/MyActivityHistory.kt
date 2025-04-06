@@ -15,17 +15,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
-import project.graduation.crowd_sourcing.presentation.utils.spaceMedium
-import project.graduation.crowd_sourcing.presentation.utils.spaceSmall
-import project.graduation.crowd_sourcing.presentation.utils.textStyleLarge
-import project.graduation.crowd_sourcing.presentation.utils.textStyleSmall
 
 @Composable
 fun MyActivityHistory(navController: NavController) {
@@ -40,17 +39,17 @@ fun MyActivityHistory(navController: NavController) {
     )
 
     Column(
-        modifier = Modifier.padding(vertical = spaceMedium())
+        modifier = Modifier.padding(vertical = dimensionResource(R.dimen.space_medium))
     ) {
         Text(
             text = "내 활동 내역",
-            style = textStyleLarge(),
+            style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp),
         )
 
-        Spacer(modifier = Modifier.height(spaceSmall()))
+        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_small)))
 
         Row(
-            modifier = Modifier.padding(horizontal = spaceMedium()),
+            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.space_medium)),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             historyList.forEach { history ->
@@ -62,18 +61,18 @@ fun MyActivityHistory(navController: NavController) {
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
-                        modifier = Modifier.padding(vertical = spaceSmall())
+                        modifier = Modifier.padding(vertical = dimensionResource(R.dimen.space_small))
                     ) {
                         Icon(
                             painter = painterResource(history.first.first),
                             contentDescription = null
                         )
 
-                        Spacer(modifier = Modifier.height(spaceSmall()))
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_small)))
 
                         Text(
                             text = history.first.second,
-                            style = textStyleSmall()
+                            style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_small).value.sp)
                         )
                     }
                 }

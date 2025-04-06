@@ -8,9 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.component.HistoryStats
-import project.graduation.crowd_sourcing.presentation.utils.spaceMedium
 
 @Composable
 fun HistoryView(historyType: HistoryType){
@@ -20,11 +21,11 @@ fun HistoryView(historyType: HistoryType){
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(spaceMedium())
+            .padding(dimensionResource(R.dimen.space_medium))
     ) {
         HistoryStats(type = uiState.value.stats.first)
 
-        Spacer(modifier = Modifier.height(spaceMedium()))
+        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
         HistoryStats(type = uiState.value.stats.second)
     }
 }

@@ -15,16 +15,19 @@ import project.graduation.crowd_sourcing.presentation.R
 
 @Composable
 fun CancelButton(
+    modifier: Modifier = Modifier,
     text: String,
+    textColor: Color = Color.Black,
+    borderColor: Color = Color.Black,
     onConfirm: () -> Unit
 ) {
     Button(
         onClick = { onConfirm() },
         colors = ButtonDefaults.buttonColors(containerColor = Color.White),
         shape = RoundedCornerShape(6.dp),
-        modifier = Modifier.border(1.dp, Color.Black, RoundedCornerShape(6.dp))
+        modifier = modifier.border(1.dp, borderColor, RoundedCornerShape(6.dp))
     ) {
-        Text(text, color = Color.Black)
+        Text(text, color = textColor)
     }
 }
 
@@ -32,6 +35,6 @@ fun CancelButton(
 @Composable
 fun CancelButtonPrev(){
     CancelButton(
-        "cancel"
+        text = "cancel"
     ) { }
 }

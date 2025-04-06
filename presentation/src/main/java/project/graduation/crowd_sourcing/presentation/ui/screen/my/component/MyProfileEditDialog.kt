@@ -15,10 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -35,13 +32,14 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyUiState
-import project.graduation.crowd_sourcing.presentation.utils.spaceMedium
-import project.graduation.crowd_sourcing.presentation.utils.textStyleTitle
 
 @Composable
 fun MyProfileEditDialog(
@@ -72,7 +70,7 @@ fun MyProfileEditDialog(
         AlertDialog(
             containerColor = Color.White,
             onDismissRequest = { },
-            title = { Text("프로필 수정", style = textStyleTitle()) },
+            title = { Text("프로필 수정", style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_title).value.sp)) },
             text = {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -105,7 +103,7 @@ fun MyProfileEditDialog(
                     }
 
 
-                    Spacer(modifier = Modifier.height(spaceMedium()))
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
 
                     TextField(
                         value = nickname,
