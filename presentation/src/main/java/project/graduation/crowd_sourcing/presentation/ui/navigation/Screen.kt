@@ -27,7 +27,7 @@ sealed class Screen(val title: String, val route: String) {
 
         data object RequestScreen : BottomScreen(
             bTitle = "의뢰",
-            bRoute = "reqeust",
+            bRoute = "request",
             icon = R.drawable.ic_request
         )
 

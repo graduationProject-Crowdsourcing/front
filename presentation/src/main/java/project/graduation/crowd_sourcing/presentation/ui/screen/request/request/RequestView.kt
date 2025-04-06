@@ -1,0 +1,59 @@
+package project.graduation.crowd_sourcing.presentation.ui.screen.request.request
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.ActionCard
+
+@Composable
+fun RequestView(
+    navController: NavController
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "의뢰",
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        ActionCard(
+            title = "의뢰 작성",
+            icon = Icons.Default.Star,
+            onClick = { navController.navigate("request_form") }
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        ActionCard(
+            title = "작업 제출",
+            icon = Icons.Default.Star,
+            onClick = { /* 추후 작업 제출 화면으로 이동 */ }
+        )
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun RequestViewPreview() {
+    // NavController 대신 가짜 Navigation 사용 -> 나중에 추가 작업 후에 방식 교체 (임시)
+    val fakeNavController = rememberNavController()
+
+    RequestView(navController = fakeNavController)
+}
+

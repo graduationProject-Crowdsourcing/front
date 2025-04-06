@@ -1,0 +1,4 @@
+package project.graduation.crowd_sourcing.presentation.ui.screen.request.work
+
+class WorkListView {
+}
