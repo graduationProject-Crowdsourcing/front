@@ -1,6 +1,5 @@
-package project.graduation.crowd_sourcing.presentation.ui.component
+package project.graduation.crowd_sourcing.presentation.ui.component.Bar
 
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Icon
@@ -16,8 +15,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.navigation.screensInBottom
 import project.graduation.crowd_sourcing.presentation.ui.screen.base.BaseUiState
 import project.graduation.crowd_sourcing.presentation.utils.navigateBottom

@@ -1,6 +1,7 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.my
 
 import android.graphics.Bitmap
+import project.graduation.crowd_sourcing.presentation.utils.twoDaysAgo
 import java.util.Calendar
 import java.util.Date
 
@@ -33,8 +34,3 @@ data class MyUiState(
         )
     }
 }
-
-
-val twoDaysAgo = Calendar.getInstance().apply {
-    add(Calendar.DAY_OF_MONTH, -2)
-}.time

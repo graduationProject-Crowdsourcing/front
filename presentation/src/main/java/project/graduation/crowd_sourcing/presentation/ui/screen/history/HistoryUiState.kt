@@ -1,11 +1,23 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.history
 
+import project.graduation.crowd_sourcing.presentation.utils.twoDaysAgo
+import java.util.Date
+
 data class HistoryUiState(
-    val stats: Pair<StatsType, StatsType>
+    val stats: Pair<StatsType, StatsType>,
+    val currentHistoryList: List<HistoryItem>,
+    val totalHistoryList: List<HistoryItem>,
+    val searchQuery: String = ""
 ) {
+    data class HistoryItem(
+        val product: String,
+        val category: String,
+        val date: Date,
+        val point: Int
+    )
+
     sealed interface StatsType {
         data object Init : StatsType
-
         sealed class Work : StatsType {
             data class All(
                 val totalWork: Int,
@@ -68,18 +80,59 @@ data class HistoryUiState(
             }
         }
 
-        fun init() = HistoryUiState(stats = StatsType.Init to StatsType.Init)
+        fun init() = HistoryUiState(
+            stats = StatsType.Init to StatsType.Init,
+            currentHistoryList = emptyList(),
+            totalHistoryList = emptyList()
+        )
+
         fun initTest() = HistoryUiState(
             stats = StatsType.Work.All(
                 totalWork = 20,
                 totalPoint = 300,
                 totalTime = 2
-            ) to StatsType.Work.Detail(mostRegion = "강남구", mostCategory = "라면", averageTime = 2)
+            ) to StatsType.Work.Detail(mostRegion = "강남구", mostCategory = "라면", averageTime = 2),
+            currentHistoryList = listOf(
+                HistoryItem(
+                    product = "product",
+                    date = twoDaysAgo,
+                    point = 20,
+                    category = "가공식품"
+                ),
+                HistoryItem(
+                    product = "product",
+                    date = twoDaysAgo,
+                    point = 20,
+                    category = "가공식품"
+                ),
+            ),
+            totalHistoryList = listOf(
+                HistoryItem(
+                    product = "product",
+                    date = twoDaysAgo,
+                    point = 20,
+                    category = "가공식품"
+                ), HistoryItem(
+                    product = "product",
+                    date = twoDaysAgo,
+                    point = 20,
+                    category = "가공식품"
+                ), HistoryItem(
+                    product = "product",
+                    date = twoDaysAgo,
+                    point = 20,
+                    category = "가공식품"
+                ), HistoryItem(
+                    product = "product",
+                    date = twoDaysAgo,
+                    point = 20,
+                    category = "가공식품"
+                ),
+            )
         )
     }
 }
 
-sealed interface HistoryType{
-    data object Work: HistoryType
-    data object Request:HistoryType
+enum class HistoryType {
+    WORK, REQUEST
 }
