@@ -12,15 +12,12 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.Priority
 import com.naver.maps.geometry.LatLng
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
-import javax.inject.Inject
 
 class BaseViewModel () : ViewModel() {
-
     private val _uiState = MutableStateFlow(BaseUiState.init())
     val uiState = _uiState.asStateFlow()
 
@@ -45,6 +42,22 @@ class BaseViewModel () : ViewModel() {
             _uiState.update { prev ->
                 prev.copy(currentLocation = LatLng(newLocation.latitude, newLocation.longitude))
             }
+
+            uiState.value.serverLocation.let { serverLoc ->
+                val distanceResult = FloatArray(1) // 거리 결과를 담을 배열
+
+                Location.distanceBetween(
+                    serverLoc.latitude, serverLoc.longitude,
+                    newLocation.latitude, newLocation.longitude,
+                    distanceResult
+                )
+
+                if (distanceResult[0] >= 250f) {
+                    onMoved250m(newLocation)
+                }
+            }
+
+
             Log.d("location", "${LatLng(newLocation.latitude, newLocation.longitude)}")
         }
     }
@@ -60,5 +73,12 @@ class BaseViewModel () : ViewModel() {
 
     fun stopTracking(fusedLocationClient: FusedLocationProviderClient) {
         fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+    private fun onMoved250m(location: Location) {
+      _uiState.update { prev->
+          prev.copy(serverLocation = LatLng(location.latitude, location.longitude))
+      }
+        Log.d("location", "Moved over 250m: ${location.latitude}, ${location.longitude}")
     }
 }
