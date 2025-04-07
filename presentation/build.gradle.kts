@@ -21,6 +21,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         resValue( "string", "google_maps_api_key", localProperties.getProperty("google_maps_api_key"))
+        resValue( "string", "naver_client_id", localProperties.getProperty("naver_client_id"))
     }
 
     buildTypes {
@@ -81,8 +82,9 @@ dependencies {
     // Material icons extended
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
 
-    implementation("io.github.fornewid:naver-map-compose:1.7.3")
-    implementation("io.github.fornewid:naver-map-location:21.0.2")
+    // Naver Maps
+    implementation(libs.naver.map.compose)
+    implementation(libs.naver.map.location)
     
     // Permissions
     implementation(libs.accompanist.permissions)
