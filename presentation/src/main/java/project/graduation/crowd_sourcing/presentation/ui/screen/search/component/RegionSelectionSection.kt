@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -41,7 +42,7 @@ fun RegionSelectionSection(
             color = Color.Black,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        
+
         // 지역 선택 행
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -49,7 +50,8 @@ fun RegionSelectionSection(
         ) {
             // 첫 3개 지역 표시
             regions.take(3).forEach { region ->
-                val isSelected = (selectedRegion == region) || (selectedRegion == null && region == "전체")
+                val isSelected =
+                    (selectedRegion == region) || (selectedRegion == null && region == "전체")
                 LocationChip(
                     text = region,
                     isSelected = isSelected,
@@ -57,7 +59,7 @@ fun RegionSelectionSection(
                     modifier = Modifier.weight(1f)
                 )
             }
-            
+
             // 더보기 아이콘
             Icon(
                 imageVector = Icons.Default.ArrowForward,
@@ -67,4 +69,15 @@ fun RegionSelectionSection(
             )
         }
     }
-} 
+}
+
+@Preview
+@Composable
+fun RegionSelectionPrev() {
+    RegionSelectionSection(
+        regions = listOf("전체", "동대문구"),
+        selectedRegion = "전체",
+        onRegionSelected = {  },
+        modifier = Modifier
+    )
+}

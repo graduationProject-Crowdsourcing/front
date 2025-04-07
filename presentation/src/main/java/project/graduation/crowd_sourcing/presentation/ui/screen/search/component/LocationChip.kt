@@ -1,6 +1,7 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.search.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,9 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import project.graduation.crowd_sourcing.presentation.R
 
 /**
  * 위치 또는 카테고리 선택을 위한 칩 컴포넌트
@@ -36,15 +41,19 @@ fun LocationChip(
         modifier = modifier
             .padding(end = 8.dp)
             .clip(RoundedCornerShape(4.dp))
-            .clickable { onClick() },
+            .clickable { onClick() }
+            .border(
+                width = 1.dp,
+                color = Color.Gray.copy(alpha = 0.3f),
+                shape = RoundedCornerShape(4.dp)
+            ),
         color = if (isSelected) Color.LightGray.copy(alpha = 0.7f) else Color.White,
-        border = BorderStroke(1.dp, Color.Gray.copy(alpha = 0.3f))
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = text,
@@ -54,4 +63,15 @@ fun LocationChip(
             )
         }
     }
-} 
+}
+
+@Preview
+@Composable
+fun LocationClipPrev(){
+    LocationChip(
+        text = "region",
+        isSelected = true,
+        onClick = {  },
+        modifier = Modifier
+    )
+}
