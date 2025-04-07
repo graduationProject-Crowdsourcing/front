@@ -1,21 +1,64 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.base
 
+import android.annotation.SuppressLint
+import android.location.Location
+import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.Priority
+import com.naver.maps.geometry.LatLng
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
+import javax.inject.Inject
 
-class BaseViewModel:ViewModel() {
+class BaseViewModel () : ViewModel() {
+
     private val _uiState = MutableStateFlow(BaseUiState.init())
     val uiState = _uiState.asStateFlow()
 
     fun updateCurrentScreen(navController: NavController) {
         val currentRoute = navController.currentBackStackEntry?.destination?.route
         currentRoute?.let { route ->
-            val screen = Screen.fromRoute(route) // 🔥 route를 기반으로 Screen을 찾는 함수
+            val screen = Screen.fromRoute(route)
             _uiState.update { prev -> prev.copy(currentScreen = screen) }
         }
+    }
+
+    private val locationRequest = LocationRequest.create().apply {
+        interval = 5_000L           // 요청 간격: 5초
+        fastestInterval = 5_000L     // 가장 빠른 요청 간격: 5초
+        priority = Priority.PRIORITY_HIGH_ACCURACY
+    }
+
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult) {
+            val newLocation = result.lastLocation ?: return
+
+            _uiState.update { prev ->
+                prev.copy(currentLocation = LatLng(newLocation.latitude, newLocation.longitude))
+            }
+            Log.d("location", "${LatLng(newLocation.latitude, newLocation.longitude)}")
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun startTracking(fusedLocationClient: FusedLocationProviderClient) {
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+    }
+
+    fun stopTracking(fusedLocationClient: FusedLocationProviderClient) {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 }
