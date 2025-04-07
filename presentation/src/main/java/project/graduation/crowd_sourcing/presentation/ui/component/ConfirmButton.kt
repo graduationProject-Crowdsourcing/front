@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import project.graduation.crowd_sourcing.presentation.R
@@ -22,7 +23,7 @@ fun ConfirmButton(
         onClick = { onConfirm() },
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.primary)),
-        shape = RoundedCornerShape(6.dp)
+        shape = RoundedCornerShape(dimensionResource(R.dimen.round_common)),
     ) {
         Text(text, color = Color.White)
     }
@@ -30,7 +31,7 @@ fun ConfirmButton(
 
 @Preview
 @Composable
-fun ConfirmButtonPrev(){
+fun ConfirmButtonPrev() {
     ConfirmButton(
         text = "apply"
     ) { }

@@ -57,6 +57,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.testing)
     implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -85,7 +88,7 @@ dependencies {
     // Naver Maps
     implementation(libs.naver.map.compose)
     implementation(libs.naver.map.location)
-    
+
     // Permissions
     implementation(libs.accompanist.permissions)
 

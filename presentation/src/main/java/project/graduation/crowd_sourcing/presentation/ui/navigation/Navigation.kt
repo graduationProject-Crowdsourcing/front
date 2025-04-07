@@ -9,11 +9,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.HistoryType
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.HistoryView
+import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeView
 import project.graduation.crowd_sourcing.presentation.ui.screen.login.LoginView
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyView
-import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeView
 import project.graduation.crowd_sourcing.presentation.ui.screen.notification.NotificationView
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchView
+import project.graduation.crowd_sourcing.presentation.ui.screen.stats.StatsView
 
 @Composable
 fun Navigation(
@@ -22,7 +23,7 @@ fun Navigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.LoginScreen.route,
+        startDestination = Screen.BottomScreen.HomeScreen.bRoute,
         modifier = Modifier.padding(pd)
     ) {
         composable(route = Screen.LoginScreen.route) {
@@ -46,14 +47,18 @@ fun Navigation(
         }
 
         composable(route = Screen.HistoryWorkScreen.route) {
-            HistoryView(HistoryType.Work)
+            HistoryView(HistoryType.WORK, navController)
         }
         composable(route = Screen.HistoryRequestScreen.route) {
-            HistoryView(HistoryType.Request)
+            HistoryView(HistoryType.REQUEST, navController)
         }
 
         composable(route = Screen.NotificationScreen.route) {
             NotificationView()
+        }
+
+        composable(route = Screen.DetailStatsScreen.route) {
+            StatsView()
         }
     }
 }
