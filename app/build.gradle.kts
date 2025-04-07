@@ -65,4 +65,12 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+
+    // 네이버 지도 SDK
+    implementation("com.naver.maps:map-sdk:3.16.2")
+    implementation("io.github.fornewid:naver-map-compose:1.7.3")
+    implementation("io.github.fornewid:naver-map-location:21.0.2")
+    // Google Maps
+    implementation("com.google.maps.android:maps-compose:2.11.4")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 }

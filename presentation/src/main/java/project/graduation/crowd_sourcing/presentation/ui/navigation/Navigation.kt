@@ -13,6 +13,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeView
 import project.graduation.crowd_sourcing.presentation.ui.screen.login.LoginView
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyView
 import project.graduation.crowd_sourcing.presentation.ui.screen.notification.NotificationView
+import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchView
 import project.graduation.crowd_sourcing.presentation.ui.screen.stats.StatsView
 
 @Composable
@@ -34,7 +35,7 @@ fun Navigation(
         }
 
         composable(route = Screen.BottomScreen.SearchScreen.bRoute) {
-
+            SearchView()
         }
 
         composable(route = Screen.BottomScreen.RequestScreen.bRoute) {
