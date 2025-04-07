@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,9 +24,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
@@ -86,23 +82,28 @@ fun StatsHorizontalChart(chartList: List<StatsUiState.StatsListItem>) {
     // data set
     val labels = chartList.map { it.name }
 
-    val mostExpensivePrice = roundToSecondHighestFiveUnit(chartList.maxOf { it.price })
-    val barWidthsRatio = chartList.map { it.price.toFloat() / mostExpensivePrice }
+    val maxPrice = roundToSecondHighestFiveUnit(chartList.maxOf { it.price })
+    val barWidthsRatio = chartList.map { it.price.toFloat() / maxPrice }
 
     // dp
     val barThicknessDp = 28.dp
     val barSpacingDp = 20.dp
-    val labelSp = dimensionResource(R.dimen.sp_small)
 
     // dp to px
     val density = LocalDensity.current
     val barThicknessPx = with(density) { barThicknessDp.toPx() }
     val barSpacingPx = with(density) { barSpacingDp.toPx() }
-    val textPaint = android.graphics.Paint().apply {
+    val textPaintRight = android.graphics.Paint().apply {
         color = colorResource(R.color.darker_gary).toArgb()
-        textSize = with(density) { labelSp.toPx() }
+        textSize = with(density) { dimensionResource(R.dimen.sp_small).toPx() }
         textAlign = android.graphics.Paint.Align.RIGHT
     }
+    val textPaintCenter = android.graphics.Paint().apply {
+        color = colorResource(R.color.darker_gary).toArgb()
+        textSize = with(density) { dimensionResource(R.dimen.space_small).toPx() }
+        textAlign = android.graphics.Paint.Align.CENTER
+    }
+
 
     val barColor = colorResource(R.color.primary)
     val dividerColor = colorResource(R.color.gray)
@@ -111,7 +112,8 @@ fun StatsHorizontalChart(chartList: List<StatsUiState.StatsListItem>) {
 
     Box(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(vertical = dimensionResource(R.dimen.sp_medium)),
         contentAlignment = Alignment.Center
     ) {
         Canvas(
@@ -128,9 +130,16 @@ fun StatsHorizontalChart(chartList: List<StatsUiState.StatsListItem>) {
                 val currentX = dividerX + (i * spacing)
                 drawLine(
                     color = dividerColor,
-                    start = Offset(currentX, 0f),
-                    end = Offset(currentX, size.height),
+                    start = Offset(currentX, -10f),
+                    end = Offset(currentX, size.height + 10f),
                     strokeWidth = if (i == 0) 4f else 2f
+                )
+
+                drawContext.canvas.nativeCanvas.drawText(
+                    "${maxPrice / 4 * i}원",
+                    currentX,
+                    size.height + 40f,
+                    textPaintCenter
                 )
             }
 
@@ -162,7 +171,7 @@ fun StatsHorizontalChart(chartList: List<StatsUiState.StatsListItem>) {
                     label,
                     dividerX - 20f,
                     yOffset + barThicknessPx / 2 + 15f,
-                    textPaint
+                    textPaintRight
                 )
             }
         }
