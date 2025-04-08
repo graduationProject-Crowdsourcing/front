@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.ActionCard
 
 @Composable
@@ -34,7 +35,7 @@ fun RequestView(
 
         ActionCard(
             title = "의뢰 작성",
-            icon = Icons.Default.Star,
+            iconResId = R.drawable.ic_star,
             onClick = { navController.navigate("request_form") }
         )
 
@@ -42,7 +43,7 @@ fun RequestView(
 
         ActionCard(
             title = "작업 제출",
-            icon = Icons.Default.Star,
+            iconResId = R.drawable.ic_star,
             onClick = { /* 추후 작업 제출 화면으로 이동 */ }
         )
     }
