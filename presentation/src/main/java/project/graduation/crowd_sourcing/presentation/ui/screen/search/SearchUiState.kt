@@ -17,14 +17,20 @@ sealed class SearchUiState {
      * @param searchResults 검색 결과 목록
      * @param regions 지역 목록
      * @param selectedRegion 선택된 지역 (null이면 전체 선택)
+     * @param recentSearches 최근 검색어 목록
+     * @param recommendedSearches 추천 검색어 목록
+     * @param sortType 정렬 방식
      */
     data class Success(
-        val searchQuery: String = "",
-        val selectedCategory: String? = null,
-        val categories: List<String> = emptyList(),
-        val searchResults: List<SearchResult> = emptyList(),
-        val regions: List<String> = emptyList(),
-        val selectedRegion: String? = null
+        val searchQuery: String,
+        val categories: List<String>,
+        val selectedCategory: String?,
+        val regions: List<String>,
+        val selectedRegion: String?,
+        val searchResults: List<SearchResult>,
+        val recentSearches: List<String> = emptyList(),
+        val recommendedSearches: List<String> = emptyList(),
+        val sortType: SortType = SortType.LATEST
     ) : SearchUiState()
     
     /**
