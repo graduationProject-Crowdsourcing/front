@@ -2,9 +2,22 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -14,17 +27,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import androidx.compose.foundation.layout.FlowRowScope
 import com.naver.maps.geometry.LatLng
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.CurrentRequestsList
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.MapSection
@@ -121,7 +139,7 @@ fun HomeView() {
     val isMapServiceAvailable = remember {
         val availability = GoogleApiAvailability.getInstance()
         val resultCode = availability.isGooglePlayServicesAvailable(context)
-        resultCode == com.google.android.gms.common.ConnectionResult.SUCCESS
+        resultCode == ConnectionResult.SUCCESS
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -145,12 +163,13 @@ fun HomeView() {
             is HomeUiState.Success -> {
                 // showContent 상태에 따라 모든 콘텐츠 조건부 렌더링
                 if (showContent.value) {
+
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(16.dp)
                     ) {
-                        item { 
+                        item {
                             Box {
                                 // 맵 표시
                                 MapSection(isMapServiceAvailable = isMapServiceAvailable, state = state)
@@ -172,12 +191,12 @@ fun HomeView() {
                                 }
                             }
                         }
-                        item { 
+                        item {
                             SearchSection(
-                                searchQuery = state.searchQuery, 
+                                searchQuery = state.searchQuery,
                                 onSearchQueryChange = viewModel::updateSearchQuery,
                                 requests = state.requests
-                            ) 
+                            )
                         }
                         item {
                             RequestsSection(viewModel = viewModel, state = state)
@@ -194,6 +213,66 @@ fun HomeView() {
                 } else {
                     // 화면 전환 중일 때는 빈 화면 표시
                     Box(modifier = Modifier.fillMaxSize())
+                }
+                // LazyColumn 위에 겹쳐진 고정 버튼
+//                Button(
+//                    onClick = { /* TODO */ },
+//                    modifier = Modifier
+//                        .align(Alignment.BottomCenter) // 화면 하단 중앙
+//                        .padding(bottom = 16.dp)
+//                ) {
+//                    Text("현재 작업보기")
+//                }
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(align = Alignment.BottomCenter) // 중앙 하단에 정렬
+                        .padding(bottom = 24.dp) // 하단 여백
+                        .border(1.dp, Color.Black, RoundedCornerShape(36.dp)) // 테두리 추가
+                        .clip(RoundedCornerShape(36.dp)),
+                    color = Color(0xFF343A40)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .clickable(onClick = {})
+                            .padding(horizontal = 36.dp, vertical = 9.dp)
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Column(
+                            ) {
+                                Text(
+                                    text = "현재 작업보기",
+                                    fontSize = 18.sp,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = "강남구 / 과자",
+                                    fontSize = 12.sp,
+                                    color = Color.White
+                                )
+                            }
+                            IconButton(
+                                modifier = Modifier.padding(start = 8.dp),
+                                onClick = {},
+                                colors = IconButtonColors(
+                                    Color(0xFF1785E4),
+                                    contentColor = Color(0xFF1785E4),
+                                    disabledContainerColor = Color(0xFF1785E4),
+                                    disabledContentColor = Color(0xFF1785E4)
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.FilterList,
+                                    contentDescription = "정렬 필터",
+                                    tint = Color(0xFF1785E4)
+                                )
+                            }
+                        }
+
+
+                    }
                 }
             }
         }
