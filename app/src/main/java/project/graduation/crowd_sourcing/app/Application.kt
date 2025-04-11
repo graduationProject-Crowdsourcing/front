@@ -40,7 +40,7 @@ class HiltApplication : Application(), Configuration.Provider {
             .build()
 
     private fun registerPeriodicLocationWorker() {
-        val request = PeriodicWorkRequestBuilder<LocationWorker>(1, TimeUnit.HOURS)
+        val request = PeriodicWorkRequestBuilder<LocationWorker>(15, TimeUnit.MINUTES)
             .setConstraints(
                 Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -49,8 +49,8 @@ class HiltApplication : Application(), Configuration.Provider {
             .build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "LocationTrackingWork",
-            ExistingPeriodicWorkPolicy.KEEP, // 기존 워크가 있으면 유지
+            "LocationNotifyWork",
+            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
             request
         )
     }
