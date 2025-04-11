@@ -37,18 +37,22 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import androidx.wear.compose.material.ChipDefaults
 import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 
 @Composable
 fun HistorySearch(
     categories: List<String>,
-    selectedCategory: String,
+    selectedCategory: List<String>,
     onCategorySelected: (String) -> Unit,
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
     onSearchClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     Column(
         modifier = modifier
@@ -65,7 +69,9 @@ fun HistorySearch(
                         onClick = { onCategorySelected(category) },
                         label = { Text(text = category) },
                         colors = FilterChipDefaults.filterChipColors().copy(
-                            containerColor = if (category == selectedCategory) colorResource(R.color.black50) else colorResource(
+                            containerColor = if (selectedCategory.contains(category)) colorResource(
+                                R.color.black50
+                            ) else colorResource(
                                 R.color.black5
                             ),
                         ),
@@ -74,7 +80,7 @@ fun HistorySearch(
                 }
             }
 
-            IconButton(onClick = { /* 필터 기능 추가 */ }) {
+            IconButton(onClick = { navController.navigate(Screen.FilterSelectionScreen.route) }) {
                 Icon(
                     painter = painterResource(id = R.drawable.img_filter),
                     contentDescription = "필터",
@@ -113,12 +119,13 @@ fun HistorySearch(
 
             Box(
                 modifier = Modifier
-                    .wrapContentHeight()
                     .padding(4.dp)
                     .background(
                         color = colorResource(R.color.primary),
                         shape = RoundedCornerShape(dimensionResource(R.dimen.round_common))
                     )
+                    .height(32.dp)
+                    .width(40.dp)
                     .clickable { onSearchClicked },
                 contentAlignment = Alignment.Center
             ) {
@@ -137,10 +144,11 @@ fun HistorySearch(
 fun HistorySearchPrev() {
     HistorySearch(
         categories = listOf("전체", "가공식품", "생활용품", "의류", "전자제품"),
-        selectedCategory = "전체",
+        selectedCategory = listOf("전체"),
         onCategorySelected = {},
         searchQuery = "",
         onSearchQueryChanged = {},
-        onSearchClicked = {}
+        onSearchClicked = {},
+        navController = rememberNavController()
     )
 }

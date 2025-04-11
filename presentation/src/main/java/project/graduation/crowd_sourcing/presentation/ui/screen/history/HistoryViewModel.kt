@@ -8,10 +8,4 @@ import kotlinx.coroutines.flow.update
 class HistoryViewModel:ViewModel(){
     private val _uiState = MutableStateFlow(HistoryUiState.initTest())
     val uiState = _uiState.asStateFlow()
-
-    fun updateSearchQuery( searchQuery: String){
-        _uiState.update { prev->
-            prev.copy(searchQuery = searchQuery)
-        }
-    }
 }
