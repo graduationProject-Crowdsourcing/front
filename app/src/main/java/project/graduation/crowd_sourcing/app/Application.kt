@@ -41,7 +41,7 @@ class HiltApplication : Application(), Configuration.Provider {
             .build()
 
     private fun registerPeriodicLocationWorker() {
-        val request = PeriodicWorkRequestBuilder<LocationWorker>(15, TimeUnit.MINUTES)
+        val request = PeriodicWorkRequestBuilder<LocationWorker>(1, TimeUnit.HOURS)
             .setConstraints(
                 Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
