@@ -14,6 +14,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -25,8 +26,9 @@ class LocationWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters
 ) : CoroutineWorker(appContext, workerParams) {
 
-    @Inject
-    lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val fusedLocationClient by lazy {
+        LocationServices.getFusedLocationProviderClient(applicationContext)
+    }
 
     private val context = appContext
 
