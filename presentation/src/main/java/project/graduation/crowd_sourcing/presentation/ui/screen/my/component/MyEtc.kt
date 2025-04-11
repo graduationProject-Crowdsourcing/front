@@ -23,12 +23,17 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 
 @Composable
-fun MyEtc() {
+fun MyEtc(navController: NavController) {
     val list = listOf(
-        (R.drawable.ic_set to "알람 설정") to {},
+        (R.drawable.ic_set to "알람 설정") to {
+            navController.navigate(Screen.AlarmSettingScreen.route)
+        },
         (R.drawable.ic_report to "신고하기") to {},
         (R.drawable.ic_support to "고객지원") to {},
         (R.drawable.ic_out to "로그아웃") to {},
@@ -81,6 +86,6 @@ fun MyEtc() {
 @Preview
 @Composable
 fun MyEtcPrev() {
-    MyEtc()
+    MyEtc(rememberNavController())
 }
 

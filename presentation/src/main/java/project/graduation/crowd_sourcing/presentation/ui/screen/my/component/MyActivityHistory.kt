@@ -34,8 +34,11 @@ fun MyActivityHistory(navController: NavController) {
             navController.navigate(Screen.HistoryWorkScreen.route)
         },
         (R.drawable.ic_history_request to "의뢰 기록") to {
-            navController.navigate(Screen.HistoryRequestScreen.route)},
-        (R.drawable.ic_history_point to "포인트 내역") to {}
+            navController.navigate(Screen.HistoryRequestScreen.route)
+        },
+        (R.drawable.ic_history_point to "포인트 내역") to {
+            navController.navigate(Screen.HistoryPointScreen.route)
+        }
     )
 
     Column(

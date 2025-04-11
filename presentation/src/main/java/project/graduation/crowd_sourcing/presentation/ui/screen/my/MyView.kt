@@ -46,7 +46,7 @@ fun MyView(navController: NavController) {
         MyRecentActivity(uiState.value, navController = navController)
         GrayDivider()
 
-        MyEtc()
+        MyEtc(navController)
 
     }
 
