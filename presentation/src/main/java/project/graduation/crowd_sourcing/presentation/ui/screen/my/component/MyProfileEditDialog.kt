@@ -7,8 +7,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,6 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.component.CancelButton
+import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyUiState
 
 @Composable
@@ -70,7 +74,12 @@ fun MyProfileEditDialog(
         AlertDialog(
             containerColor = Color.White,
             onDismissRequest = { },
-            title = { Text("프로필 수정", style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_title).value.sp)) },
+            title = {
+                Text(
+                    "프로필 수정",
+                    style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_title).value.sp)
+                )
+            },
             text = {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -114,17 +123,20 @@ fun MyProfileEditDialog(
                 }
             },
             confirmButton = {
-                TextButton(onClick = {
-                    onSave(nickname, profileImage) // Pass the updated nickname and image
-                    onDismiss()
-                }) {
-                    Text("수정")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.space_small))
+                ) {
+                    CancelButton(
+                        modifier = Modifier.weight(1f),
+                        text = "취소") { onDismiss() }
+                    ConfirmButton(
+                        modifier = Modifier.weight(1f),
+                        text = "수정") { }
                 }
             },
             dismissButton = {
-                TextButton(onClick = { onDismiss() }) {
-                    Text("취소")
-                }
+
             }
         )
     }

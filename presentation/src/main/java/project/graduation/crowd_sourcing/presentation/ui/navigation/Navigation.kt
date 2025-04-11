@@ -16,6 +16,8 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.login.LoginView
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyView
 import project.graduation.crowd_sourcing.presentation.ui.screen.notification.NotificationView
 import project.graduation.crowd_sourcing.presentation.ui.screen.point.PointView
+import project.graduation.crowd_sourcing.presentation.ui.screen.search.FilterSelectionView
+import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchResultView
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchView
 import project.graduation.crowd_sourcing.presentation.ui.screen.stats.StatsView
 
@@ -38,7 +40,17 @@ fun Navigation(
         }
 
         composable(route = Screen.BottomScreen.SearchScreen.bRoute) {
-            SearchView()
+            SearchView(navController = navController)
+        }
+
+        // 통합 필터 선택 화면 (카테고리 및 지역 선택)
+        composable(route = Screen.FilterSelectionScreen.route) {
+            FilterSelectionView(navController = navController)
+        }
+
+        // 검색 결과 화면
+        composable(route = Screen.SearchResultScreen.route) {
+            SearchResultView(navController = navController)
         }
 
         composable(route = Screen.BottomScreen.RequestScreen.bRoute) {
@@ -59,7 +71,7 @@ fun Navigation(
             PointView()
         }
 
-        composable(route = Screen.AlarmSettingScreen.route){
+        composable(route = Screen.AlarmSettingScreen.route) {
             AlarmView()
         }
 
