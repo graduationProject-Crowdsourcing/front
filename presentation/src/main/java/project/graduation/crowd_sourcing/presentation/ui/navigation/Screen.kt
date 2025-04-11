@@ -11,6 +11,10 @@ sealed class Screen(val title: String, val route: String) {
     data object HistoryRequestScreen: Screen(title = "작업 기록", route = "history/request")
 
     data object DetailStatsScreen: Screen(title = "세부 통계", route = "detail_stats")
+    
+    // 검색 관련 화면
+    data object FilterSelectionScreen: Screen(title = "필터 선택", route = "filter_selection")
+    data object SearchResultScreen: Screen(title = "검색 결과", route = "search_result")
 
     sealed class BottomScreen(
         val bTitle: String, val bRoute: String, @DrawableRes val icon: Int
@@ -50,6 +54,9 @@ sealed class Screen(val title: String, val route: String) {
                 HistoryRequestScreen.route->HistoryRequestScreen
 
                 DetailStatsScreen.route->DetailStatsScreen
+                
+                FilterSelectionScreen.route -> FilterSelectionScreen
+                SearchResultScreen.route -> SearchResultScreen
 
                 BottomScreen.HomeScreen.bRoute -> BottomScreen.HomeScreen
                 BottomScreen.SearchScreen.bRoute -> BottomScreen.SearchScreen
