@@ -18,6 +18,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.point.PointView
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.request.RequestFormView
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.RequestView
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.request.RequestCompleteView
+import project.graduation.crowd_sourcing.presentation.ui.screen.request.work.WorkListView
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.FilterSelectionView
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchResultView
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchView
@@ -66,6 +67,10 @@ fun Navigation(
             RequestCompleteView(navController)
         }
 
+        // 작업 제출 화면
+        composable(route = Screen.WorkListScreen.route) {
+            WorkListView(navController)
+        }
 
 
         composable(route = Screen.BottomScreen.MyScreen.bRoute) {

@@ -10,6 +10,7 @@ sealed class Screen(val title: String, val route: String) {
     data object RequestFormScreen : Screen(title = "의뢰 작성", route = "request_form")
     data object RequestCompleteScreen : Screen(title = "의뢰 완료", route = "request_complete")
 
+    data object WorkListScreen : Screen(title = "작업 제출", route = "work_list")
 
     data object HistoryWorkScreen: Screen(title = "의뢰 기록", route = "history/work")
     data object HistoryRequestScreen: Screen(title = "작업 기록", route = "history/request")
@@ -59,6 +60,8 @@ sealed class Screen(val title: String, val route: String) {
 
                 RequestFormScreen.route -> RequestFormScreen
                 RequestCompleteScreen.route -> RequestCompleteScreen
+
+                WorkListScreen.route -> WorkListScreen
 
                 HistoryWorkScreen.route -> HistoryWorkScreen
                 HistoryRequestScreen.route->HistoryRequestScreen

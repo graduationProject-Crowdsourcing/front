@@ -43,7 +43,7 @@ fun RequestView(
         ActionCard(
             title = "작업 제출",
             iconResId = R.drawable.ic_star,
-            onClick = { /* 추후 작업 제출 화면으로 이동 */ }
+            onClick = { navController.navigate(Screen.WorkListScreen.route) }
         )
     }
 }
@@ -51,9 +51,8 @@ fun RequestView(
 @Composable
 @Preview(showBackground = true)
 fun RequestViewPreview() {
-    // NavController 대신 가짜 Navigation 사용 -> 나중에 추가 작업 후에 방식 교체 고려 (임시)
-    val fakeNavController = rememberNavController()
+    val navController = rememberNavController()
 
-    RequestView(navController = fakeNavController)
+    RequestView(navController = navController)
 }
 
