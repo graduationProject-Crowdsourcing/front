@@ -16,6 +16,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://repository.map.naver.com/archive/maven")
+        maven("https://naver.jfrog.io/artifactory/maven/")
+
     }
 }
 

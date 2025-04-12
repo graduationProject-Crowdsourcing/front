@@ -39,7 +39,7 @@ fun RadiusButton(
                 color = Color.Black
             )
             Text(
-                text = "${radius.toInt()}km",
+                text = if (radius >= 1f) "${radius.toInt()}km" else "${(radius * 1000).toInt()}m",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary

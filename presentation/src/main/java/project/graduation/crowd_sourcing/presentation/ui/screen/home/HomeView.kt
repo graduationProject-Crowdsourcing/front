@@ -1,25 +1,32 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.home
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import android.Manifest
+import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.maps.model.LatLng
-import project.graduation.crowd_sourcing.presentation.R
+import com.naver.maps.geometry.LatLng
+import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.CurrentRequestsList
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.MapSection
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RadiusButton
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RadiusSettingDialog
@@ -52,15 +59,66 @@ import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingThem
 // 4. 컴포넌트 구조 개선
 //    - 상태에 따른 조건부 렌더링
 //    - 컴포넌트 간 일관된 스타일 적용
+// 5. Kakao Map 지원 추가
+//    - 구글맵 또는 카카오맵 중 선택하여 사용 가능
 
+/**
+ * 홈 화면 UI 구성
+ * 
+ * 주요 기능:
+ * 1. 네이버 맵을 사용한 지도 표시
+ * 2. 사용자 현재 위치 표시
+ * 3. 주변 의뢰 목록 표시
+ * 4. 검색 반경 설정
+ * 5. 검색 기능
+ */
+@SuppressLint("RememberReturnType")
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeView() {
     val viewModel: HomeViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    
+    // 화면 콘텐츠 표시 여부를 제어하는 상태
+    val showContent = remember { mutableStateOf(true) }
+    
+    // 화면 생명주기에 따라 콘텐츠 관리
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> {
+                    // 화면이 백그라운드로 이동할 때 모든 콘텐츠를 숨김
+                    showContent.value = false
+                }
+                Lifecycle.Event.ON_RESUME -> {
+                    // 화면이 포그라운드로 돌아올 때 모든 콘텐츠를 다시 표시
+                    showContent.value = true
+                }
+                else -> {}
+            }
+        }
+        
+        lifecycleOwner.lifecycle.addObserver(observer)
+        
+        onDispose {
+            // 컴포지션이 해제될 때 옵저버 제거
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+    
+    val locationPermissionState = rememberPermissionState(
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
+
+    LaunchedEffect(Unit) {
+        locationPermissionState.launchPermissionRequest()
+    }
     
     // TODO: Data Layer 구현 후 UseCase로 이동 필요
-    val isGoogleMapsAvailable = remember {
+    // Google Maps는 사용하지 않지만 참조용으로 코드 남겨둠
+    val isMapServiceAvailable = remember {
         val availability = GoogleApiAvailability.getInstance()
         val resultCode = availability.isGooglePlayServicesAvailable(context)
         resultCode == com.google.android.gms.common.ConnectionResult.SUCCESS
@@ -85,63 +143,61 @@ fun HomeView() {
                 }
             }
             is HomeUiState.Success -> {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.space_medium))
-                ) {
-                    item { 
-                        Box {
-                            MapSection(isGoogleMapsAvailable, state)
+                // showContent 상태에 따라 모든 콘텐츠 조건부 렌더링
+                if (showContent.value) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        item { 
+                            Box {
+                                // 맵 표시
+                                MapSection(isMapServiceAvailable = isMapServiceAvailable, state = state)
 
-                            // 구글 맵스 사용 가능하고 현재 위치정보가 있으면 반경 버튼 표시
-                            // 구글 맵스 사용 불가능하면 반경 버튼 표시 안함 => 테스트 하고 싶으면 if문 없애고 반경 버튼 표시
-                            if(isGoogleMapsAvailable && state.currentLocation != null){
-                                Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = dimensionResource(R.dimen.space_medium)),
-                                contentAlignment = Alignment.TopCenter
-                            ) {
-                                RadiusButton(
-                                    radius = state.searchRadius,
-                                    onClick = viewModel::showRadiusDialog,
-                                    modifier = Modifier.zIndex(1f)
-                                )
+                                // 현재 위치정보가 있으면 반경 버튼 표시
+                                if (state.currentLocation != null) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 16.dp),
+                                        contentAlignment = Alignment.TopCenter
+                                    ) {
+                                        RadiusButton(
+                                            radius = state.searchRadius,
+                                            onClick = viewModel::showRadiusDialog,
+                                            modifier = Modifier.zIndex(1f)
+                                        )
+                                    }
+                                }
                             }
-                            }
-                            
+                        }
+                        item { 
+                            SearchSection(
+                                searchQuery = state.searchQuery, 
+                                onSearchQueryChange = viewModel::updateSearchQuery,
+                                requests = state.requests
+                            ) 
+                        }
+                        item {
+                            RequestsSection(viewModel = viewModel, state = state)
                         }
                     }
-                    item { 
-                        SearchSection(
-                            searchQuery = state.searchQuery, 
-                            onSearchQueryChange = viewModel::updateSearchQuery,
-                            requests = state.requests
-                        ) 
-                    }
-                    item {
-                        RequestsSection(viewModel = viewModel, state = state)
-                    }
-                }
 
-                if (state.isRadiusDialogVisible) {
-                    RadiusSettingDialog(
-                        currentRadius = state.searchRadius,
-                        onRadiusChange = viewModel::updateSearchRadius,
-                        onDismiss = viewModel::hideRadiusDialog
-                    )
+                    if (state.isRadiusDialogVisible) {
+                        RadiusSettingDialog(
+                            currentRadius = state.searchRadius,
+                            onRadiusChange = viewModel::updateSearchRadius,
+                            onDismiss = viewModel::hideRadiusDialog
+                        )
+                    }
+                } else {
+                    // 화면 전환 중일 때는 빈 화면 표시
+                    Box(modifier = Modifier.fillMaxSize())
                 }
             }
         }
     }
-}
-
-// TODO: Domain Layer로 이동 필요
-// - Location 데이터 모델 변환 로직을 Domain Layer의 mapper로 분리
-// - 현재는 Presentation Layer에서 직접 처리하고 있음
-fun Location.toLatLng(): LatLng {
-    return LatLng(this.latitude, this.longitude)
 }
 
 @Preview(showBackground = true)

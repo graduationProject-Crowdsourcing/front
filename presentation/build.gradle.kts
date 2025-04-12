@@ -17,11 +17,11 @@ android {
 
     defaultConfig {
         minSdk = 24
-        targetSdk = 34
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         resValue( "string", "google_maps_api_key", localProperties.getProperty("google_maps_api_key"))
+        resValue( "string", "naver_client_id", localProperties.getProperty("naver_client_id"))
     }
 
     buildTypes {
@@ -57,6 +57,12 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.testing)
+    implementation(libs.play.services.location)
+    implementation(libs.androidx.hilt.common)
+    implementation(libs.androidx.work.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -74,6 +80,18 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     // Google Maps
-    implementation("com.google.maps.android:maps-compose:2.11.4")
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location.v2120)
+
+    // Material icons extended
+    implementation("androidx.compose.material:material-icons-extended:1.6.1")
+
+    // Naver Maps
+    implementation(libs.naver.map.compose)
+    implementation(libs.naver.map.location)
+
+    // Permissions
+    implementation(libs.accompanist.permissions)
+
 }
