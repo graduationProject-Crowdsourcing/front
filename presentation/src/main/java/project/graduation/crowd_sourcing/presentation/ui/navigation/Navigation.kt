@@ -17,6 +17,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.notification.Not
 import project.graduation.crowd_sourcing.presentation.ui.screen.point.PointView
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.request.RequestFormView
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.RequestView
+import project.graduation.crowd_sourcing.presentation.ui.screen.request.request.RequestCompleteView
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.FilterSelectionView
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchResultView
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchView
@@ -61,6 +62,10 @@ fun Navigation(
         composable(route = Screen.RequestFormScreen.route) {
             RequestFormView(navController)
         }
+        composable(route = Screen.RequestCompleteScreen.route) {
+            RequestCompleteView(navController)
+        }
+
 
 
         composable(route = Screen.BottomScreen.MyScreen.bRoute) {
