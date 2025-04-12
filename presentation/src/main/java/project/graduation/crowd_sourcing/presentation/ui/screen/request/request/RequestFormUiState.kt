@@ -5,5 +5,8 @@ data class RequestFormUiState(
     val maxPeople: String = "",
     val pointPerPerson: String = "",
     val item: String = "",
-    val dateTime: String = ""
+    val dateTime: String = "",
+    val martLat: Double? = null,
+    val martLng: Double? = null
 )
+

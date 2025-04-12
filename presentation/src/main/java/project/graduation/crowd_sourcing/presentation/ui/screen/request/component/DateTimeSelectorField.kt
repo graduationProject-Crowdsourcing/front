@@ -29,7 +29,7 @@ fun DateTimeSelectorField(
         Icon(
             painter = painterResource(id = iconResId),
             contentDescription = null,
-            modifier = Modifier.padding(top = 20.dp, end = 15.dp)
+            modifier = Modifier.padding(top = 25.dp, end = 15.dp)
         )
 
         // 라벨 + 날짜/시간 필드
@@ -41,15 +41,26 @@ fun DateTimeSelectorField(
                 modifier = Modifier.padding(bottom = 4.dp)
             )
 
-            OutlinedTextField(
-                value = dateTimeText,
-                onValueChange = {},
-                readOnly = true,
-                placeholder = { Text("의뢰 마감 날짜 및 시간 선택") },
+            // Box로 감싸서 전체 필드 클릭 처리
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onClick() }
-            )
+            ) {
+                OutlinedTextField(
+                    value = dateTimeText,
+                    onValueChange = {},
+                    readOnly = true,
+                    enabled = false,
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("의뢰 마감 날짜 및 시간 선택") },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        disabledBorderColor = Color.Black,
+                        disabledTextColor = Color.Black,
+                        disabledPlaceholderColor = Color.Black
+                    )
+                )
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 package project.graduation.crowd_sourcing.presentation.ui.navigation
 
-import android.graphics.Point
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -17,7 +16,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyView
 import project.graduation.crowd_sourcing.presentation.ui.screen.notification.NotificationView
 import project.graduation.crowd_sourcing.presentation.ui.screen.point.PointView
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.request.RequestFormView
-import project.graduation.crowd_sourcing.presentation.ui.screen.request.request.RequestView
+import project.graduation.crowd_sourcing.presentation.ui.screen.request.RequestView
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.FilterSelectionView
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchResultView
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchView
@@ -55,15 +54,14 @@ fun Navigation(
             SearchResultView(navController = navController)
         }
 
+        // 의뢰 화면
         composable(route = Screen.BottomScreen.RequestScreen.bRoute) {
             RequestView(navController = navController)
         }
         composable(route = Screen.RequestFormScreen.route) {
             RequestFormView(navController)
         }
-        composable(route = Screen.RequestFormScreen.route) {
-            RequestFormView(navController)
-        }
+
 
         composable(route = Screen.BottomScreen.MyScreen.bRoute) {
             MyView(navController)

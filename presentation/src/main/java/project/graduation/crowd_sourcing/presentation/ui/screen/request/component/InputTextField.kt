@@ -2,6 +2,7 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.request.compone
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,6 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun InputTextField(
@@ -17,7 +19,8 @@ fun InputTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    @DrawableRes iconResId: Int
+    @DrawableRes iconResId: Int,
+    keyboardType: KeyboardType = KeyboardType.Text
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -29,7 +32,7 @@ fun InputTextField(
         Icon(
             painter = painterResource(id = iconResId),
             contentDescription = null,
-            modifier = Modifier.padding(top = 20.dp, end = 15.dp)
+            modifier = Modifier.padding(top = 25.dp, end = 15.dp)
         )
 
         // 라벨 + 입력창 (세로 정렬)
@@ -45,6 +48,7 @@ fun InputTextField(
                 value = value,
                 onValueChange = onValueChange,
                 placeholder = { Text(placeholder) },
+                keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
                 modifier = Modifier.fillMaxWidth()
             )
         }

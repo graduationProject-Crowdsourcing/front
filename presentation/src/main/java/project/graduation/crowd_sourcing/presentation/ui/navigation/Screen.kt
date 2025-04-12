@@ -55,6 +55,8 @@ sealed class Screen(val title: String, val route: String) {
                 LoginScreen.route -> LoginScreen
                 NotificationScreen.route -> NotificationScreen
 
+                RequestFormScreen.route -> RequestFormScreen
+
                 HistoryWorkScreen.route -> HistoryWorkScreen
                 HistoryRequestScreen.route->HistoryRequestScreen
                 HistoryPointScreen.route->HistoryPointScreen
