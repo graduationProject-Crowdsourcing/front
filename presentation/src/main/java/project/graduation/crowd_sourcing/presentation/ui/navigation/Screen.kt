@@ -7,6 +7,8 @@ sealed class Screen(val title: String, val route: String) {
     data object LoginScreen : Screen(title = "Login", route = "login")
     data object NotificationScreen : Screen(title = "알림", route = "notification")
 
+    data object RequestFormScreen : Screen(title = "의뢰 작성", route = "request_form")
+
     data object HistoryWorkScreen: Screen(title = "의뢰 기록", route = "history/work")
     data object HistoryRequestScreen: Screen(title = "작업 기록", route = "history/request")
 

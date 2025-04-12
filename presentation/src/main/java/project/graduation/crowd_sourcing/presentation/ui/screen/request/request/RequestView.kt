@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.ActionCard
 
 @Composable
@@ -36,7 +37,7 @@ fun RequestView(
         ActionCard(
             title = "의뢰 작성",
             iconResId = R.drawable.ic_star,
-            onClick = { navController.navigate("request_form") }
+            onClick = { navController.navigate(Screen.RequestFormScreen.route) }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -52,7 +53,7 @@ fun RequestView(
 @Composable
 @Preview(showBackground = true)
 fun RequestViewPreview() {
-    // NavController 대신 가짜 Navigation 사용 -> 나중에 추가 작업 후에 방식 교체 (임시)
+    // NavController 대신 가짜 Navigation 사용 -> 나중에 추가 작업 후에 방식 교체 고려 (임시)
     val fakeNavController = rememberNavController()
 
     RequestView(navController = fakeNavController)
