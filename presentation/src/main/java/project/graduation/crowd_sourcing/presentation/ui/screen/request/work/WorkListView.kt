@@ -14,7 +14,7 @@ import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.WorkListItem
 
-// 작업 제출 버튼 클릭 시 등장 - 작업 리스트 페이지 뷰모델
+// 작업 제출 버튼 클릭 시 등장 - 작업 리스트 페이지
 @Composable
 fun WorkListView(
     navController: NavController,

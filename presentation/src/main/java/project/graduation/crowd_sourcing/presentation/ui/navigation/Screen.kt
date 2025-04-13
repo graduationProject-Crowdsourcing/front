@@ -7,9 +7,18 @@ sealed class Screen(val title: String, val route: String) {
     data object LoginScreen : Screen(title = "Login", route = "login")
     data object NotificationScreen : Screen(title = "알림", route = "notification")
 
+    // 의뢰 작성 관련 화면
     data object RequestFormScreen : Screen(title = "의뢰 작성", route = "request_form")
     data object RequestCompleteScreen : Screen(title = "의뢰 완료", route = "request_complete")
 
+    // 의뢰 수락 관련 화면
+    data object AcceptRequestScreen : Screen(title = "의뢰 수락", route = "accept_request")
+    data object AcceptCompleteScreen : Screen(title = "의뢰 수락 완료", route = "acceptComplete/{place}/{title}/{reward}") {
+        fun createRoute(place: String, title: String): String =
+            "acceptComplete/$place/$title"
+    }
+
+    // 작업 제출 관련 화면
     data object WorkListScreen : Screen(title = "작업 리스트", route = "work_list")
     data object SubmitWorkScreen : Screen(title = "작업 제출", route = "submit_work") {
         const val routeWithArg = "submit_work/{workId}"
@@ -71,8 +80,12 @@ sealed class Screen(val title: String, val route: String) {
                 RequestFormScreen.route -> RequestFormScreen
                 RequestCompleteScreen.route -> RequestCompleteScreen
 
+                AcceptRequestScreen.route -> AcceptRequestScreen
+                AcceptCompleteScreen.route -> AcceptCompleteScreen
+
                 WorkListScreen.route -> WorkListScreen
                 SubmitWorkScreen.route -> SubmitWorkScreen
+                WorkCompleteScreen.route -> WorkCompleteScreen
 
                 HistoryWorkScreen.route -> HistoryWorkScreen
                 HistoryRequestScreen.route->HistoryRequestScreen

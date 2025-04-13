@@ -15,10 +15,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
-import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.ActionCard
+import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.TabRequestButton
 
 @Composable
-fun RequestView(
+fun TabRequestView(
     navController: NavController
 ) {
     Column(
@@ -32,7 +32,7 @@ fun RequestView(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        ActionCard(
+        TabRequestButton(
             title = "의뢰 작성",
             iconResId = R.drawable.ic_star,
             onClick = { navController.navigate(Screen.RequestFormScreen.route) }
@@ -40,7 +40,7 @@ fun RequestView(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        ActionCard(
+        TabRequestButton(
             title = "작업 제출",
             iconResId = R.drawable.ic_star,
             onClick = { navController.navigate(Screen.WorkListScreen.route) }
@@ -53,6 +53,6 @@ fun RequestView(
 fun RequestViewPreview() {
     val navController = rememberNavController()
 
-    RequestView(navController = navController)
+    TabRequestView(navController = navController)
 }
 

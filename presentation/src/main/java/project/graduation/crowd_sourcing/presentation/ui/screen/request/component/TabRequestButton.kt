@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.annotation.DrawableRes
 
 @Composable
-fun ActionCard(
+fun TabRequestButton(
     title: String,
     @DrawableRes iconResId: Int,
     onClick: () -> Unit
@@ -61,7 +61,7 @@ fun ActionCard(
 @Preview(showBackground = true)
 @Composable
 fun ActionCardPreview() {
-    ActionCard(
+    TabRequestButton(
         title = "의뢰 작성",
         iconResId = android.R.drawable.star_on, // 프리뷰용
         onClick = {}

@@ -18,7 +18,9 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyView
 import project.graduation.crowd_sourcing.presentation.ui.screen.notification.NotificationView
 import project.graduation.crowd_sourcing.presentation.ui.screen.point.PointView
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.request.RequestFormView
-import project.graduation.crowd_sourcing.presentation.ui.screen.request.RequestView
+import project.graduation.crowd_sourcing.presentation.ui.screen.request.TabRequestView
+import project.graduation.crowd_sourcing.presentation.ui.screen.request.accept.AcceptCompleteView
+import project.graduation.crowd_sourcing.presentation.ui.screen.request.accept.AcceptRequestView
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.request.RequestCompleteView
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.work.WorkListView
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.work.SubmitWorkView
@@ -62,7 +64,7 @@ fun Navigation(
 
         // 의뢰 탭 최초 화면
         composable(route = Screen.BottomScreen.RequestScreen.bRoute) {
-            RequestView(navController = navController)
+            TabRequestView(navController = navController)
         }
         // 의뢰 작성 화면
         composable(route = Screen.RequestFormScreen.route) {
@@ -72,6 +74,23 @@ fun Navigation(
         composable(route = Screen.RequestCompleteScreen.route) {
             RequestCompleteView(navController)
         }
+        // 의뢰 수락 화면
+        composable(route = Screen.AcceptRequestScreen.route) {
+            AcceptRequestView(navController = navController)
+        }
+
+        // 의뢰 수락 완료 화면
+        composable(route = Screen.AcceptCompleteScreen.route) { backStackEntry ->
+            val place = backStackEntry.arguments?.getString("place") ?: ""
+            val title = backStackEntry.arguments?.getString("title") ?: ""
+
+            AcceptCompleteView(
+                navController = navController,
+                place = place,
+                title = title
+            )
+        }
+
         // 작업 리스트 화면
         composable(route = Screen.WorkListScreen.route) {
             WorkListView(navController)
