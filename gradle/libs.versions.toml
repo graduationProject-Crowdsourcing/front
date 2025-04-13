@@ -62,6 +62,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 androidx-compose-testing = { group = "androidx.xr.compose", name = "compose-testing", version.ref = "composeTesting" }
 
+
 # Compose navigation
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "nav_version" }
 

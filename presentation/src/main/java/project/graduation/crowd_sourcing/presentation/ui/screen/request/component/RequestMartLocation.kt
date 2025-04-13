@@ -7,6 +7,7 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.*
 
+// 의뢰 작성 페이지 - 하단 마트 위치 컴포넌트
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun MartLocationMapView(

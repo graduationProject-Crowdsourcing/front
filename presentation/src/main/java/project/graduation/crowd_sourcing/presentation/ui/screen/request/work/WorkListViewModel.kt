@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
+// 작업 제출 버튼 클릭 시 등장 - 작업 리스트 페이지 뷰모델
 data class Work(
     val id: String,
     val title: String,
@@ -13,13 +14,5 @@ data class Work(
 )
 
 class WorkListViewModel : ViewModel() {
-    var workList by mutableStateOf(
-        listOf(
-            Work("1", "딸기 한 팩 가격", "수색 이마트", 15),
-            Work("2", "진라면 한 묶음 가격", "상암 홈플러스", 10),
-            Work("3", "신라면 투움바 한 봉지", "은평 롯데몰", 20),
-            Work("4", "양배추 한 통", "성산 하나로마트", 10),
-            Work("5", "삼다수 12병 묶음", "상암 홈플러스", 10)
-        )
-    )
+    var workList by mutableStateOf(WorkRepository.workList)
 }

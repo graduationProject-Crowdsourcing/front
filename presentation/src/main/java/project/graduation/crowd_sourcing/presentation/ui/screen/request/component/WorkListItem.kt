@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.work.Work
 
+// 작업 리스트 페이지 - 리스트 아이템 컴포넌트
 @Composable
 fun WorkListItem(work: Work, onClick: () -> Unit) {
     Row(

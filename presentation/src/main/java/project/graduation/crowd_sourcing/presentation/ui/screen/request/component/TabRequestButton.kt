@@ -18,7 +18,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.annotation.DrawableRes
-import androidx.compose.ui.res.painterResource
 
 @Composable
 fun ActionCard(

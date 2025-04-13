@@ -11,8 +11,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
+import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.WorkListItem
 
+// 작업 제출 버튼 클릭 시 등장 - 작업 리스트 페이지 뷰모델
 @Composable
 fun WorkListView(
     navController: NavController,
@@ -40,7 +42,7 @@ fun WorkListView(
             items(viewModel.workList.size) { index ->
                 val work = viewModel.workList[index]
                 WorkListItem(work = work) {
-                    navController.navigate("submitWork/${work.id}")
+                    navController.navigate("submit_work/${work.id}")
                 }
 
                 // 마지막 아이템 전까지만 Divider 추가
@@ -49,6 +51,5 @@ fun WorkListView(
                 }
             }
         }
-
     }
 }

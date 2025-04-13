@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.request.MartInfo
 
+// 의뢰 작성 페이지 - 마트 선택 드롭다운 컴포넌트
 @Composable
 fun MartDropdownField(
     label: String,                       // 드롭다운 라벨 (ex. "마트 선택")
