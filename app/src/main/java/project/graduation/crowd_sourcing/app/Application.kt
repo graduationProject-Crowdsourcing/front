@@ -41,7 +41,10 @@ class HiltApplication : Application(), Configuration.Provider {
             .build()
 
     private fun registerPeriodicLocationWorker() {
-        val request = PeriodicWorkRequestBuilder<LocationWorker>(1, TimeUnit.HOURS)
+        val workerManager = WorkManager.getInstance(this)
+        workerManager.cancelAllWork()
+
+        val request = PeriodicWorkRequestBuilder<LocationWorker>(30, TimeUnit.MINUTES)
             .setConstraints(
                 Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -50,24 +53,24 @@ class HiltApplication : Application(), Configuration.Provider {
             .build()
 
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+        workerManager.enqueueUniquePeriodicWork(
             "LocationNotifyWork",
             ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
             request
         )
 
-        val request2 = androidx.work.OneTimeWorkRequestBuilder<LocationWorker>()
-            .setInitialDelay(30, TimeUnit.SECONDS)
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
-            )
-            .build()
-        WorkManager.getInstance(this).enqueueUniqueWork(
-            "LocationNotifyWorkTest",
-            ExistingWorkPolicy.REPLACE,
-            request2
-        )
+//        val request2 = androidx.work.OneTimeWorkRequestBuilder<LocationWorker>()
+//            .setInitialDelay(5, TimeUnit.SECONDS)
+//            .setConstraints(
+//                Constraints.Builder()
+//                    .setRequiredNetworkType(NetworkType.CONNECTED)
+//                    .build()
+//            )
+//            .build()
+//        WorkManager.getInstance(this).enqueueUniqueWork(
+//            "LocationNotifyWorkTest",
+//            ExistingWorkPolicy.REPLACE,
+//            request2
+//        )
     }
 }

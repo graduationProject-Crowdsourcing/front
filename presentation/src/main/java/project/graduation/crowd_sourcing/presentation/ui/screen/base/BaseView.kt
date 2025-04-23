@@ -146,13 +146,11 @@ fun PermissionHandler() {
 
         if (permissionsToRequest.isNotEmpty()) {
             locationPermissionLauncher.launch(permissionsToRequest.toTypedArray())
-        }
-
-        if (ContextCompat.checkSelfPermission(
+        } else if (ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
-        ){
+        ) {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                 data = Uri.fromParts("package", context.packageName, null)
             }
