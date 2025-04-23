@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -16,9 +15,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.R
-import project.graduation.crowd_sourcing.presentation.ui.component.TopBar
-import project.graduation.crowd_sourcing.presentation.ui.screen.base.BaseUiState
-import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 
 // TODO: Domain Layer 구현 필요
 // 1. Notification 도메인 모델 정의

@@ -4,29 +4,44 @@ import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.location.LocationServices
 import project.graduation.crowd_sourcing.presentation.R
-import project.graduation.crowd_sourcing.presentation.ui.component.BottomBar
-import project.graduation.crowd_sourcing.presentation.ui.component.TopBar
+import project.graduation.crowd_sourcing.presentation.ui.component.Bar.BottomBar
+import project.graduation.crowd_sourcing.presentation.ui.component.Bar.TopBar
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Navigation
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
+
 
 @Composable
 fun BaseView() {
     val navController = rememberNavController()
-    val viewModel: BaseViewModel = viewModel()
+    val viewModel: BaseViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
 
     val context = LocalContext.current
-    val apiKey = context.getString(R.string.google_maps_api_key)
-    Log.d("API_KEY", "The API key is: $apiKey")
+
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+
+    // 위치 추적 시작
+    LaunchedEffect(Unit) {
+        viewModel.startTracking(fusedLocationClient)
+    }
+
+    // Composable이 dispose될 때 위치 추적 중단
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stopTracking(fusedLocationClient)
+        }
+    }
 
     LaunchedEffect(navController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -38,6 +53,8 @@ fun BaseView() {
     }
 
 
+
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -47,6 +64,7 @@ fun BaseView() {
             )
         },
         bottomBar = {
+
             if (uiState.value.currentScreen is Screen.BottomScreen) {
                 BottomBar(
                     navController = navController,

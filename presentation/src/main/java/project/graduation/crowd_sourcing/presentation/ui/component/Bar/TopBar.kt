@@ -1,4 +1,4 @@
-package project.graduation.crowd_sourcing.presentation.ui.component
+package project.graduation.crowd_sourcing.presentation.ui.component.Bar
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.base.BaseUiState
 
@@ -60,7 +61,7 @@ fun TopBar(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_left),
-                            contentDescription = "Menu"
+                            contentDescription = "Back"
                         )
                     }
                 }

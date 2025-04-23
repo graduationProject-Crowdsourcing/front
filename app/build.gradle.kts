@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "project.graduation.crowd_sourcing.app"
-        minSdk = 24
+        minSdk = 25
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -54,6 +54,12 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.components)
+    implementation(libs.androidx.hilt.work)
+    implementation(libs.androidx.runner)
+    implementation(libs.androidx.scenecore)
+    implementation(libs.play.services.basement)
+    implementation(libs.androidx.work.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -65,4 +71,12 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+
+    // 네이버 지도 SDK
+    implementation("com.naver.maps:map-sdk:3.16.2")
+    implementation("io.github.fornewid:naver-map-compose:1.7.3")
+    implementation("io.github.fornewid:naver-map-location:21.0.2")
+    // Google Maps
+    implementation("com.google.maps.android:maps-compose:2.11.4")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 }
