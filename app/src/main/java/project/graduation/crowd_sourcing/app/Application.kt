@@ -6,6 +6,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -40,7 +41,10 @@ class HiltApplication : Application(), Configuration.Provider {
             .build()
 
     private fun registerPeriodicLocationWorker() {
-        val request = PeriodicWorkRequestBuilder<LocationWorker>(15, TimeUnit.MINUTES)
+        val workerManager = WorkManager.getInstance(this)
+        workerManager.cancelAllWork()
+
+        val request = PeriodicWorkRequestBuilder<LocationWorker>(30, TimeUnit.MINUTES)
             .setConstraints(
                 Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -48,10 +52,25 @@ class HiltApplication : Application(), Configuration.Provider {
             )
             .build()
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+
+        workerManager.enqueueUniquePeriodicWork(
             "LocationNotifyWork",
             ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
             request
         )
+
+//        val request2 = androidx.work.OneTimeWorkRequestBuilder<LocationWorker>()
+//            .setInitialDelay(5, TimeUnit.SECONDS)
+//            .setConstraints(
+//                Constraints.Builder()
+//                    .setRequiredNetworkType(NetworkType.CONNECTED)
+//                    .build()
+//            )
+//            .build()
+//        WorkManager.getInstance(this).enqueueUniqueWork(
+//            "LocationNotifyWorkTest",
+//            ExistingWorkPolicy.REPLACE,
+//            request2
+//        )
     }
 }

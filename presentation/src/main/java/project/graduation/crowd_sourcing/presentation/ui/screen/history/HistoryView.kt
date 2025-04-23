@@ -39,12 +39,13 @@ fun HistoryView(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.space_medium))
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(dimensionResource(R.dimen.space_medium))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 120.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             HistoryStats(type = uiState.value.stats.first)
@@ -65,18 +66,6 @@ fun HistoryView(
             )
         }
 
-        HistorySearch(
-            categories = listOf("전체", "가공식품", "생활용품", "의류", "전자제품"),
-            selectedCategory = "전체",
-            onCategorySelected = {},
-            searchQuery = uiState.value.searchQuery,
-            onSearchQueryChanged = { viewModel.updateSearchQuery(it) },
-            onSearchClicked = {},
-            modifier = Modifier
-                .align(Alignment.BottomCenter) // 하단 고정
-                .fillMaxWidth()
-                .padding(vertical = dimensionResource(R.dimen.space_small))
-        )
     }
 }
 

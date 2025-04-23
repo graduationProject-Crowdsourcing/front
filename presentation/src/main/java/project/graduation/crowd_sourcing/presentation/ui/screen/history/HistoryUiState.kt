@@ -7,7 +7,6 @@ data class HistoryUiState(
     val stats: Pair<StatsType, StatsType>,
     val currentHistoryList: List<HistoryItem>,
     val totalHistoryList: List<HistoryItem>,
-    val searchQuery: String = ""
 ) {
     data class HistoryItem(
         val product: String,
@@ -83,7 +82,7 @@ data class HistoryUiState(
         fun init() = HistoryUiState(
             stats = StatsType.Init to StatsType.Init,
             currentHistoryList = emptyList(),
-            totalHistoryList = emptyList()
+            totalHistoryList = emptyList(),
         )
 
         fun initTest() = HistoryUiState(
@@ -128,7 +127,7 @@ data class HistoryUiState(
                     point = 20,
                     category = "가공식품"
                 ),
-            )
+            ),
         )
     }
 }
