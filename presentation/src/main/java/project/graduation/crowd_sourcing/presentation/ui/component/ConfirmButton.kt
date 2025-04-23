@@ -17,7 +17,7 @@ import project.graduation.crowd_sourcing.presentation.R
 fun ConfirmButton(
     modifier: Modifier = Modifier,
     text: String,
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
 ) {
     Button(
         onClick = { onConfirm() },
