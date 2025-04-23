@@ -1,7 +1,15 @@
 [versions]
+<<<<<<< HEAD
+<<<<<<< HEAD
+agp = "8.8.0"
+=======
 accompanistPermissions = "0.34.0"
 agp = "8.7.2"
 android = "2.12.8"
+>>>>>>> 7c361d801447788d9845d8e280a64b2b4f6bde4c
+=======
+agp = "8.8.0"
+>>>>>>> 30027805f5a781abdc04a00f9778f32a89f183c5
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -38,7 +46,8 @@ runner = "1.5.0"
 scenecore = "1.0.0-alpha03"
 playServicesBasement = "18.0.0"
 workRuntime = "2.3.4"
-
+android = "1.4.0"
+accompanistPermissions = "0.34.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -62,6 +71,7 @@ maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = 
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 androidx-compose-testing = { group = "androidx.xr.compose", name = "compose-testing", version.ref = "composeTesting" }
+
 
 # Compose navigation
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "nav_version" }

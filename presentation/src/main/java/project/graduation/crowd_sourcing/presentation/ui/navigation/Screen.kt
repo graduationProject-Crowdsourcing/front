@@ -7,6 +7,30 @@ sealed class Screen(val title: String, val route: String) {
     data object LoginScreen : Screen(title = "Login", route = "login")
     data object NotificationScreen : Screen(title = "알림", route = "notification")
 
+    // 의뢰 작성 관련 화면
+    data object RequestFormScreen : Screen(title = "의뢰 작성", route = "request_form")
+    data object RequestCompleteScreen : Screen(title = "의뢰 완료", route = "request_complete")
+
+    // 의뢰 수락 관련 화면
+    data object AcceptRequestScreen : Screen(title = "의뢰 수락", route = "accept_request")
+    data object AcceptCompleteScreen : Screen(title = "의뢰 수락 완료", route = "acceptComplete/{place}/{title}/{reward}") {
+        fun createRoute(place: String, title: String): String =
+            "acceptComplete/$place/$title"
+    }
+
+    // 작업 제출 관련 화면
+    data object WorkListScreen : Screen(title = "작업 리스트", route = "work_list")
+    data object SubmitWorkScreen : Screen(title = "작업 제출", route = "submit_work") {
+        const val routeWithArg = "submit_work/{workId}"
+    }
+    data object WorkCompleteScreen : Screen(title = "작업 완료", route = "work_complete") {
+        const val routeWithArgs = "work_complete/{place}/{title}/{reward}"
+        fun createRoute(place: String, title: String, reward: Int): String {
+            return "work_complete/$place/$title/$reward"
+        }
+    }
+
+
     data object HistoryWorkScreen: Screen(title = "의뢰 기록", route = "history/work")
     data object HistoryRequestScreen: Screen(title = "작업 기록", route = "history/request")
     data object HistoryPointScreen: Screen(title = "포인트 내역", route = "history/point")
@@ -36,7 +60,7 @@ sealed class Screen(val title: String, val route: String) {
 
         data object RequestScreen : BottomScreen(
             bTitle = "의뢰",
-            bRoute = "reqeust",
+            bRoute = "request",
             icon = R.drawable.ic_request
         )
 
@@ -52,6 +76,16 @@ sealed class Screen(val title: String, val route: String) {
             return when (route) {
                 LoginScreen.route -> LoginScreen
                 NotificationScreen.route -> NotificationScreen
+
+                RequestFormScreen.route -> RequestFormScreen
+                RequestCompleteScreen.route -> RequestCompleteScreen
+
+                AcceptRequestScreen.route -> AcceptRequestScreen
+                AcceptCompleteScreen.route -> AcceptCompleteScreen
+
+                WorkListScreen.route -> WorkListScreen
+                SubmitWorkScreen.route -> SubmitWorkScreen
+                WorkCompleteScreen.route -> WorkCompleteScreen
 
                 HistoryWorkScreen.route -> HistoryWorkScreen
                 HistoryRequestScreen.route->HistoryRequestScreen
