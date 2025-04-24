@@ -1,4 +1,4 @@
-package project.graduation.crowd_sourcing.presentation.ui.component.Bar
+package project.graduation.crowd_sourcing.presentation.ui.component.bar
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,7 +37,7 @@ import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.component.CancelButton
 import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
-import project.graduation.crowd_sourcing.presentation.ui.screen.login.component.EditTextBox
+import project.graduation.crowd_sourcing.presentation.ui.component.EditTextBox
 
 @Composable
 fun LoginScreenContent(
@@ -50,7 +51,7 @@ fun LoginScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(dimensionResource(R.dimen.space_medium)),
         verticalArrangement = Arrangement.Center
     ) {
         Text(
@@ -69,8 +70,7 @@ fun LoginScreenContent(
             onValueChange = onEmailChange,
             label = "Email"
         )
-
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
 
         Text(text = "Password", fontWeight = FontWeight.Bold)
         EditTextBox(
@@ -93,7 +93,7 @@ fun LoginScreenContent(
                 .height(45.dp)
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_small)))
 
         if (!isSignUpCompleted) {
             CancelButton(

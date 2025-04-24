@@ -12,7 +12,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import project.graduation.crowd_sourcing.presentation.R
-import project.graduation.crowd_sourcing.presentation.ui.component.CommonListItem
+import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonListItem
+import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonListItemData
 import project.graduation.crowd_sourcing.presentation.utils.getTimeAgo
 
 @Composable
@@ -28,11 +29,13 @@ fun PointView() {
             items(uiState.value.list) { item ->
                 item.run {
                     CommonListItem(
-                        mainText = type.type,
-                        subText = "${getTimeAgo(date)} / ${region} / ${name}",
-                        leftText = "${point} points",
-                        icon = R.drawable.ic_list_box,
-                        onClick = { }
+                        CommonListItemData(
+                            mainText = type.type,
+                            subText = "${getTimeAgo(date)} / ${region} / ${name}",
+                            leftText = "${point} points",
+                            icon = R.drawable.ic_list_box,
+                            onClick = { }
+                        )
                     )
                 }
             }

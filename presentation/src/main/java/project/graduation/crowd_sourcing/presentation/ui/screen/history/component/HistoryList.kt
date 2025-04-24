@@ -11,8 +11,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import project.graduation.crowd_sourcing.presentation.R
-import project.graduation.crowd_sourcing.presentation.ui.component.CommonListItem
+import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonListItem
 import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
+import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonListItemData
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.HistoryUiState
 import project.graduation.crowd_sourcing.presentation.utils.getTimeAgo
 
@@ -35,11 +36,13 @@ fun HistoryList(
         historyList.forEach { historyItem ->
             historyItem.run {
                 CommonListItem(
-                    icon = R.drawable.ic_list_box,
-                    mainText = product,
-                    subText = "${getTimeAgo(date)} / ${category}",
-                    leftText = "${point} points",
-                    onClick = {}
+                    CommonListItemData(
+                        icon = R.drawable.ic_list_box,
+                        mainText = product,
+                        subText = "${getTimeAgo(date)} / ${category}",
+                        leftText = "${point} points",
+                        onClick = {}
+                    )
                 )
             }
             GrayDivider()

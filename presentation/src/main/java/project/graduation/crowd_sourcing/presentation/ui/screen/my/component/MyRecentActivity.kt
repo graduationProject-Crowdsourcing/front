@@ -14,7 +14,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.R
-import project.graduation.crowd_sourcing.presentation.ui.component.CommonListItem
+import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
+import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonList
+import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonListItem
+import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonListItemData
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyUiState
 import project.graduation.crowd_sourcing.presentation.utils.getTimeAgo
@@ -31,15 +34,19 @@ fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
             style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp)
         )
 
-
-        myUiState.recentWork.forEach { work ->
+        myUiState.recentWork.forEachIndexed { index, work ->
             work.run {
                 CommonListItem(
-                    mainText = name,
-                    subText = getTimeAgo(date),
-                    icon = R.drawable.ic_list_box,
-                    onClick = {}
+                    CommonListItemData(
+                        mainText = name,
+                        subText = getTimeAgo(date),
+                        icon = R.drawable.ic_list_box,
+                        onClick = {}
+                    )
                 )
+                if (index < myUiState.recentWork.size - 1) {
+                    GrayDivider()
+                }
             }
         }
 
@@ -50,14 +57,20 @@ fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
             style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp)
         )
 
-        myUiState.recentRequest.forEach { request ->
+        myUiState.recentRequest.forEachIndexed { index, request ->
             request.run {
                 CommonListItem(
-                    mainText = name,
-                    subText = getTimeAgo(date),
-                    icon = R.drawable.ic_list_box,
-                    onClick = {navController.navigate(Screen.DetailStatsScreen.route)}
+                    CommonListItemData(
+                        mainText = name,
+                        subText = getTimeAgo(date),
+                        icon = R.drawable.ic_list_box,
+                        onClick = { navController.navigate(Screen.DetailStatsScreen.route) }
+                    )
                 )
+
+                if (index < myUiState.recentWork.size - 1) {
+                    GrayDivider()
+                }
             }
         }
     }

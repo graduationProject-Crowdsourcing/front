@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -25,8 +26,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.common.GoogleApiAvailability
-import com.naver.maps.geometry.LatLng
-import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.CurrentRequestsList
+import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.MapSection
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RadiusButton
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RadiusSettingDialog
@@ -172,7 +172,8 @@ fun HomeView() {
                                 }
                             }
                         }
-                        item { 
+                        item {
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
                             SearchSection(
                                 searchQuery = state.searchQuery, 
                                 onSearchQueryChange = viewModel::updateSearchQuery,
@@ -180,6 +181,7 @@ fun HomeView() {
                             ) 
                         }
                         item {
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
                             RequestsSection(viewModel = viewModel, state = state)
                         }
                     }

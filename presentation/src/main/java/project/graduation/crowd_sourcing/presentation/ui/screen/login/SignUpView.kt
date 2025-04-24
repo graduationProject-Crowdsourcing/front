@@ -10,7 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
-import project.graduation.crowd_sourcing.presentation.ui.screen.login.component.EditTextBox
+import project.graduation.crowd_sourcing.presentation.ui.component.EditTextBox
 
 @Composable
 fun SignUpView(onSignUpSuccess: () -> Unit) {

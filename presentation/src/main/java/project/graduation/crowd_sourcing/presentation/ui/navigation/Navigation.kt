@@ -37,7 +37,7 @@ fun Navigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.BottomScreen.HomeScreen.bRoute,
+        startDestination = Screen.BottomScreen.HomeScreen.route,
         modifier = Modifier.padding(pd)
     ) {
         composable(route = Screen.LoginScreen.route) {
