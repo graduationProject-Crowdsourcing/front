@@ -45,7 +45,7 @@ fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
                     )
                 )
                 if (index < myUiState.recentWork.size - 1) {
-                    GrayDivider()
+                    GrayDivider(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.space_small)))
                 }
             }
         }
@@ -69,7 +69,7 @@ fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
                 )
 
                 if (index < myUiState.recentWork.size - 1) {
-                    GrayDivider()
+                    GrayDivider(Modifier.padding(horizontal = dimensionResource(R.dimen.space_small)))
                 }
             }
         }

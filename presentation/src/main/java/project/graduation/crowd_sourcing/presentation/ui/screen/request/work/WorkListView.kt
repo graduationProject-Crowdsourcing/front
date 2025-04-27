@@ -11,6 +11,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
+import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonList
+import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonListItem
+import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonListItemData
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.WorkListItem
 
@@ -20,7 +23,10 @@ fun WorkListView(
     navController: NavController,
     viewModel: WorkListViewModel = viewModel()
 ) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)
+    ) {
 
         Text(
             text = "현재 진행 중인 의뢰",
@@ -38,18 +44,20 @@ fun WorkListView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn {
-            items(viewModel.workList.size) { index ->
-                val work = viewModel.workList[index]
-                WorkListItem(work = work) {
-                    navController.navigate("submit_work/${work.id}")
-                }
 
-                // 마지막 아이템 전까지만 Divider 추가
-                if (index < viewModel.workList.size - 1) {
-                    GrayDivider(modifier = Modifier.padding(horizontal = 16.dp))
-                }
+        CommonList(
+            list = viewModel.workList.map {
+                CommonListItemData(
+                    mainText = it.title,
+                    subText = it.place,
+                    leftText = "리워드 : ${it.reward}p",
+                    icon = null,
+                    onClick = { navController.navigate(Screen.SubmitWorkScreen.createRoute(it.id))
+                    }
+                )
             }
-        }
+        )
     }
 }
+
+

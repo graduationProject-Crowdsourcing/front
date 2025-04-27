@@ -4,6 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -142,61 +144,57 @@ fun HomeView() {
                     Text(text = state.message)
                 }
             }
-            is HomeUiState.Success -> {
-                // showContent 상태에 따라 모든 콘텐츠 조건부 렌더링
-                if (showContent.value) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
-                    ) {
-                        item { 
-                            Box {
-                                // 맵 표시
-                                MapSection(isMapServiceAvailable = isMapServiceAvailable, state = state)
+            is HomeUiState.Success -> if (showContent.value) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Box {
+                        // 맵 표시
+                        MapSection(isMapServiceAvailable = isMapServiceAvailable, state = state)
 
-                                // 현재 위치정보가 있으면 반경 버튼 표시
-                                if (state.currentLocation != null) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(top = 16.dp),
-                                        contentAlignment = Alignment.TopCenter
-                                    ) {
-                                        RadiusButton(
-                                            radius = state.searchRadius,
-                                            onClick = viewModel::showRadiusDialog,
-                                            modifier = Modifier.zIndex(1f)
-                                        )
-                                    }
-                                }
+                        // 현재 위치정보가 있으면 반경 버튼 표시
+                        if (state.currentLocation != null) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 16.dp),
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                RadiusButton(
+                                    radius = state.searchRadius,
+                                    onClick = viewModel::showRadiusDialog,
+                                    modifier = Modifier.zIndex(1f)
+                                )
                             }
                         }
-                        item {
-                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
-                            SearchSection(
-                                searchQuery = state.searchQuery, 
-                                onSearchQueryChange = viewModel::updateSearchQuery,
-                                requests = state.requests
-                            ) 
-                        }
-                        item {
-                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
-                            RequestsSection(viewModel = viewModel, state = state)
-                        }
                     }
 
-                    if (state.isRadiusDialogVisible) {
-                        RadiusSettingDialog(
-                            currentRadius = state.searchRadius,
-                            onRadiusChange = viewModel::updateSearchRadius,
-                            onDismiss = viewModel::hideRadiusDialog
-                        )
-                    }
-                } else {
-                    // 화면 전환 중일 때는 빈 화면 표시
-                    Box(modifier = Modifier.fillMaxSize())
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
+
+                    SearchSection(
+                        searchQuery = state.searchQuery,
+                        onSearchQueryChange = viewModel::updateSearchQuery,
+                        requests = state.requests
+                    )
+
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
+
+                    RequestsSection(viewModel = viewModel, state = state)
                 }
+
+                if (state.isRadiusDialogVisible) {
+                    RadiusSettingDialog(
+                        currentRadius = state.searchRadius,
+                        onRadiusChange = viewModel::updateSearchRadius,
+                        onDismiss = viewModel::hideRadiusDialog
+                    )
+                }
+            } else {
+                // 화면 전환 중일 때는 빈 화면 표시
+                Box(modifier = Modifier.fillMaxSize())
             }
         }
     }

@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import project.graduation.crowd_sourcing.presentation.ui.component.EditTextBox
 
 /**
  * 검색어 입력 섹션
@@ -46,12 +47,11 @@ fun SearchInputSection(
         )
         
         // 검색창
-        OutlinedTextField(
+        EditTextBox(
             value = searchQuery,
             onValueChange = onSearchQueryChange,
-            placeholder = { Text("검색어를 입력해주세요") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            label = "검색어를 입력해주세요",
+            modifier = Modifier.fillMaxWidth()
         )
     }
 } 
