@@ -10,9 +10,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.component.EditTextBox
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.request.MartInfo
 
 // 의뢰 작성 페이지 - 마트 선택 드롭다운 컴포넌트
@@ -56,17 +59,13 @@ fun MartDropdownField(
                     .wrapContentSize(Alignment.TopStart)
             ) {
                 // 선택된 마트 보여주는 필드
-                OutlinedTextField(
+                EditTextBox(
                     value = selectedMart,
-                    onValueChange = {},
+                    onValueChange = {}, // 입력은 막기
+                    label = "마트 선택",
                     readOnly = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { expanded = true },
-                    placeholder = { Text("마트 선택") },
-                    trailingIcon = {
-                        Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-                    }
+                    trailingIcon = { Icon(Icons.Default.ArrowDropDown, contentDescription = null) },
+                    onClick = { expanded = true }
                 )
 
                 // 실제 드롭다운 메뉴

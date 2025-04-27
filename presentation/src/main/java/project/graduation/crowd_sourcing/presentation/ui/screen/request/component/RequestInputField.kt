@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.KeyboardType
+import project.graduation.crowd_sourcing.presentation.ui.component.EditTextBox
 
 // 의뢰 작성 페이지 - 아이콘 + 라벨 + 입력창 컴포넌트
 @Composable
@@ -45,11 +46,11 @@ fun InputTextField(
                 modifier = Modifier.padding(bottom = 4.dp)
             )
 
-            OutlinedTextField(
+            EditTextBox(
                 value = value,
                 onValueChange = onValueChange,
-                placeholder = { Text(placeholder) },
-                keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+                label = placeholder,
+                keyboardType = keyboardType,
                 modifier = Modifier.fillMaxWidth()
             )
         }

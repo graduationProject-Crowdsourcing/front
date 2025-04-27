@@ -11,6 +11,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.component.EditTextBox
 
 // 의뢰 작성 페이지 - 기간 설정 (의뢰 마감 날짜, 시간 선택) 컴포넌트
 @Composable
@@ -48,18 +51,12 @@ fun DateTimeSelectorField(
                     .fillMaxWidth()
                     .clickable { onClick() }
             ) {
-                OutlinedTextField(
+                EditTextBox(
                     value = dateTimeText,
                     onValueChange = {},
+                    label = "의뢰 마감 날짜 및 시간 선택",
                     readOnly = true,
-                    enabled = false,
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("의뢰 마감 날짜 및 시간 선택") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        disabledBorderColor = Color.Black,
-                        disabledTextColor = Color.Black,
-                        disabledPlaceholderColor = Color.Black
-                    )
+                    enabled = false
                 )
             }
         }
