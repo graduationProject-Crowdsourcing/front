@@ -1,5 +1,8 @@
 package project.graduation.crowd_sourcing.presentation.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -39,7 +42,17 @@ fun Navigation(
     NavHost(
         navController = navController,
         startDestination = Screen.BottomScreen.HomeScreen.route,
-        modifier = Modifier.padding(pd).fillMaxSize()
+        modifier = Modifier
+            .padding(pd)
+            .fillMaxSize(),
+        enterTransition = {
+            fadeIn(animationSpec = tween(durationMillis = 300))
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(durationMillis = 300))
+        },
+        popEnterTransition = { fadeIn() },
+        popExitTransition = { fadeOut() }
     ) {
         composable(route = Screen.LoginScreen.route) {
             LoginView(navController = navController)
