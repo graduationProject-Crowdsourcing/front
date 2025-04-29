@@ -62,7 +62,6 @@ fun SignUpView(onSignUpSuccess: () -> Unit) {
             onConfirm = onSignUpSuccess,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
         )
     }
 }
@@ -73,7 +72,6 @@ fun InputWithButton(label: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp)
-            .widthIn(max = 400.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -91,7 +89,6 @@ fun InputWithButton(label: String) {
                 text = "확인",
                 onConfirm = { /* TODO */ },
                 modifier = Modifier
-                    .height(48.dp)
                     .align(Alignment.CenterVertically)
             )
         }

@@ -148,7 +148,7 @@ fun HomeView() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp)
+                        .padding(dimensionResource(R.dimen.space_medium))
                         .verticalScroll(rememberScrollState())
                 ) {
                     Box {

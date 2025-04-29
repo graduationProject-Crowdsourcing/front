@@ -58,8 +58,7 @@ fun SearchSection(
         Spacer(Modifier.height(dimensionResource(R.dimen.space_small)))
         ConfirmButton(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(45.dp),
+                .fillMaxWidth(),
             text = "검색",
             onConfirm = { showDialog = true }
         )

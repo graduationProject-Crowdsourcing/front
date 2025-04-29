@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.component
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -21,7 +22,7 @@ fun ConfirmButton(
 ) {
     Button(
         onClick = { onConfirm() },
-        modifier = modifier,
+        modifier = modifier.height(dimensionResource(R.dimen.height_btn)),
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.primary)),
         shape = RoundedCornerShape(dimensionResource(R.dimen.round_common)),
     ) {
