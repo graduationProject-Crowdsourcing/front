@@ -40,7 +40,7 @@ fun SignUpView(onSignUpSuccess: () -> Unit) {
             EditTextBox(
                 value = "",
                 onValueChange = {},
-                label = "비밀번호"
+                placeHolder = "비밀번호"
             )
         }
         Spacer(modifier = Modifier.height(12.dp)) // 입력칸 간격
@@ -79,7 +79,7 @@ fun InputWithButton(label: String) {
             EditTextBox(
                 value = "",
                 onValueChange = {},
-                label = label,
+                placeHolder = label,
                 modifier = Modifier.weight(1f)
             )
 

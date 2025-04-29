@@ -2,7 +2,6 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.request.compone
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -49,7 +48,7 @@ fun InputTextField(
             EditTextBox(
                 value = value,
                 onValueChange = onValueChange,
-                label = placeholder,
+                placeHolder = placeholder,
                 keyboardType = keyboardType,
                 modifier = Modifier.fillMaxWidth()
             )

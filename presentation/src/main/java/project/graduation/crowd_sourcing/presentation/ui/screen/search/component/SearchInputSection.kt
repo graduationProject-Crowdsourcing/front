@@ -3,7 +3,6 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.search.componen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -50,7 +49,7 @@ fun SearchInputSection(
         EditTextBox(
             value = searchQuery,
             onValueChange = onSearchQueryChange,
-            label = "검색어를 입력해주세요",
+            placeHolder = "검색어를 입력해주세요",
             modifier = Modifier.fillMaxWidth()
         )
     }

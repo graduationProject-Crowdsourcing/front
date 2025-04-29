@@ -15,8 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,7 +23,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,7 +33,7 @@ import project.graduation.crowd_sourcing.presentation.R
 fun EditTextBox(
     value: String,
     onValueChange: (String) -> Unit,
-    label: String,
+    placeHolder: String,
     modifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Text,
     readOnly: Boolean = false,
@@ -76,7 +73,7 @@ fun EditTextBox(
                     Box(modifier = Modifier.weight(1f)) {
                         if (value.isEmpty()) {
                             Text(
-                                text = label,
+                                text = placeHolder,
                                 fontSize = 14.sp,
                                 color = Color.Gray
                             )
@@ -102,6 +99,7 @@ fun EditTextBoxPrev(){
     EditTextBox(
         value = "test",
         onValueChange = {},
-        label = "test"
+        placeHolder = "test"
     )
 }
+

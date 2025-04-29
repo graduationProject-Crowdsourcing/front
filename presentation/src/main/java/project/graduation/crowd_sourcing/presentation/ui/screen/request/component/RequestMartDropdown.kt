@@ -1,7 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.request.component
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -10,11 +9,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.component.EditTextBox
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.request.MartInfo
 
@@ -62,7 +59,7 @@ fun MartDropdownField(
                 EditTextBox(
                     value = selectedMart,
                     onValueChange = {}, // 입력은 막기
-                    label = "마트 선택",
+                    placeHolder = "마트 선택",
                     readOnly = true,
                     trailingIcon = { Icon(Icons.Default.ArrowDropDown, contentDescription = null) },
                     onClick = { expanded = true }

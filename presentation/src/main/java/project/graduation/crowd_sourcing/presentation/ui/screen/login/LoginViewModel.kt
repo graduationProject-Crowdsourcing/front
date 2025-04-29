@@ -1,5 +1,8 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.login
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +22,7 @@ class LoginViewModel @Inject constructor(
     var isSignUpCompleted = false
         private set
 
-    var isLoginSuccess = false
+    var isLoginSuccess by mutableStateOf(false)
         private set
 
     fun onEmailChanged(value: String) {

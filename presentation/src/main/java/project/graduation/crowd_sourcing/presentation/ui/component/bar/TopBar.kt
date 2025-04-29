@@ -57,7 +57,7 @@ fun TopBar(
             },
 
             navigationIcon = {
-                if (uiState.currentScreen !is Screen.BottomScreen || uiState.currentScreen !is Screen.LoginScreen) {
+                if (uiState.currentScreen !is Screen.BottomScreen && uiState.currentScreen !is Screen.LoginScreen) {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_left),

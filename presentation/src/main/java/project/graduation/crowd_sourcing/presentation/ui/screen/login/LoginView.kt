@@ -68,7 +68,7 @@ fun LoginScreenContent(
         EditTextBox(
             value = state.email,
             onValueChange = onEmailChange,
-            label = "Email"
+            placeHolder = "Email"
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
 
@@ -76,7 +76,7 @@ fun LoginScreenContent(
         EditTextBox(
             value = state.password,
             onValueChange = onPasswordChange,
-            label = "Password"
+            placeHolder = "Password"
         )
 
         state.errorMessage?.let {
