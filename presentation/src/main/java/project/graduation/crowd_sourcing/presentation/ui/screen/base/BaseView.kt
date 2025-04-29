@@ -1,7 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.base
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -18,15 +17,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.location.LocationServices
-import project.graduation.crowd_sourcing.presentation.R
-import project.graduation.crowd_sourcing.presentation.ui.component.Bar.BottomBar
-import project.graduation.crowd_sourcing.presentation.ui.component.Bar.TopBar
+import project.graduation.crowd_sourcing.presentation.ui.component.bar.BottomBar
+import project.graduation.crowd_sourcing.presentation.ui.component.bar.TopBar
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Navigation
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 

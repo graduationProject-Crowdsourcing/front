@@ -10,7 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
-import project.graduation.crowd_sourcing.presentation.ui.screen.login.component.EditTextBox
+import project.graduation.crowd_sourcing.presentation.ui.component.EditTextBox
 
 @Composable
 fun SignUpView(onSignUpSuccess: () -> Unit) {
@@ -40,7 +40,7 @@ fun SignUpView(onSignUpSuccess: () -> Unit) {
             EditTextBox(
                 value = "",
                 onValueChange = {},
-                label = "비밀번호"
+                placeHolder = "비밀번호"
             )
         }
         Spacer(modifier = Modifier.height(12.dp)) // 입력칸 간격
@@ -62,7 +62,6 @@ fun SignUpView(onSignUpSuccess: () -> Unit) {
             onConfirm = onSignUpSuccess,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
         )
     }
 }
@@ -73,7 +72,6 @@ fun InputWithButton(label: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp)
-            .widthIn(max = 400.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -81,7 +79,7 @@ fun InputWithButton(label: String) {
             EditTextBox(
                 value = "",
                 onValueChange = {},
-                label = label,
+                placeHolder = label,
                 modifier = Modifier.weight(1f)
             )
 
@@ -91,7 +89,6 @@ fun InputWithButton(label: String) {
                 text = "확인",
                 onConfirm = { /* TODO */ },
                 modifier = Modifier
-                    .height(48.dp)
                     .align(Alignment.CenterVertically)
             )
         }

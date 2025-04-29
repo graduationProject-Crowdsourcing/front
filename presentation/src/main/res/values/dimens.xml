@@ -9,5 +9,7 @@
     <dimen name="space_medium">16dp</dimen>
     <dimen name="space_large">24dp</dimen>
 
-    <dimen name="round_common">6dp</dimen>
+    <dimen name="round_common">8dp</dimen>
+
+    <dimen name="height_btn">48dp</dimen>
 </resources>

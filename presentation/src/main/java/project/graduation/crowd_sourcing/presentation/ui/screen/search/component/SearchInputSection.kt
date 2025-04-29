@@ -3,7 +3,6 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.search.componen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -13,6 +12,7 @@ import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import project.graduation.crowd_sourcing.presentation.ui.component.EditTextBox
 
 /**
  * 검색어 입력 섹션
@@ -46,12 +46,11 @@ fun SearchInputSection(
         )
         
         // 검색창
-        OutlinedTextField(
+        EditTextBox(
             value = searchQuery,
             onValueChange = onSearchQueryChange,
-            placeholder = { Text("검색어를 입력해주세요") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            placeHolder = "검색어를 입력해주세요",
+            modifier = Modifier.fillMaxWidth()
         )
     }
 } 

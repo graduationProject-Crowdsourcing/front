@@ -1,4 +1,4 @@
-package project.graduation.crowd_sourcing.presentation.ui.component.Bar
+package project.graduation.crowd_sourcing.presentation.ui.component.bar
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -57,7 +57,7 @@ fun TopBar(
             },
 
             navigationIcon = {
-                if (uiState.currentScreen !is Screen.BottomScreen) {
+                if (uiState.currentScreen !is Screen.BottomScreen && uiState.currentScreen !is Screen.LoginScreen) {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_left),
