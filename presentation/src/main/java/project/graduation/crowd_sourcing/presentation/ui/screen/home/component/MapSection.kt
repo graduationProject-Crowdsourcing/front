@@ -35,6 +35,7 @@ import com.naver.maps.map.compose.Marker
 import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
+import project.graduation.crowd_sourcing.domain.model.entity.Mart
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeUiState
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.Location
 import project.graduation.crowd_sourcing.presentation.R
@@ -153,6 +154,9 @@ private fun NaverMapView(state: HomeUiState.Success) {
                     radiusInKm = state.searchRadius
                 )
 
+                // 주변 마트 마커들
+                DrawMartMarkers(state.nearbyMarts)
+
                 // 의뢰 위치 마커들
                 DrawRequestMarkers(state.requests)
             }
@@ -211,6 +215,21 @@ private fun DrawSearchRadiusCircle(center: LatLng, radiusInKm: Float) {
         outlineWidth = MapConstants.CIRCLE_OUTLINE_WIDTH,
         zIndex = MapConstants.CIRCLE_ZINDEX
     )
+}
+
+/**
+ * 주변 마트 마커들 표시
+ */
+@OptIn(ExperimentalNaverMapApi::class)
+@Composable
+private fun DrawMartMarkers(marts: List<Mart>) {
+    marts.forEach { mart ->
+        Marker(
+            state = MarkerState(position = LatLng(mart.lat, mart.lng)),
+            captionText = mart.martName,
+            zIndex = MapConstants.MARKER_ZINDEX
+        )
+    }
 }
 
 /**

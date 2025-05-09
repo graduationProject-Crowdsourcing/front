@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import project.graduation.crowd_sourcing.data.network.AuthorizationInterceptor
 import project.graduation.crowd_sourcing.data.service.LoginService
+import project.graduation.crowd_sourcing.data.service.MartSearchService
 import project.graduation.crowd_sourcing.data.service.SearchService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -61,6 +62,13 @@ class NetworkModule {
         retrofit: Retrofit
     ): SearchService{
         return retrofit.create(SearchService::class.java)
+    }
+
+    @Provides
+    fun provideMartSearchService(
+        retrofit: Retrofit
+    ): MartSearchService {
+        return retrofit.create(MartSearchService::class.java)
     }
 
 

@@ -12,8 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -186,10 +188,15 @@ fun HomeView() {
                 }
 
                 if (state.isRadiusDialogVisible) {
+                    var tempRadius by remember { mutableStateOf(state.searchRadius) }
                     RadiusSettingDialog(
-                        currentRadius = state.searchRadius,
-                        onRadiusChange = viewModel::updateSearchRadius,
-                        onDismiss = viewModel::hideRadiusDialog
+                        currentRadius = tempRadius,
+                        onRadiusChange = { tempRadius = it },
+                        onDismiss = viewModel::hideRadiusDialog,
+                        onConfirm = {
+                            viewModel.updateSearchRadius(tempRadius)
+                            viewModel.hideRadiusDialog()
+                        }
                     )
                 }
             } else {

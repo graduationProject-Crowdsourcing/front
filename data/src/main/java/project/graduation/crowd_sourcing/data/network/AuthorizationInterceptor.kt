@@ -6,7 +6,7 @@ import okhttp3.Response
 
 class AuthorizationInterceptor: Interceptor {
     // 실제 Bearer 토큰 입력
-    private val testToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwidG9rZW5UeXBlIjoiQUNDRVNTIiwibWVtYmVyUm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0Njc4NzEwNSwiZXhwIjoxNzQ2Nzg4OTA1fQ.klE_0f6u6ECtZcJbPLc8JVSRmR6X86QS38sS6fTAJoQ"
+    private val testToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwidG9rZW5UeXBlIjoiQUNDRVNTIiwibWVtYmVyUm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0Njc5MDY1OSwiZXhwIjoxNzQ2NzkyNDU5fQ.CY-srunG4TZ7aBIO-ZxXS6BVMZeylXYbkp3ohILtJpI"
     
     override fun intercept(
         chain: Interceptor.Chain
