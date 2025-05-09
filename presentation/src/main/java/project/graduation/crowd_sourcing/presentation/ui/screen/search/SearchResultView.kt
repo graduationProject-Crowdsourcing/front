@@ -354,8 +354,15 @@ fun SearchResultItem(
             ),
             shape = RoundedCornerShape(4.dp)
         ) {
+            // remainingDays가 음수이면 시간 단위, 양수이면 일 단위로 표시
+            val timeText = if (result.remainingDays < 0) {
+                "${-result.remainingDays} hours left"
+            } else {
+                "${result.remainingDays} days left"
+            }
+            
             Text(
-                text = "${result.remainingDays} days left",
+                text = timeText,
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 color = Color(0xFF1785E4),
                 fontSize = 12.sp
