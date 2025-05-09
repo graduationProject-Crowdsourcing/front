@@ -1,122 +1,43 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.search
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import project.graduation.crowd_sourcing.domain.model.entity.Commission
+import project.graduation.crowd_sourcing.domain.usecase.GetSearchHomeInitDataUseCase
+import project.graduation.crowd_sourcing.domain.usecase.SearchCommissionUseCase
 import javax.inject.Inject
 import kotlinx.coroutines.Job
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 /**
  * 검색 화면의 비즈니스 로직을 처리하는 ViewModel
  * 검색어, 카테고리, 지역 선택 등의 상태 관리
  */
+@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
-class SearchViewModel @Inject constructor() : ViewModel() {
+class SearchViewModel @Inject constructor(
+    private val searchCommissionUseCase: SearchCommissionUseCase,
+    private val getSearchHomeInitDataUseCase: GetSearchHomeInitDataUseCase
+) : ViewModel() {
     private val _uiState = MutableStateFlow<SearchUiState>(SearchUiState.Loading)
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
-    // 최근 검색어를 저장하는 리스트 (실제로는 Repository나 DataStore를 통해 영구 저장 필요)
+    // 최근 검색어를 저장하는 리스트
     private val _recentSearches = MutableStateFlow<List<String>>(emptyList())
     val recentSearches = _recentSearches.asStateFlow()
 
-    companion object {
-        /**
-         * 테스트용 카테고리 목록 (가공식품)
-         * Domain 계층 구현 시 실제 데이터로 교체 필요
-         */
-        private val DUMMY_CATEGORIES = listOf(
-            "전체", 
-            "과자/스낵", 
-            "라면/면류", 
-            "통조림/캔", 
-            "유제품", 
-            "냉동식품", 
-            "즉석식품", 
-            "소스/양념", 
-            "음료/커피",
-            "쌀/잡곡"
-        )
-        
-        /**
-         * 테스트용 지역 목록
-         * Domain 계층 구현 시 실제 데이터로 교체 필요
-         */
-        private val DUMMY_REGIONS = listOf("전체", "동대문구", "강남구", "서초구", "종로구", "용산구")
-        
-        /**
-         * 테스트용 검색 결과 목록 (가공식품)
-         * Domain 계층 구현 시 실제 데이터로 교체 필요
-         */
-        private val DUMMY_SEARCH_RESULTS = listOf(
-            SearchResult(
-                id = "A001",
-                title = "오리온 꼬북칩",
-                place = "GS25 강남점",
-                remainingDays = 3,
-                reward = 5000
-            ),
-            SearchResult(
-                id = "A002",
-                title = "농심 신라면",
-                place = "CU 종로점",
-                remainingDays = 2,
-                reward = 4500
-            ),
-            SearchResult(
-                id = "A003",
-                title = "동원 참치캔",
-                place = "이마트 용산점",
-                remainingDays = 5,
-                reward = 6000
-            ),
-            SearchResult(
-                id = "A004",
-                title = "매일 바나나우유",
-                place = "세븐일레븐 서초점",
-                remainingDays = 1,
-                reward = 4000
-            ),
-            SearchResult(
-                id = "A005",
-                title = "청정원 고추장",
-                place = "롯데마트 동대문점",
-                remainingDays = 4,
-                reward = 5500
-            ),
-            SearchResult(
-                id = "A006",
-                title = "코카콜라 제로",
-                place = "GS25 강남역점",
-                remainingDays = 3,
-                reward = 4800
-            )
-        )
-
-        /**
-         * 테스트용 최근 검색어
-         * 실제로는 API를 통해 가져오거나 로컬 저장소에서 가져와야 함
-         */
-        private val DUMMY_RECENT_SEARCHES = listOf(
-            "Product B",
-            "Store C",
-            "Store C"
-        )
-
-        /**
-         * 테스트용 추천 검색어
-         * 실제로는 서버에서 가져와야 함
-         */
-        private val DUMMY_RECOMMENDED_SEARCHES = listOf(
-            "Product D",
-            "Product D",
-            "Store E"
-        )
-    }
+    // 현재 진행 중인 검색 작업을 취소하기 위한 Job
+    private var searchJob: Job? = null
 
     init {
         loadInitialData()
@@ -124,45 +45,180 @@ class SearchViewModel @Inject constructor() : ViewModel() {
 
     /**
      * 초기 데이터를 로드하여 상태를 설정
-     * 현재는 더미 데이터를 사용하지만 향후 실제 데이터로 교체 필요
      */
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun loadInitialData() {
         viewModelScope.launch {
             try {
-                // 최근 검색어 초기화
-                _recentSearches.value = DUMMY_RECENT_SEARCHES
-
+                println("DEBUG: 서버에서 초기 검색 데이터 로드 시작")
+                
+                // 서버에서 초기 검색 데이터 로드
+                val searchHome = getSearchHomeInitDataUseCase()
+                
+                println("DEBUG: 초기 검색 데이터 로드 완료 - 지역: ${searchHome.regionList.size}개, 카테고리: ${searchHome.categoryList.size}개")
+                println("DEBUG: 최근 검색어: ${searchHome.recentKeywords.size}개, 추천 검색어: ${searchHome.recommendedKeywords.size}개")
+                
+                // 지역과 카테고리 목록에 "전체" 옵션 추가
+                val regions = listOf("전체") + searchHome.regionList
+                val categories = listOf("전체") + searchHome.categoryList
+                
+                // 최근 검색어 업데이트
+                _recentSearches.value = searchHome.recentKeywords
+                
                 _uiState.value = SearchUiState.Success(
                     searchQuery = "",
-                    categories = DUMMY_CATEGORIES,
+                    categories = categories,
                     selectedCategory = null,
-                    regions = DUMMY_REGIONS,
+                    regions = regions,
                     selectedRegion = null,
                     searchResults = emptyList(),
-                    recentSearches = DUMMY_RECENT_SEARCHES,
-                    recommendedSearches = DUMMY_RECOMMENDED_SEARCHES
+                    recentSearches = searchHome.recentKeywords,
+                    recommendedSearches = searchHome.recommendedKeywords
                 )
+
+                println("DEBUG: 초기 데이터 로드 완료 - UI 상태 업데이트")
             } catch (e: Exception) {
-                _uiState.update { 
-                    SearchUiState.Error("데이터를 불러오는데 실패했습니다: ${e.message}")
+                println("DEBUG: 초기 데이터 로드 중 오류 발생 - ${e.javaClass.simpleName}: ${e.message}")
+                e.printStackTrace()
+                
+                // 오류 발생 시 기본 데이터로 초기화
+                val defaultCategories = listOf("전체", "과자/스낵", "라면/면류", "통조림/캔", "유제품", 
+                                      "냉동식품", "즉석식품", "소스/양념", "음료/커피", "쌀/잡곡")
+                val defaultRegions = listOf("전체", "동대문구", "강남구", "서초구", "종로구", "용산구")
+                
+                _uiState.update {
+                    SearchUiState.Success(
+                        searchQuery = "",
+                        categories = defaultCategories,
+                        selectedCategory = null,
+                        regions = defaultRegions,
+                        selectedRegion = null,
+                        searchResults = emptyList(),
+                        recentSearches = emptyList(),
+                        recommendedSearches = emptyList()
+                    )
+                }
+                
+                println("DEBUG: 오류로 인해 기본 데이터로 초기화 완료")
+            }
+        }
+    }
+
+    /**
+     * 서버로부터 Commission 데이터 로드
+     */
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun loadCommissionsFromServer() {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            try {
+                val currentState = _uiState.value
+                if (currentState !is SearchUiState.Success) {
+                    println("DEBUG: loadCommissionsFromServer - 현재 상태가 Success가 아님(${currentState::class.simpleName})")
+                    return@launch
+                }
+
+                val searchKeyword = currentState.searchQuery.trim()
+                
+                // 선택된 필터 값 처리
+                // "전체"가 선택되었거나 null인 경우 "ALL" 사용, 그 외에는 실제 선택값 사용
+                val category = if (currentState.selectedCategory.isNullOrBlank() || currentState.selectedCategory == "전체") {
+                    "ALL"
+                } else {
+                    currentState.selectedCategory
+                }
+                
+                val region = if (currentState.selectedRegion.isNullOrBlank() || currentState.selectedRegion == "전체") {
+                    "ALL"
+                } else {
+                    currentState.selectedRegion
+                }
+                
+                val sort = "createdAt"  // API 명세에 따른 기본값으로 설정
+                val order = "asc"       // API 명세에 따른 기본값으로 설정
+
+                println("DEBUG: 검색 API 호출 시작 - 키워드: '$searchKeyword', 카테고리: '$category', 지역: '$region', 정렬: $sort $order")
+
+                searchCommissionUseCase(
+                    searchKeyword = searchKeyword,
+                    category = category,
+                    region = region,
+                    sort = sort,
+                    order = order
+                ).collect { commissions ->
+                    // 응답 로그
+                    println("DEBUG: searchCommissionUseCase 응답 수신 - 데이터 개수: ${commissions.size}")
+                    commissions.forEachIndexed { index, commission ->
+                        println("DEBUG: Commission[$index] - commission: ${commission.commission}, point: ${commission.commissionPoint}, deadline: ${commission.deadline}")
+                    }
+
+                    // Domain Commission 객체를 UI SearchResult 객체로 변환
+                    val searchResults = commissions.map { commission ->
+                        val now = LocalDateTime.now()
+                        val daysLeft = ChronoUnit.DAYS.between(now, commission.deadline).toInt()
+
+                        val searchResult = SearchResult(
+                            id = commission.commission,  // todo 실제 commision id로 변경하기기
+                            title = commission.commission,
+                            place = "서버 데이터",  // todo 실제 위치로 변경하기기
+                            remainingDays = if (daysLeft > 0) daysLeft else 1,
+                            reward = commission.commissionPoint
+                        )
+                        println("DEBUG: SearchResult 변환 - id: ${searchResult.id}, title: ${searchResult.title}, place: ${searchResult.place}, days: ${searchResult.remainingDays}, reward: ${searchResult.reward}")
+                        searchResult
+                    }
+
+                    println("DEBUG: UI 상태 업데이트 - 결과 개수: ${searchResults.size}")
+
+                    // UI 상태 업데이트
+                    _uiState.update { state ->
+                        when (state) {
+                            is SearchUiState.Success -> {
+                                val newState = state.copy(searchResults = searchResults)
+                                println("DEBUG: 상태 업데이트 완료 - 이전 결과 개수: ${state.searchResults.size}, 이후 결과 개수: ${newState.searchResults.size}")
+                                newState
+                            }
+                            else -> {
+                                println("DEBUG: 상태 업데이트 실패 - 현재 상태가 Success가 아님(${state::class.simpleName})")
+                                state
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                println("DEBUG: 검색 중 오류 발생 - ${e.javaClass.simpleName}: ${e.message}")
+                e.printStackTrace()
+                
+                _uiState.update { currentState ->
+                    when (currentState) {
+                        is SearchUiState.Success -> {
+                            println("DEBUG: 오류로 인한 상태 업데이트 - 검색 결과 초기화")
+                            currentState.copy(searchResults = emptyList())
+                        }
+                        else -> {
+                            println("DEBUG: 오류 상태로 변경")
+                            SearchUiState.Error("검색에 실패했습니다: ${e.message}")
+                        }
+                    }
                 }
             }
         }
     }
-    
+
     /**
      * 화면이 다시 표시될 때 상태를 새로고침
      * UI 리컴포지션을 위해 사용
      */
     fun refreshState() {
         _uiState.update { currentState ->
+            println("DEBUG: 상태 새로고침")
             currentState
         }
     }
 
     /**
      * 검색어를 업데이트
-     * 
+     *
      * @param query 새로운 검색어
      */
     fun updateSearchQuery(query: String) {
@@ -176,18 +232,18 @@ class SearchViewModel @Inject constructor() : ViewModel() {
 
     /**
      * 카테고리를 선택
-     * 
+     *
      * @param category 선택한 카테고리 (null 또는 "전체"인 경우 '전체' 카테고리 선택)
      */
     fun selectCategory(category: String?) {
-        println("ViewModel: 카테고리 선택 - ${category ?: "전체"}")
+        println("DEBUG: 카테고리 선택 - ${category ?: "전체"}")
         _uiState.update { currentState ->
             when (currentState) {
                 is SearchUiState.Success -> {
                     val newState = currentState.copy(
                         selectedCategory = if (category == "전체" || category == null) null else category
                     )
-                    println("ViewModel: 카테고리 업데이트 후 상태 - ${newState.selectedCategory ?: "전체"}")
+                    println("DEBUG: 카테고리 업데이트 완료 - ${newState.selectedCategory ?: "전체"}")
                     newState
                 }
                 else -> currentState
@@ -197,121 +253,131 @@ class SearchViewModel @Inject constructor() : ViewModel() {
 
     /**
      * 지역 선택
-     * 
+     *
      * @param region 선택한 지역 (null 또는 "전체"인 경우 모든 지역 대상)
      */
     fun selectRegion(region: String?) {
-        println("ViewModel: 지역 선택 - ${region ?: "전체"}")
+        println("DEBUG: 지역 선택 - ${region ?: "전체"}")
         _uiState.update { currentState ->
             when (currentState) {
                 is SearchUiState.Success -> {
                     val newState = currentState.copy(
                         selectedRegion = if (region == "전체" || region == null) null else region
                     )
-                    println("ViewModel: 지역 업데이트 후 상태 - ${newState.selectedRegion ?: "전체"}")
+                    println("DEBUG: 지역 업데이트 완료 - ${newState.selectedRegion ?: "전체"}")
                     newState
                 }
                 else -> currentState
             }
         }
     }
-    
+
     /**
      * 검색 실행
-     * 검색어, 카테고리, 지역 선택에 따라 결과 필터링
-     * @return 필터링된 검색 결과 목록
+     * 검색어, 카테고리, 지역 선택에 따라 결과 필터링하고 비동기적으로 결과를 로드
+     * @return 서버에서 로드한 검색 결과 목록
      */
-    fun performSearch(): List<SearchResult> {
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun performSearch(): List<SearchResult> {
         val currentState = _uiState.value
-        if (currentState !is SearchUiState.Success) return emptyList()
-        
-        // 실제로는 API 호출 또는 Repository를 통한 데이터 조회 필요
-        // 현재는 더미 데이터로 필터링 로직 구현
-        
-        val query = currentState.searchQuery.lowercase()
-        
+        if (currentState !is SearchUiState.Success) {
+            println("DEBUG: performSearch - 현재 상태가 Success가 아님(${currentState::class.simpleName})")
+            return emptyList()
+        }
+
+        val query = currentState.searchQuery
+        println("DEBUG: performSearch 호출됨 - 검색어: '$query'")
+
         // 검색어가 있을 때만 최근 검색어 목록에 추가
         if (query.isNotEmpty()) {
-            addToRecentSearches(currentState.searchQuery)
+            addToRecentSearches(query)
+            println("DEBUG: 최근 검색어에 '$query' 추가됨")
         }
 
         val category = currentState.selectedCategory
         val region = currentState.selectedRegion
-        
-        println("ViewModel: 검색 실행 - 검색어=$query, 카테고리=${category ?: "전체"}, 지역=${region ?: "전체"}")
-        
-        // 검색어, 카테고리, 지역으로 필터링
-        var filteredResults = DUMMY_SEARCH_RESULTS
-        
-        // 검색어 필터링
-        if (query.isNotEmpty()) {
-            filteredResults = filteredResults.filter { 
-                it.title.lowercase().contains(query) || 
-                it.place.lowercase().contains(query)
-            }
-        }
-        
-        // 카테고리 필터링 (카테고리가 선택된 경우에만)
-        if (category != null) {
-            // 실제로는 카테고리별 필터링 로직 필요
-            // 더미 데이터에서는 간단한 필터링 구현
-            filteredResults = filteredResults.filter {
-                when (category) {
-                    "과자/스낵" -> it.title.contains("꼬북칩") || it.title.contains("스낵")
-                    "라면/면류" -> it.title.contains("라면") || it.title.contains("면")
-                    "통조림/캔" -> it.title.contains("참치캔") || it.title.contains("캔")
-                    "유제품" -> it.title.contains("우유") || it.title.contains("유제품")
-                    "소스/양념" -> it.title.contains("고추장") || it.title.contains("소스")
-                    "음료/커피" -> it.title.contains("콜라") || it.title.contains("음료")
-                    else -> true
-                }
-            }
-        }
-        
-        // 지역 필터링 (지역이 선택된 경우에만)
-        if (region != null) {
-            filteredResults = filteredResults.filter { 
-                it.place.contains(region)
-            }
-        }
-        
-        println("ViewModel: 필터링된 결과 개수 = ${filteredResults.size}") // 로그 추가
-        filteredResults.forEachIndexed { index, result -> // 로그 추가
-            println("ViewModel: 필터링 결과 ${index + 1}: $result") // 로그 추가
-        }
 
-        // 로컬 UI 상태도 업데이트
-        _uiState.update { currentState ->
-            when (currentState) {
-                is SearchUiState.Success -> currentState.copy(searchResults = filteredResults)
-                else -> currentState
-            }
-        }
+        println("DEBUG: 검색 실행 - 검색어=$query, 카테고리=${category ?: "전체"}, 지역=${region ?: "전체"}")
+
+        // 선택된 필터 값 처리
+        val categoryParam = if (category.isNullOrBlank() || category == "전체") "ALL" else category
+        val regionParam = if (region.isNullOrBlank() || region == "전체") "ALL" else region
+        val sortParam = "createdAt"
+        val orderParam = "asc"
+
+        // 서버에서 데이터 가져오기 (suspend 함수로 실제 결과 기다림)
+        val results = mutableListOf<SearchResult>()
         
-        // 필터링된 결과 반환
-        return filteredResults
+        try {
+            println("DEBUG: 검색 API 호출 시작 (동기 방식) - 키워드: '$query', 카테고리: '$categoryParam', 지역: '$regionParam'")
+            
+            searchCommissionUseCase(
+                searchKeyword = query,
+                category = categoryParam,
+                region = regionParam,
+                sort = sortParam,
+                order = orderParam
+            ).collect { commissions ->
+                println("DEBUG: searchCommissionUseCase 응답 수신 - 데이터 개수: ${commissions.size}")
+                
+                // Domain Commission 객체를 UI SearchResult 객체로 변환
+                val searchResults = commissions.map { commission ->
+                    val now = LocalDateTime.now()
+                    val daysLeft = ChronoUnit.DAYS.between(now, commission.deadline).toInt()
+
+                    SearchResult(
+                        id = commission.commission,
+                        title = commission.commission,
+                        place = "서버 데이터",
+                        remainingDays = if (daysLeft > 0) daysLeft else 1,
+                        reward = commission.commissionPoint
+                    )
+                }
+                
+                results.addAll(searchResults)
+                
+                // UI 상태 업데이트
+                _uiState.update { state ->
+                    when (state) {
+                        is SearchUiState.Success -> {
+                            state.copy(searchResults = searchResults)
+                        }
+                        else -> state
+                    }
+                }
+                
+                println("DEBUG: 검색 결과 변환 및 상태 업데이트 완료 - 결과 개수: ${results.size}")
+            }
+            
+            return results
+            
+        } catch (e: Exception) {
+            println("DEBUG: 검색 중 오류 발생 - ${e.javaClass.simpleName}: ${e.message}")
+            e.printStackTrace()
+            return emptyList()
+        }
     }
-    
+
     /**
      * 최근 검색어 목록에 검색어 추가
      * 동일 검색어가 있을 경우 기존 항목 제거 후 맨 앞에 추가
      */
     private fun addToRecentSearches(query: String) {
         if (query.isBlank()) return
-        
+
         val currentRecent = _recentSearches.value.toMutableList()
         // 기존에 동일한 검색어가 있으면 제거
         currentRecent.remove(query)
         // 최근 검색어 맨 앞에 추가
         currentRecent.add(0, query)
-        
+
         // 최대 검색어 개수 제한 (예: 10개)
         if (currentRecent.size > 10) {
             currentRecent.removeAt(currentRecent.size - 1)
         }
-        
+
         _recentSearches.value = currentRecent
-        
+
         // UI 상태도 업데이트
         _uiState.update { currentState ->
             when (currentState) {
@@ -322,18 +388,19 @@ class SearchViewModel @Inject constructor() : ViewModel() {
             }
         }
     }
-    
+
     /**
      * 추천 검색어로 바로 검색 실행
      */
-    fun searchWithTerm(searchTerm: String) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun searchWithTerm(searchTerm: String): List<SearchResult> {
         _uiState.update { currentState ->
             when (currentState) {
                 is SearchUiState.Success -> currentState.copy(searchQuery = searchTerm)
                 else -> currentState
             }
         }
-        performSearch()
+        return performSearch()
     }
 
     /**
@@ -390,9 +457,9 @@ class SearchViewModel @Inject constructor() : ViewModel() {
         selectedRegion: String?
     ) {
         println("SearchViewModel.updateStateWithFilterInfo 호출됨 - 검색어: '$searchQuery', 카테고리: ${selectedCategory ?: "전체"}, 지역: ${selectedRegion ?: "전체"}, 결과 수: ${searchResults.size}")
-        
+
         val prevState = _uiState.value
-        
+
         _uiState.update { currentState ->
             when (currentState) {
                 is SearchUiState.Success -> {
@@ -411,5 +478,21 @@ class SearchViewModel @Inject constructor() : ViewModel() {
                 }
             }
         }
+    }
+
+    /**
+     * 현재 설정된 필터로 검색을 새로고침
+     * 결과 화면에서 호출될 때 사용
+     */
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun refreshSearch() {
+        val currentState = _uiState.value
+        if (currentState !is SearchUiState.Success) {
+            println("DEBUG: refreshSearch - 현재 상태가 Success가 아님(${currentState::class.simpleName})")
+            return
+        }
+        
+        println("DEBUG: refreshSearch - 현재 필터로 검색 실행 - 검색어: '${currentState.searchQuery}', 카테고리: ${currentState.selectedCategory ?: "전체"}, 지역: ${currentState.selectedRegion ?: "전체"}")
+        loadCommissionsFromServer()
     }
 } 

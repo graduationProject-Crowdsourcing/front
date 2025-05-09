@@ -69,36 +69,47 @@ fun SearchResultView(
     
     // 화면이 표시될 때 savedStateHandle에서 검색 결과 및 필터 정보 가져오기
     LaunchedEffect(Unit) {
+        println("DEBUG_RESULT: SearchResultView LaunchedEffect 블록 실행")
         navController.previousBackStackEntry?.savedStateHandle?.let { handle ->
             // 객체 존재 여부 확인 로그
-            println("SearchResultView: previousBackStackEntry 존재, savedStateHandle 존재")
+            println("DEBUG_RESULT: previousBackStackEntry와 savedStateHandle 확인됨")
             
             // 검색 결과 가져오기
             val resultsArray = handle.get<Array<SearchResult>>("searchResults")
-            println("SearchResultView: searchResults 배열 ${if (resultsArray != null) "존재 (${resultsArray.size}개)" else "없음"}")
+            println("DEBUG_RESULT: savedStateHandle에서 searchResults 배열 확인 - ${if (resultsArray != null) "존재 (${resultsArray.size}개)" else "없음"}")
             
             resultsArray?.let {
                 searchResults = it.toList()
-                println("SearchResultView: 검색 결과를 리스트로 변환 완료, 크기: ${searchResults.size}")
-            }
+                println("DEBUG_RESULT: 검색 결과를 리스트로 변환 완료 - 크기: ${searchResults.size}")
+                // 디버그를 위해 첫 번째 아이템 출력
+                if (searchResults.isNotEmpty()) {
+                    val first = searchResults.first()
+                    println("DEBUG_RESULT: 첫 번째 결과 - id: ${first.id}, title: ${first.title}, reward: ${first.reward}")
+                }
+            } ?: println("DEBUG_RESULT: searchResults 배열이 null")
             
             // 검색어, 카테고리, 지역 정보 가져오기
             val searchQuery = handle.get<String>("searchQuery") ?: ""
             val selectedCategory = handle.get<String?>("selectedCategory")
             val selectedRegion = handle.get<String?>("selectedRegion")
             
-            println("SearchResultView: savedStateHandle에서 필터 정보 로드 - 검색어: '$searchQuery', 카테고리: ${selectedCategory ?: "전체"}, 지역: ${selectedRegion ?: "전체"}")
+            println("DEBUG_RESULT: 필터 정보 확인 - 검색어: '$searchQuery', 카테고리: ${selectedCategory ?: "전체"}, 지역: ${selectedRegion ?: "전체"}")
             
             // ViewModel 상태 전체 업데이트
+            println("DEBUG_RESULT: viewModel.updateStateWithFilterInfo 호출 전")
             viewModel.updateStateWithFilterInfo(
                 searchResults = searchResults,
                 searchQuery = searchQuery,
                 selectedCategory = selectedCategory,
                 selectedRegion = selectedRegion
             )
+            println("DEBUG_RESULT: viewModel.updateStateWithFilterInfo 호출 완료")
             
-            println("SearchResultView: viewModel.updateStateWithFilterInfo 호출 완료")
-        } ?: println("SearchResultView: previousBackStackEntry 또는 savedStateHandle이 null")
+            // 서버에서 데이터를 다시 로드하지 않음 (이미 검색 화면에서 로드했음)
+            // 주석 처리: 디버깅을 위해 나중에 필요할 경우 주석 해제할 수 있음
+            // println("DEBUG_RESULT: 설정된 필터로 새로운 검색 실행")
+            // viewModel.refreshSearch()
+        } ?: println("DEBUG_RESULT: previousBackStackEntry 또는 savedStateHandle이 null")
     }
     
     // 필터 바텀 시트 상태

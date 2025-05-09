@@ -175,25 +175,38 @@ fun SearchView(
                                     keyboardController?.hide()
                                     focusManager.clearFocus()
                                     
-                                    // 검색 실행 및 결과 얻기
-                                    val searchResults = viewModel.performSearch()
+                                    println("DEBUG_UI: 검색 버튼 클릭됨")
                                     
-                                    // 현재 상태 가져오기 및 조건 확인
-                                    val currentState = uiState.value as? SearchUiState.Success
-                                    if (currentState != null) {
-                                        // 검색 결과 및 필터 정보를 savedStateHandle에 저장
-                                        navController.currentBackStackEntry?.savedStateHandle?.apply {
-                                            set("searchResults", searchResults.toTypedArray())
-                                            set("searchQuery", currentState.searchQuery)
-                                            set("selectedCategory", currentState.selectedCategory)
-                                            set("selectedRegion", currentState.selectedRegion)
-                                            
-                                            // 로그 추가: 저장되는 데이터 확인
-                                            println("SearchView: savedStateHandle에 저장 - 검색어: ${currentState.searchQuery}, 카테고리: ${currentState.selectedCategory ?: "전체"}, 지역: ${currentState.selectedRegion ?: "전체"}")
-                                        }
+                                    // 코루틴을 사용하여 검색 결과를 비동기적으로 가져옴
+                                    scope.launch {
+                                        println("DEBUG_UI: 검색 코루틴 시작")
                                         
-                                        // 검색 결과 화면으로 이동
-                                        navController.navigate(Screen.SearchResultScreen.route)
+                                        // 로딩 상태를 표시할 수 있음
+                                        
+                                        // 검색 실행 및 결과 기다리기
+                                        val searchResults = viewModel.performSearch()
+                                        println("DEBUG_UI: 검색 완료 - 결과 개수: ${searchResults.size}")
+                                        
+                                        // 현재 상태 가져오기 및 조건 확인
+                                        val currentState = uiState.value as? SearchUiState.Success
+                                        if (currentState != null) {
+                                            // 검색 결과 및 필터 정보를 savedStateHandle에 저장
+                                            navController.currentBackStackEntry?.savedStateHandle?.apply {
+                                                set("searchResults", searchResults.toTypedArray())
+                                                set("searchQuery", currentState.searchQuery)
+                                                set("selectedCategory", currentState.selectedCategory)
+                                                set("selectedRegion", currentState.selectedRegion)
+                                                
+                                                // 로그 추가: 저장되는 데이터 확인
+                                                println("DEBUG_UI: savedStateHandle에 데이터 저장 - 검색어: '${currentState.searchQuery}', 카테고리: ${currentState.selectedCategory ?: "전체"}, 지역: ${currentState.selectedRegion ?: "전체"}, 결과 개수: ${searchResults.size}")
+                                            }
+                                            
+                                            // 검색 결과 화면으로 이동
+                                            println("DEBUG_UI: 검색 결과 화면으로 네비게이션")
+                                            navController.navigate(Screen.SearchResultScreen.route)
+                                        } else {
+                                            println("DEBUG_UI: 현재 상태가 Success가 아님 - 네비게이션 취소")
+                                        }
                                     }
                                 }
                             )
@@ -206,8 +219,30 @@ fun SearchView(
                                 onSearchTermClick = { searchTerm ->
                                     keyboardController?.hide()
                                     focusManager.clearFocus()
-                                    viewModel.searchWithTerm(searchTerm)
-                                    navController.navigate(Screen.SearchResultScreen.route)
+                                    
+                                    // 코루틴을 사용하여 검색 결과를 비동기적으로 가져옴
+                                    scope.launch {
+                                        println("DEBUG_UI: 최근 검색어 클릭 - '$searchTerm'")
+                                        
+                                        // 검색 실행 및 결과 기다리기
+                                        val searchResults = viewModel.searchWithTerm(searchTerm)
+                                        println("DEBUG_UI: 검색 완료 - 결과 개수: ${searchResults.size}")
+                                        
+                                        // 현재 상태 가져오기 및 조건 확인
+                                        val currentState = uiState.value as? SearchUiState.Success
+                                        if (currentState != null) {
+                                            // 검색 결과 및 필터 정보를 savedStateHandle에 저장
+                                            navController.currentBackStackEntry?.savedStateHandle?.apply {
+                                                set("searchResults", searchResults.toTypedArray())
+                                                set("searchQuery", currentState.searchQuery)
+                                                set("selectedCategory", currentState.selectedCategory)
+                                                set("selectedRegion", currentState.selectedRegion)
+                                            }
+                                            
+                                            // 검색 결과 화면으로 이동
+                                            navController.navigate(Screen.SearchResultScreen.route)
+                                        }
+                                    }
                                 }
                             )
                             
@@ -219,8 +254,30 @@ fun SearchView(
                                 onSearchTermClick = { searchTerm ->
                                     keyboardController?.hide()
                                     focusManager.clearFocus()
-                                    viewModel.searchWithTerm(searchTerm)
-                                    navController.navigate(Screen.SearchResultScreen.route)
+                                    
+                                    // 코루틴을 사용하여 검색 결과를 비동기적으로 가져옴
+                                    scope.launch {
+                                        println("DEBUG_UI: 추천 검색어 클릭 - '$searchTerm'")
+                                        
+                                        // 검색 실행 및 결과 기다리기
+                                        val searchResults = viewModel.searchWithTerm(searchTerm)
+                                        println("DEBUG_UI: 검색 완료 - 결과 개수: ${searchResults.size}")
+                                        
+                                        // 현재 상태 가져오기 및 조건 확인
+                                        val currentState = uiState.value as? SearchUiState.Success
+                                        if (currentState != null) {
+                                            // 검색 결과 및 필터 정보를 savedStateHandle에 저장
+                                            navController.currentBackStackEntry?.savedStateHandle?.apply {
+                                                set("searchResults", searchResults.toTypedArray())
+                                                set("searchQuery", currentState.searchQuery)
+                                                set("selectedCategory", currentState.selectedCategory)
+                                                set("selectedRegion", currentState.selectedRegion)
+                                            }
+                                            
+                                            // 검색 결과 화면으로 이동
+                                            navController.navigate(Screen.SearchResultScreen.route)
+                                        }
+                                    }
                                 }
                             )
                         }

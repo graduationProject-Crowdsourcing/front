@@ -14,6 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CrowdSourcing"
+        android:usesCleartextTraffic="true"
         android:name=".HiltApplication">
         <!-- Google Maps API 키 설정 -->
         <meta-data
