@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import project.graduation.crowd_sourcing.data.network.AuthorizationInterceptor
 import project.graduation.crowd_sourcing.data.service.LoginService
+import project.graduation.crowd_sourcing.data.service.MyService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -32,7 +33,7 @@ class NetworkModule {
         okHttpClient: OkHttpClient,
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://dapi.kakao.com")
+            .baseUrl("http://52.78.15.153:8080")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -43,5 +44,12 @@ class NetworkModule {
         retrofit: Retrofit
     ): LoginService{
         return retrofit.create(LoginService::class.java)
+    }
+
+    @Provides
+    fun provideMyService(
+        retrofit: Retrofit
+    ): MyService{
+        return retrofit.create(MyService::class.java)
     }
 }

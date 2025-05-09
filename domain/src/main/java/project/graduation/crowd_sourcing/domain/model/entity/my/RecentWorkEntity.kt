@@ -3,11 +3,12 @@ package project.graduation.crowd_sourcing.domain.model.entity.my
 import project.graduation.crowd_sourcing.domain.model.Region
 import java.util.Date
 
-data class RecentCommissionEntity(
+data class RecentWorkEntity(
     val id: Int,
-    val commission: String,
+    val work: String,
     val region: Region,
     val category: String,
-    val commissionDate: Date,
-    val commissionPoint: Int
+    val item: String,
+    val itemPrice: Int,
+    val workDate: Date
 )

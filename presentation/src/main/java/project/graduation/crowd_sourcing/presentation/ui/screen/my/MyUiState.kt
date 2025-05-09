@@ -9,8 +9,8 @@ data class MyUiState(
     val profileImage: Bitmap?,
     val nickname: String,
     val point: Int,
-    val recentRequest: List<RecentListItem>,
-    val recentWork: List<RecentListItem>,
+    val recentRequest: RecentListItem,
+    val recentWork: RecentListItem,
     val isDialogVisible: Boolean = false
 ) {
     data class RecentListItem(
@@ -23,14 +23,8 @@ data class MyUiState(
             profileImage = null,
             nickname = "user name",
             point = 0,
-            recentRequest = listOf(
-                RecentListItem(name = "test1", date = twoDaysAgo),
-                RecentListItem(name = "test2", date = twoDaysAgo),
-                ),
-            recentWork = listOf(
-                RecentListItem(name = "test1", date = twoDaysAgo),
-                RecentListItem(name = "test2", date = twoDaysAgo),
-            )
+            recentRequest = RecentListItem(name = "test1", date = twoDaysAgo),
+            recentWork = RecentListItem(name = "test1", date = twoDaysAgo)
         )
     }
 }

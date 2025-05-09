@@ -1,7 +1,7 @@
 package project.graduation.crowd_sourcing.data.response.my
 
 data class RecentCommissionResponse (
-    val id: Long,
+    val id: Int,
     val commission: String,
     val region: String,
     val category: String,

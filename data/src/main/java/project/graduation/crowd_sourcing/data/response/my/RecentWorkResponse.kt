@@ -1,7 +1,7 @@
 package project.graduation.crowd_sourcing.data.response.my
 
 data class RecentWorkResponse(
-    val id: Long,
+    val id: Int,
     val work: String,
     val region: String,
     val category: String,
