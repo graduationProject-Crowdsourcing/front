@@ -9,13 +9,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import project.graduation.crowd_sourcing.domain.usecase.HistoryUseCase
 import project.graduation.crowd_sourcing.domain.usecase.MyUseCase
 import project.graduation.crowd_sourcing.presentation.utils.getTimeAgo
 import javax.inject.Inject
 
 @HiltViewModel
 class MyViewModel @Inject constructor(
-    private val myUseCase: MyUseCase
+    private val myUseCase: MyUseCase,
+    private val historyUseCase: HistoryUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MyUiState.init())
     val uiState = _uiState.asStateFlow()
@@ -27,26 +29,28 @@ class MyViewModel @Inject constructor(
     }
 
     fun getRecentHistory(userId: Int) = viewModelScope.launch {
-        myUseCase.getRecentHistory(userId).let {
-            val recentWork = it.first.let {
-                MyUiState.RecentListItem(
-                    name = it.item,
-                    date = it.workDate
+        myUseCase.getRecentHistory(userId)
+            .onSuccess { (work, commission) ->
+                val recentWork = MyUiState.RecentListItem(
+                    name = work.item,
+                    date = work.workDate
                 )
-            }
-            val recentCommission = it.second.let {
-                MyUiState.RecentListItem(
-                    name = it.commission,
-                    date = it.commissionDate
-                )
-            }
 
-            _uiState.update { prev->
-                prev.copy(
-                    recentWork = recentWork,
-                    recentRequest = recentCommission
+                val recentCommission = MyUiState.RecentListItem(
+                    name = commission.commission,
+                    date = commission.commissionDate
                 )
+
+                _uiState.update { prev ->
+                    prev.copy(
+                        recentWork = recentWork,
+                        recentRequest = recentCommission
+                    )
+                }
             }
-        }
+            .onFailure { e ->
+
+            }
     }
+
 }

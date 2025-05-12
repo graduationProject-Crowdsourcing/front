@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient
 import project.graduation.crowd_sourcing.data.network.AuthorizationInterceptor
 import project.graduation.crowd_sourcing.data.service.LoginService
 import project.graduation.crowd_sourcing.data.service.MyService
+import project.graduation.crowd_sourcing.data.service.UserPointService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -42,14 +43,21 @@ class NetworkModule {
     @Provides
     fun provideLoginService(
         retrofit: Retrofit
-    ): LoginService{
+    ): LoginService {
         return retrofit.create(LoginService::class.java)
     }
 
     @Provides
     fun provideMyService(
         retrofit: Retrofit
-    ): MyService{
+    ): MyService {
         return retrofit.create(MyService::class.java)
+    }
+
+    @Provides
+    fun provideUserPointService(
+        retrofit: Retrofit
+    ): UserPointService {
+        return retrofit.create(UserPointService::class.java)
     }
 }

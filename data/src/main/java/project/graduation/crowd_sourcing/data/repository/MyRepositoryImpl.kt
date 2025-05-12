@@ -12,14 +12,26 @@ import javax.inject.Inject
 class MyRepositoryImpl @Inject constructor(
     private val myService: MyService
 ) : MyRepository {
-    @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun getRecentWork(userId: Int): RecentWorkEntity =
-        myService.getRecentWork(userId).toEntity()
-
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun getRecentCommission(userId: Int): RecentCommissionEntity =
-        myService.getRecentCommission(userId).toEntity()
+    override suspend fun getRecentWork(userId: Int): Result<RecentWorkEntity> {
+        return try {
+            val response = myService.getRecentWork(userId)
+            Result.success(response.toEntity())
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
 
-
+    @RequiresApi(Build.VERSION_CODES.O)
+    override suspend fun getRecentCommission(userId: Int): Result<RecentCommissionEntity> {
+        return try {
+            val response = myService.getRecentCommission(userId)
+            Result.success(response.toEntity())
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
 }
