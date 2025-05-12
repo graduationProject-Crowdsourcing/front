@@ -18,7 +18,6 @@ class UserPointRepositoryImpl @Inject constructor(
             val entityList = response.map { it.toEntity() }
             Result.success(entityList)
         } catch (e: Exception) {
-            e.printStackTrace()
             Result.failure(e)
         }
     }

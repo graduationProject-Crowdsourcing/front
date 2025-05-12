@@ -19,7 +19,6 @@ class MyRepositoryImpl @Inject constructor(
             val response = myService.getRecentWork(userId)
             Result.success(response.toEntity())
         } catch (e: Exception) {
-            e.printStackTrace()
             Result.failure(e)
         }
     }
@@ -30,7 +29,6 @@ class MyRepositoryImpl @Inject constructor(
             val response = myService.getRecentCommission(userId)
             Result.success(response.toEntity())
         } catch (e: Exception) {
-            e.printStackTrace()
             Result.failure(e)
         }
     }
