@@ -1,6 +1,7 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.point
 
 import project.graduation.crowd_sourcing.presentation.utils.twoDaysAgo
+import java.time.LocalDateTime
 import java.util.Date
 
 data class PointUiState(
@@ -8,7 +9,7 @@ data class PointUiState(
 ){
     data class PointItem(
         val name: String,
-        val date: Date,
+        val date: LocalDateTime,
         val region: String,
         val type: PointType,
         val point: Int

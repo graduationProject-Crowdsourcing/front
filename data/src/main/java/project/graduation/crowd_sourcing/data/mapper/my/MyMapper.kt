@@ -16,7 +16,7 @@ fun RecentCommissionResponse.toEntity(): RecentCommissionEntity = RecentCommissi
     commission = this.commission,
     region = stringToRegion(this.region),
     category = this.category,
-    commissionDate = stringToDate(this.commissionDate) ?: Date(),
+    commissionDate = stringToDate(this.commissionDate),
     commissionPoint = this.commissionPoint
 )
 
@@ -28,5 +28,5 @@ fun RecentWorkResponse.toEntity(): RecentWorkEntity = RecentWorkEntity(
     category = this.category,
     item = this.item,
     itemPrice = this.itemPrice,
-    workDate = stringToDate(this.workDate) ?: Date()
+    workDate = stringToDate(this.workDate)
 )

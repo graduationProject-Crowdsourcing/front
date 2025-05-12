@@ -14,5 +14,5 @@ fun UserPointHistoryResponse.toEntity(): UserPointHistoryEntity = UserPointHisto
     region = stringToRegion(this.region),
     item = this.item,
     point = this.point,
-    date = stringToDate(this.date) ?: Date()
+    date = stringToDate(this.date)
 )

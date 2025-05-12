@@ -2,6 +2,7 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.my
 
 import android.graphics.Bitmap
 import project.graduation.crowd_sourcing.presentation.utils.twoDaysAgo
+import java.time.LocalDateTime
 import java.util.Calendar
 import java.util.Date
 
@@ -15,7 +16,7 @@ data class MyUiState(
 ) {
     data class RecentListItem(
         val name: String,
-        val date: Date
+        val date: LocalDateTime
     )
 
     companion object {
