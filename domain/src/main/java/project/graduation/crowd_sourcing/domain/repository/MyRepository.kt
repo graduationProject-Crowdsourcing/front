@@ -1,7 +1,10 @@
 package project.graduation.crowd_sourcing.domain.repository
 
-interface MyRepository {
-    fun getRecentWork()
+import project.graduation.crowd_sourcing.domain.model.entity.my.RecentCommissionEntity
+import project.graduation.crowd_sourcing.domain.model.entity.my.RecentWorkEntity
 
-    fun getRecentCommission()
+interface MyRepository {
+    suspend fun getRecentWork(userId: Int): Result<RecentWorkEntity>
+
+    suspend fun getRecentCommission(userId: Int): Result<RecentCommissionEntity>
 }

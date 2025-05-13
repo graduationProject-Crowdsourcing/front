@@ -1,5 +1,7 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.stats.component
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,15 +24,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.stats.StatsUiState
-import java.text.SimpleDateFormat
-import java.util.Date
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 @Composable
 fun StatsRequestedTerm(uiState: StatsUiState) {
     val list = listOf(
         "해당 지역" to uiState.requestRegion,
-        "의뢰 기간" to formatRequestPeriod(uiState.requestStartDate,uiState.requestCompleteDate),
+        "의뢰 기간" to formatRequestPeriod(uiState.requestStartDate, uiState.requestCompleteDate),
         "제품" to uiState.requestProduct
     )
     Column {
@@ -75,7 +77,8 @@ fun StatsRequestedTerm(uiState: StatsUiState) {
     }
 }
 
-private fun formatRequestPeriod(startDate: Date, endDate: Date): String {
-    val formatter = SimpleDateFormat("M.d") // Format as "Month.Day"
-    return formatter.format(startDate) + "~" + formatter.format(endDate)
+@RequiresApi(Build.VERSION_CODES.O)
+private fun formatRequestPeriod(startDate: LocalDateTime, endDate: LocalDateTime): String {
+    val formatter = DateTimeFormatter.ofPattern("M.d")
+    return startDate.format(formatter) + "~" + endDate.format(formatter)
 }

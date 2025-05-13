@@ -1,6 +1,7 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.history
 
 import project.graduation.crowd_sourcing.presentation.utils.twoDaysAgo
+import java.time.LocalDateTime
 import java.util.Date
 
 data class HistoryUiState(
@@ -11,7 +12,7 @@ data class HistoryUiState(
     data class HistoryItem(
         val product: String,
         val category: String,
-        val date: Date,
+        val date: LocalDateTime,
         val point: Int
     )
 

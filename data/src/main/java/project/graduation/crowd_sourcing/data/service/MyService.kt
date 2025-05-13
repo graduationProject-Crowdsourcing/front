@@ -8,12 +8,12 @@ import retrofit2.http.Query
 
 interface MyService {
     @GET("/api/v1/mypage/recent-work")
-    fun getRecentWork(
+    suspend fun getRecentWork(
         @Query("userId") userId: Int
     ): RecentWorkResponse
 
     @GET("/api/v1/mypage/recent-commission")
-    fun getRecentCommission(
+    suspend fun getRecentCommission(
         @Query("userId") userId: Int
     ): RecentCommissionResponse
 }
