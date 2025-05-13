@@ -1,0 +1,52 @@
+package project.graduation.crowd_sourcing.data.service
+
+import project.graduation.crowd_sourcing.data.request.worker.PostWorkRequest
+import project.graduation.crowd_sourcing.data.response.worker.WorkCountResponse
+import project.graduation.crowd_sourcing.data.response.worker.WorkHistoryResponse
+import project.graduation.crowd_sourcing.data.response.worker.WorkHourResponse
+import project.graduation.crowd_sourcing.data.response.worker.WorkMostResponse
+import project.graduation.crowd_sourcing.data.response.worker.WorkPointResponse
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Query
+
+
+interface WorkerService {
+    @POST("/api/v1/worker/postwork")
+    suspend fun postWorker(
+        @Body request: PostWorkRequest
+    ): Int
+
+    @GET("/api/v1/worker/workstats")
+    suspend fun getWorkerCounts(
+        @Query("username") userId: String
+    ): WorkCountResponse
+
+    @GET("/api/v1/worker/workpoint")
+    suspend fun getWorkerPoint(
+        @Query("username") userId: String
+    ): WorkPointResponse
+
+    @GET("/api/v1/worker/workongoing")
+    suspend fun getWorking(
+        @Query("username") userId: String
+    ): List<WorkHistoryResponse>
+
+    @GET("/api/v1/worker/workhour")
+    suspend fun getWorkerHour(
+        @Query("username") userId: String
+    ): WorkHourResponse
+
+    @GET("/api/v1/worker/workhistory")
+    suspend fun getWorkHistory(
+        @Query("username") userId: String,
+        @Query("status") workingStatus: String // Available values : COMPLETED, CANCEL
+    ): List<WorkHistoryResponse>
+
+    @GET("/api/v1/worker/workDetail")
+    suspend fun getWorkMost(
+        @Query("username") userId: String
+    ): WorkMostResponse
+}
+
