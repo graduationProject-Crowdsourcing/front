@@ -4,16 +4,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import project.graduation.crowd_sourcing.data.local.TokenManager
 import project.graduation.crowd_sourcing.domain.usecase.LoginUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState.init())
@@ -36,15 +40,29 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onLoginClick() {
-        val success = (_uiState.value.email == "test" && _uiState.value.password == "1234")
-        isLoginSuccess = success
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(errorMessage = null)
 
-        _uiState.value = if (success) {
-            _uiState.value.copy(errorMessage = null)
-        } else {
-            _uiState.value.copy(errorMessage = "이메일 또는 비밀번호가 올바르지 않습니다.")
+            loginUseCase(_uiState.value.email, _uiState.value.password)
+                .onSuccess {
+                    // 로그인 성공 시
+                    isLoginSuccess = true
+                    tokenManager.save(
+                        accessToken = it.accessToken,
+                        refreshToken = it.refreshToken,
+                        userId = it.id
+                    )
+                }
+                .onFailure {
+                    // 로그인 실패 시
+                    isLoginSuccess = false
+                    _uiState.value = _uiState.value.copy(
+                        errorMessage = "로그인에 실패했습니다. 다시 시도해 주세요."
+                    )
+                }
         }
     }
+
 
     fun onSignUpSuccess() {
         isSignUpCompleted = true
