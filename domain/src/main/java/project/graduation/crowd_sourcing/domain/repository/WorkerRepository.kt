@@ -21,18 +21,18 @@ interface WorkerRepository {
         memberId: Int
     ): Result<Int>
 
-    suspend fun getWorkerCounts(userId: String): Result<WorkCountEntity>
+    suspend fun getWorkerCounts(username: String): Result<WorkCountEntity>
 
-    suspend fun getWorkerPoint(userId: String): Result<WorkPointEntity>
+    suspend fun getWorkerPoint(username: String): Result<WorkPointEntity>
 
-    suspend fun getWorking(userId: String): Result<List<WorkHistoryEntity>>
+    suspend fun getWorking(username: String): Result<List<WorkHistoryEntity>>
 
-    suspend fun getWorkerHour(userId: String): Result<WorkHourEntity>
+    suspend fun getWorkerHour(username: String): Result<WorkHourEntity>
 
     suspend fun getWorkHistory(
-        userId: String,
+        username: String,
         status: WorkStatus // COMPLETED, CANCEL
     ): Result<List<WorkHistoryEntity>>
 
-    suspend fun getWorkMost(userId: String): Result<WorkMostEntity>
+    suspend fun getWorkMost(username: String): Result<WorkMostEntity>
 }

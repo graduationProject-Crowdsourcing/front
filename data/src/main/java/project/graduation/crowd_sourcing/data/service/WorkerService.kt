@@ -20,33 +20,33 @@ interface WorkerService {
 
     @GET("/api/v1/worker/workstats")
     suspend fun getWorkerCounts(
-        @Query("username") userId: String
+        @Query("username") username: String
     ): WorkCountResponse
 
     @GET("/api/v1/worker/workpoint")
     suspend fun getWorkerPoint(
-        @Query("username") userId: String
+        @Query("username") username: String
     ): WorkPointResponse
 
     @GET("/api/v1/worker/workongoing")
     suspend fun getWorking(
-        @Query("username") userId: String
+        @Query("username") username: String
     ): List<WorkHistoryResponse>
 
     @GET("/api/v1/worker/workhour")
     suspend fun getWorkerHour(
-        @Query("username") userId: String
+        @Query("username") username: String
     ): WorkHourResponse
 
     @GET("/api/v1/worker/workhistory")
     suspend fun getWorkHistory(
-        @Query("username") userId: String,
+        @Query("username") username: String,
         @Query("status") workingStatus: String // Available values : COMPLETED, CANCEL
     ): List<WorkHistoryResponse>
 
     @GET("/api/v1/worker/workDetail")
     suspend fun getWorkMost(
-        @Query("username") userId: String
+        @Query("username") username: String
     ): WorkMostResponse
 }
 

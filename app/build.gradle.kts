@@ -71,6 +71,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    implementation(libs.hilt.navigation)
 
     // 네이버 지도 SDK
     implementation("com.naver.maps:map-sdk:3.16.2")

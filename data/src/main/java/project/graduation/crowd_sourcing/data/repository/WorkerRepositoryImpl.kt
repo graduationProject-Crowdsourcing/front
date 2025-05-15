@@ -48,36 +48,36 @@ class WorkerRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun getWorkerCounts(userId: String): Result<WorkCountEntity> {
+    override suspend fun getWorkerCounts(username: String): Result<WorkCountEntity> {
         return try {
-            val response = workerService.getWorkerCounts(userId).toEntity()
+            val response = workerService.getWorkerCounts(username).toEntity()
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun getWorkerPoint(userId: String): Result<WorkPointEntity> {
+    override suspend fun getWorkerPoint(username: String): Result<WorkPointEntity> {
         return try {
-            val response = workerService.getWorkerPoint(userId).toEntity()
+            val response = workerService.getWorkerPoint(username).toEntity()
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun getWorking(userId: String): Result<List<WorkHistoryEntity>> {
+    override suspend fun getWorking(username: String): Result<List<WorkHistoryEntity>> {
         return try {
-            val response = workerService.getWorking(userId).map { it.toEntity() }
+            val response = workerService.getWorking(username).map { it.toEntity() }
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun getWorkerHour(userId: String): Result<WorkHourEntity> {
+    override suspend fun getWorkerHour(username: String): Result<WorkHourEntity> {
         return try {
-            val response = workerService.getWorkerHour(userId).toEntity()
+            val response = workerService.getWorkerHour(username).toEntity()
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
@@ -85,21 +85,21 @@ class WorkerRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getWorkHistory(
-        userId: String,
+        username: String,
         status: WorkStatus
     ): Result<List<WorkHistoryEntity>> {
         return try {
             val response =
-                workerService.getWorkHistory(userId, status.toString()).map { it.toEntity() }
+                workerService.getWorkHistory(username, status.toString()).map { it.toEntity() }
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun getWorkMost(userId: String): Result<WorkMostEntity> {
+    override suspend fun getWorkMost(username: String): Result<WorkMostEntity> {
         return try {
-            val response = workerService.getWorkMost(userId).toEntity()
+            val response = workerService.getWorkMost(username).toEntity()
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
