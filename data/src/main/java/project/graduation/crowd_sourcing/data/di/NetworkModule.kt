@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import project.graduation.crowd_sourcing.data.local.TokenManager
 import project.graduation.crowd_sourcing.data.network.AuthorizationInterceptor
 import project.graduation.crowd_sourcing.data.service.LoginService
 import project.graduation.crowd_sourcing.data.service.MyService
@@ -18,9 +19,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Module
 class NetworkModule {
     @Provides
-    fun provideAuthorizationInterceptor(): AuthorizationInterceptor {
-        return AuthorizationInterceptor()
+    fun provideAuthorizationInterceptor(
+        tokenManager: TokenManager
+    ): AuthorizationInterceptor {
+        return AuthorizationInterceptor(tokenManager)
     }
+
 
     @Provides
     fun provideOkHttpClient(
