@@ -2,6 +2,7 @@ package project.graduation.crowd_sourcing.data.repository
 
 import project.graduation.crowd_sourcing.data.mapper.login.toEntity
 import project.graduation.crowd_sourcing.data.request.LoginRequest
+import project.graduation.crowd_sourcing.data.request.SignUpRequest
 import project.graduation.crowd_sourcing.data.service.LoginService
 import project.graduation.crowd_sourcing.domain.model.entity.login.LoginEntity
 import project.graduation.crowd_sourcing.domain.repository.LoginRepository
@@ -16,6 +17,16 @@ class LoginRepositoryImpl @Inject constructor(
             val request = LoginRequest(username, password)
             val response = loginService.login(request)
             Result.success(response.toEntity())
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun signUp(username: String, password: String, nickname: String): Result<String> {
+        return try {
+            val request = SignUpRequest(username, password, nickname)
+            val response = loginService.signUp(request)
+            Result.success(response.message)
         } catch (e: Exception) {
             Result.failure(e)
         }

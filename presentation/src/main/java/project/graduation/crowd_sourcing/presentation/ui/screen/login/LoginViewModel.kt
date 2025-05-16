@@ -12,11 +12,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.data.local.TokenManager
 import project.graduation.crowd_sourcing.domain.usecase.LoginUseCase
+import project.graduation.crowd_sourcing.domain.usecase.SignUpUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
+    private val signUpUseCase: SignUpUseCase,
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
@@ -63,6 +65,22 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun signUp(username: String, password: String, nickname: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(errorMessage = null)
+
+            signUpUseCase(username, password, nickname)
+                .onSuccess {
+                    isSignUpCompleted = true
+                    _uiState.value = _uiState.value.copy(errorMessage = null)
+                }
+                .onFailure {
+                    _uiState.value = _uiState.value.copy(
+                        errorMessage = it.message ?: "회원가입에 실패했습니다."
+                    )
+                }
+        }
+    }
 
     fun onSignUpSuccess() {
         isSignUpCompleted = true
