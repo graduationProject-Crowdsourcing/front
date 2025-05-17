@@ -8,4 +8,9 @@ interface WorkRepository {
         directoryPath: String,
         imageFile: File
     ): Result<String>
+
+    suspend fun requestOcr(
+        fileName: String,
+        commissionId: String
+    ): Result<String>
 }

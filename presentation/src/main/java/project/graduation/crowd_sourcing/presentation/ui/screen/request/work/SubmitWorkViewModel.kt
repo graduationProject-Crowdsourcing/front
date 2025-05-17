@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import project.graduation.crowd_sourcing.domain.usecase.OcrRequestUseCase
 import project.graduation.crowd_sourcing.domain.usecase.UploadImageUseCase
 import project.graduation.crowd_sourcing.presentation.utils.FileUtil
 import java.io.File
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SubmitWorkViewModel @Inject constructor(
-    private val uploadImageUseCase: UploadImageUseCase
+    private val uploadImageUseCase: UploadImageUseCase,
+    private val ocrRequestUseCase: OcrRequestUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SubmitWorkUiState())
@@ -61,11 +63,19 @@ class SubmitWorkViewModel @Inject constructor(
         val directoryPath = "$username/${commissionId}_${System.currentTimeMillis()}.jpg"
 
         viewModelScope.launch {
-            val result = uploadImageUseCase(username, directoryPath, file)
-            result.onSuccess {
-                // 성공 처리: 예를 들어 OCR API 호출 or 상태 저장
+            val uploadResult = uploadImageUseCase(username, directoryPath, file)
+
+            uploadResult.onSuccess {
+                // OCR 요청 이어서 호출
+                val ocrResult = ocrRequestUseCase(directoryPath, commissionId)
+                ocrResult.onSuccess { text ->
+                    // 성공 시 로그 or 상태 업데이트
+                    println("✅ OCR 결과: $text")
+                }.onFailure {
+                    println("❌ OCR 실패: ${it.message}")
+                }
             }.onFailure {
-                // 실패 처리: 로그, 토스트 등
+                println("❌ 이미지 업로드 실패: ${it.message}")
             }
         }
     }

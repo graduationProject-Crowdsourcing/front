@@ -34,4 +34,19 @@ class WorkRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun requestOcr(
+        fileName: String,
+        commissionId: String
+    ): Result<String> {
+        return try {
+            val response = service.requestOcr(fileName, commissionId)
+            if (response.isSuccessful) {
+                Result.success(response.body() ?: "")
+            } else {
+                Result.failure(HttpException(response))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
