@@ -31,4 +31,20 @@ class LoginRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun logout(): Result<Unit> {
+        return try {
+            val response = loginService.logout()
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("로그아웃 실패: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+
+
 }

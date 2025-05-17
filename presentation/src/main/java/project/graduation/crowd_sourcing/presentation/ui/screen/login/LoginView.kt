@@ -147,6 +147,7 @@ fun LoginView(navController: NavHostController) {
                     .padding(16.dp)
             ) {
                 SignUpView(
+                    viewModel = viewModel,
                     onSignUpSuccess = {
                         viewModel.onSignUpSuccess()
                         Toast.makeText(context, "회원가입 완료!", Toast.LENGTH_SHORT).show()
