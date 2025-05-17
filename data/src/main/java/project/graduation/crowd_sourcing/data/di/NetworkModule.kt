@@ -12,6 +12,7 @@ import project.graduation.crowd_sourcing.data.service.LoginService
 import project.graduation.crowd_sourcing.data.service.MyService
 import project.graduation.crowd_sourcing.data.service.StatisticsService
 import project.graduation.crowd_sourcing.data.service.UserPointService
+import project.graduation.crowd_sourcing.domain.usecase.RefreshTokenUseCase
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -20,9 +21,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 class NetworkModule {
     @Provides
     fun provideAuthorizationInterceptor(
-        tokenManager: TokenManager
+        tokenManager: TokenManager,
+        refreshTokenUseCase: RefreshTokenUseCase
     ): AuthorizationInterceptor {
-        return AuthorizationInterceptor(tokenManager)
+        return AuthorizationInterceptor(tokenManager, refreshTokenUseCase)
     }
 
 

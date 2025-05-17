@@ -22,6 +22,8 @@ class TokenManager @Inject constructor(
 
     fun getAccessToken(): String? = prefs.getString("ACCESS_TOKEN", null)
 
+    fun getRefreshToken(): String? = prefs.getString("REFRESH_TOKEN", null)
+
     fun getUserId(): Int = prefs.getInt("USER_ID", -1)
 
     fun clear() {

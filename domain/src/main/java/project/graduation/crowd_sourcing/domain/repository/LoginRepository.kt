@@ -6,4 +6,5 @@ interface LoginRepository {
     suspend fun login(username: String, password: String): Result<LoginEntity>
     suspend fun signUp(username: String, password: String, nickname: String): Result<String>
     suspend fun logout(): Result<Unit>
+    suspend fun refreshToken(refreshToken: String): Result<Pair<String, String>>
 }

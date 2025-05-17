@@ -2,6 +2,7 @@ package project.graduation.crowd_sourcing.data.repository
 
 import project.graduation.crowd_sourcing.data.mapper.login.toEntity
 import project.graduation.crowd_sourcing.data.request.LoginRequest
+import project.graduation.crowd_sourcing.data.request.RefreshTokenRequest
 import project.graduation.crowd_sourcing.data.request.SignUpRequest
 import project.graduation.crowd_sourcing.data.service.LoginService
 import project.graduation.crowd_sourcing.domain.model.entity.login.LoginEntity
@@ -45,6 +46,20 @@ class LoginRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun refreshToken(refreshToken: String): Result<Pair<String, String>> {
+        return try {
+            val request = RefreshTokenRequest(refreshToken)
+            val response = loginService.refreshToken(request)
 
+            if (response.isSuccessful) {
+                val body = response.body()!!
+                Result.success(body.data.accessToken to body.data.refreshToken)
+            } else {
+                Result.failure(Exception("토큰 재발급 실패"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
 }
