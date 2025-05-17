@@ -4,12 +4,12 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import project.graduation.crowd_sourcing.data.local.TokenManager
-import project.graduation.crowd_sourcing.domain.usecase.RefreshTokenUseCase
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
 class AuthorizationInterceptor @Inject constructor(
-    private val tokenManager: TokenManager,
-    private val refreshTokenUseCase: RefreshTokenUseCase
+    private val tokenManager: TokenManager
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -26,28 +26,44 @@ class AuthorizationInterceptor @Inject constructor(
 
         val response = chain.proceed(requestWithAuth)
 
-        // accessToken 만료 시 처리 (401일 경우)
         if (response.code == 401) {
-            response.close() // 이전 응답 닫기
+            response.close()
 
             val refreshToken = tokenManager.getRefreshToken()
 
             if (refreshToken != null) {
-                val refreshResult = runBlocking {
-                    refreshTokenUseCase(refreshToken)
+                val refreshResult: Result<Pair<String, String>> = runBlocking {
+                    try {
+                        // ✅ 여기서 Retrofit을 직접 생성해서 사용!
+                        val retrofit = Retrofit.Builder()
+                            .baseUrl("http://52.78.15.153:8112/")
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build()
+
+
+                        val loginService = retrofit.create(project.graduation.crowd_sourcing.data.service.LoginService::class.java)
+                        val res = loginService.refreshToken(project.graduation.crowd_sourcing.data.request.RefreshTokenRequest(refreshToken))
+
+                        if (res.isSuccessful && res.body() != null) {
+                            val data = res.body()!!.data
+                            Result.success(data.accessToken to data.refreshToken)
+                        } else {
+                            Result.failure(Exception("토큰 갱신 실패: ${res.code()}"))
+                        }
+                    } catch (e: Exception) {
+                        Result.failure(e)
+                    }
                 }
 
                 if (refreshResult.isSuccess) {
                     val (newAccessToken, newRefreshToken) = refreshResult.getOrNull()!!
 
-                    // 토큰 갱신
                     tokenManager.save(
                         accessToken = newAccessToken,
                         refreshToken = newRefreshToken,
                         userId = tokenManager.getUserId() ?: 0
                     )
 
-                    // 새로운 토큰으로 재요청
                     val newRequest = originalRequest.newBuilder()
                         .removeHeader("Authorization")
                         .addHeader("Authorization", "Bearer $newAccessToken")
@@ -60,5 +76,5 @@ class AuthorizationInterceptor @Inject constructor(
 
         return response
     }
-
 }
+

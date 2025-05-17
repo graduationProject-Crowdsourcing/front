@@ -42,7 +42,9 @@ fun Navigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.BottomScreen.HomeScreen.bRoute,
+        // startDestination = Screen.BottomScreen.HomeScreen.bRoute,
+        startDestination = Screen.LoginScreen.route,
+
         modifier = Modifier
             .padding(pd)
             .fillMaxSize(),

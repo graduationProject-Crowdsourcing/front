@@ -22,9 +22,8 @@ class NetworkModule {
     @Provides
     fun provideAuthorizationInterceptor(
         tokenManager: TokenManager,
-        refreshTokenUseCase: RefreshTokenUseCase
     ): AuthorizationInterceptor {
-        return AuthorizationInterceptor(tokenManager, refreshTokenUseCase)
+        return AuthorizationInterceptor(tokenManager)
     }
 
 
