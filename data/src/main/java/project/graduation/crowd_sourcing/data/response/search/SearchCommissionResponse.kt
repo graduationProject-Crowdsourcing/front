@@ -2,8 +2,8 @@ package project.graduation.crowd_sourcing.data.response.search
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import project.graduation.crowd_sourcing.domain.model.entity.search.Commission
-import project.graduation.crowd_sourcing.domain.model.entity.search.SearchHome
+import project.graduation.crowd_sourcing.domain.model.entity.search.CommissionEntity
+import project.graduation.crowd_sourcing.domain.model.entity.search.SearchHomeEntity
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -19,11 +19,11 @@ data class CommissionDto(
     val deadline: String
 ) {
     @RequiresApi(Build.VERSION_CODES.O)
-    fun toCommission(): Commission {
+    fun toCommission(): CommissionEntity {
         val formatter = DateTimeFormatter.ISO_DATE_TIME
         val deadlineDateTime = LocalDateTime.parse(deadline, formatter)
         
-        return Commission(
+        return CommissionEntity(
             commission = commission,
             commissionpoint = commissionpoint,
             deadline = deadlineDateTime
@@ -37,8 +37,8 @@ data class SearchHomeDto(
     val recentSearchDtoList: List<SearchDto>,
     val recommendSearchDtoList: List<SearchDto>?
 ){
-    fun toDomain(): SearchHome {
-        return SearchHome(
+    fun toDomain(): SearchHomeEntity {
+        return SearchHomeEntity(
             regionList = regionList,
             categoryList = categoryList,
             recentKeywords = recentSearchDtoList.map { it.searchKeyword },

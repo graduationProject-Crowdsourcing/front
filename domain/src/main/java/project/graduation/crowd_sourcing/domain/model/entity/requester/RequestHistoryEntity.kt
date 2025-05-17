@@ -5,7 +5,7 @@ import java.util.Date
 /**
  * 의뢰 히스토리 정보 도메인 모델
  */
-data class RequestHistory(
+data class RequestHistoryEntity(
     val id: Long,
     val commission: String,
     val commissionCount: Int,

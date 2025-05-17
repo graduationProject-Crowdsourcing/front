@@ -2,12 +2,12 @@ package project.graduation.crowd_sourcing.data.repository
 
 import project.graduation.crowd_sourcing.data.response.requester.RequestDto
 import project.graduation.crowd_sourcing.data.service.RequesterService
-import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestDetail
-import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestHistory
-import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestPoint
-import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestStats
-import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestStatus
-import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestSuccess
+import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestDetailEntity
+import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestHistoryEntity
+import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestPointEntity
+import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestStatsEntity
+import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestStatusEntity
+import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestSuccessEntity
 import project.graduation.crowd_sourcing.domain.repository.RequesterRepository
 import java.util.Date
 import java.util.TimeZone
@@ -62,11 +62,11 @@ class RequesterRepositoryImpl @Inject constructor(
     override suspend fun getRequestStatus(
         username: String, 
         status: String
-    ): List<RequestStatus> {
+    ): List<RequestStatusEntity> {
         return try {
             val response = requesterService.getRequestStatus(username, status)
             response.map { dto ->
-                RequestStatus(
+                RequestStatusEntity(
                     id = dto.id,
                     commission = dto.commission,
                     commissionCount = dto.commissionCount,
@@ -82,56 +82,56 @@ class RequesterRepositoryImpl @Inject constructor(
         }
     }
     
-    override suspend fun getRequestStats(username: String): RequestStats {
+    override suspend fun getRequestStats(username: String): RequestStatsEntity {
         return try {
             val response = requesterService.getRequestStats(username)
-            RequestStats(
+            RequestStatsEntity(
                 commissionCount = response.commsionCount
             )
         } catch (e: Exception) {
-            RequestStats(0)
+            RequestStatsEntity(0)
         }
     }
     
-    override suspend fun getRequestPoint(username: String): RequestPoint {
+    override suspend fun getRequestPoint(username: String): RequestPointEntity {
         return try {
             val response = requesterService.getRequestPoint(username)
-            RequestPoint(
+            RequestPointEntity(
                 totalPoints = response.totalPoints
             )
         } catch (e: Exception) {
-            RequestPoint(0)
+            RequestPointEntity(0)
         }
     }
     
-    override suspend fun getRequestSuccess(username: String): RequestSuccess {
+    override suspend fun getRequestSuccess(username: String): RequestSuccessEntity {
         return try {
             val response = requesterService.getRequestSuccess(username)
-            RequestSuccess(
+            RequestSuccessEntity(
                 successfulCommissions = response.successfulCommissions
             )
         } catch (e: Exception) {
-            RequestSuccess(0)
+            RequestSuccessEntity(0)
         }
     }
     
-    override suspend fun getRequestDetail(username: String): RequestDetail {
+    override suspend fun getRequestDetail(username: String): RequestDetailEntity {
         return try {
             val response = requesterService.getRequestDetail(username)
-            RequestDetail(
+            RequestDetailEntity(
                 mostRequestedRegion = response.mostRequestedRegion,
                 mostRequestedDayOfWeek = response.mostRequestedDayOfWeek
             )
         } catch (e: Exception) {
-            RequestDetail("", "")
+            RequestDetailEntity("", "")
         }
     }
     
-    override suspend fun getOngoingRequests(username: String): List<RequestStatus> {
+    override suspend fun getOngoingRequests(username: String): List<RequestStatusEntity> {
         return try {
             val response = requesterService.getOngoingRequests(username)
             response.map { dto ->
-                RequestStatus(
+                RequestStatusEntity(
                     id = dto.id,
                     commission = dto.commission,
                     commissionCount = dto.commissionCount,
@@ -147,11 +147,11 @@ class RequesterRepositoryImpl @Inject constructor(
         }
     }
     
-    override suspend fun getRequestHistory(username: String, status: String): List<RequestHistory> {
+    override suspend fun getRequestHistory(username: String, status: String): List<RequestHistoryEntity> {
         return try {
             val response = requesterService.getRequestHistory(username, status)
             response.map { dto ->
-                RequestHistory(
+                RequestHistoryEntity(
                     id = dto.id,
                     commission = dto.commission,
                     commissionCount = dto.commissionCount,

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import project.graduation.crowd_sourcing.domain.model.entity.search.Commission
+import project.graduation.crowd_sourcing.domain.model.entity.search.CommissionEntity
 import project.graduation.crowd_sourcing.domain.usecase.GetSearchHomeInitDataUseCase
 import project.graduation.crowd_sourcing.domain.usecase.SearchCommissionUseCase
 import javax.inject.Inject
@@ -164,12 +164,12 @@ class SearchViewModel @Inject constructor(
      * Commission 도메인 객체를 SearchResult UI 객체로 변환
      */
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun convertCommissionToSearchResult(commission: Commission): SearchResult {
+    private fun convertCommissionToSearchResult(commissionEntity: CommissionEntity): SearchResult {
         val now = LocalDateTime.now()
-        val deadline = commission.deadline
+        val deadline = commissionEntity.deadline
         
         // 디버그 로깅 추가
-        println("DEBUG_TIME: 현재 시간: $now, 마감 시간: ${commission.deadline}")
+        println("DEBUG_TIME: 현재 시간: $now, 마감 시간: ${commissionEntity.deadline}")
         println("DEBUG_TIME: 현재 시간 > 마감 시간: ${now.isAfter(deadline)}")
         println("DEBUG_TIME: 마감 시간 > 현재 시간: ${deadline.isAfter(now)}")
         println("DEBUG_TIME: 현재 시간 == 마감 시간: ${now.isEqual(deadline)}")
@@ -184,11 +184,11 @@ class SearchViewModel @Inject constructor(
         if (now.isAfter(deadline)) {
             println("DEBUG_TIME: 마감 시간이 이미 지났습니다.")
             return SearchResult(
-                id = commission.commission,
-                title = commission.commission,
+                id = commissionEntity.commission,
+                title = commissionEntity.commission,
                 place = "",
                 remainingDays = 0, // 시간이 지났음을 표시하는 특별 값 (0)
-                reward = commission.commissionpoint
+                reward = commissionEntity.commissionpoint
             )
         }
         
@@ -214,11 +214,11 @@ class SearchViewModel @Inject constructor(
         println("DEBUG_TIME: 최종 표시 값: $remainingTime (${if (isHourFormat) "시간" else "일"} 단위)")
         
         return SearchResult(
-            id = commission.commission,
-            title = commission.commission,
+            id = commissionEntity.commission,
+            title = commissionEntity.commission,
             place = "",
             remainingDays = remainingTime, // 음수면 시간 단위, 양수면 일 단위
-            reward = commission.commissionpoint
+            reward = commissionEntity.commissionpoint
         )
     }
 

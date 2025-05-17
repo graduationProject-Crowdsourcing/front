@@ -1,11 +1,11 @@
 package project.graduation.crowd_sourcing.domain.usecase
 
-import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestDetail
-import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestHistory
-import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestPoint
-import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestStats
-import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestStatus
-import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestSuccess
+import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestDetailEntity
+import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestHistoryEntity
+import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestPointEntity
+import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestStatsEntity
+import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestStatusEntity
+import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestSuccessEntity
 import project.graduation.crowd_sourcing.domain.repository.RequesterRepository
 import javax.inject.Inject
 
@@ -44,7 +44,7 @@ class RequesterUseCase @Inject constructor(
     suspend fun getRequestStatus(
         username: String,
         status: String
-    ): List<RequestStatus> {
+    ): List<RequestStatusEntity> {
         // 상태값 유효성 검사
         val validStatus = when (status.uppercase()) {
             "PROCESSING", "COMPLETED", "CANCEL" -> status.uppercase()
@@ -57,35 +57,35 @@ class RequesterUseCase @Inject constructor(
     /**
      * 회원별 전체 의뢰 횟수 조회
      */
-    suspend fun getRequestStats(username: String): RequestStats {
+    suspend fun getRequestStats(username: String): RequestStatsEntity {
         return requesterRepository.getRequestStats(username)
     }
     
     /**
      * 회원별 총 사용 포인트 조회
      */
-    suspend fun getRequestPoint(username: String): RequestPoint {
+    suspend fun getRequestPoint(username: String): RequestPointEntity {
         return requesterRepository.getRequestPoint(username)
     }
     
     /**
      * 회원별 의뢰 성공 횟수 조회
      */
-    suspend fun getRequestSuccess(username: String): RequestSuccess {
+    suspend fun getRequestSuccess(username: String): RequestSuccessEntity {
         return requesterRepository.getRequestSuccess(username)
     }
     
     /**
      * 회원별 가장 많이 의뢰한 지역 및 카테고리 조회
      */
-    suspend fun getRequestDetail(username: String): RequestDetail {
+    suspend fun getRequestDetail(username: String): RequestDetailEntity {
         return requesterRepository.getRequestDetail(username)
     }
     
     /**
      * 진행중인 의뢰 목록 조회
      */
-    suspend fun getOngoingRequests(username: String): List<RequestStatus> {
+    suspend fun getOngoingRequests(username: String): List<RequestStatusEntity> {
         return requesterRepository.getOngoingRequests(username)
     }
     
@@ -93,7 +93,7 @@ class RequesterUseCase @Inject constructor(
      * 완료/취소된 의뢰 기록 조회
      * @param status 조회할 의뢰 상태 (COMPLETED, CANCEL 중 하나)
      */
-    suspend fun getRequestHistory(username: String, status: String): List<RequestHistory> {
+    suspend fun getRequestHistory(username: String, status: String): List<RequestHistoryEntity> {
         // 상태값 유효성 검사
         val validStatus = when (status.uppercase()) {
             "COMPLETED", "CANCEL" -> status.uppercase()

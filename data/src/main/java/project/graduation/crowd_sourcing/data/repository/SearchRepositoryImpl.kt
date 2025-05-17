@@ -5,8 +5,8 @@ import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import project.graduation.crowd_sourcing.data.service.SearchService
-import project.graduation.crowd_sourcing.domain.model.entity.search.Commission
-import project.graduation.crowd_sourcing.domain.model.entity.search.SearchHome
+import project.graduation.crowd_sourcing.domain.model.entity.search.CommissionEntity
+import project.graduation.crowd_sourcing.domain.model.entity.search.SearchHomeEntity
 import project.graduation.crowd_sourcing.domain.repository.SearchRepository
 import javax.inject.Inject
 
@@ -20,7 +20,7 @@ class SearchRepositoryImpl @Inject constructor(
         category: String,
         sort: String,
         order: String
-    ): Flow<List<Commission>> = flow {
+    ): Flow<List<CommissionEntity>> = flow {
         try {
             println("DEBUG_REPO: API 호출 시작 - 키워드: '$searchKeyword', 카테고리: '$category', 지역: '$region', 정렬: $sort $order")
             
@@ -62,7 +62,7 @@ class SearchRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSearchHomeInitData(): SearchHome {
+    override suspend fun getSearchHomeInitData(): SearchHomeEntity {
         try {
             println("DEBUG_REPO: 초기 검색 데이터 로드 시작")
             
@@ -81,7 +81,7 @@ class SearchRepositoryImpl @Inject constructor(
             } else {
                 // 에러 처리 - 빈 데이터 반환
                 println("DEBUG_REPO: 초기 검색 데이터 API 오류 - 상태 코드: ${response.status}, 메시지: ${response.message}")
-                return SearchHome(
+                return SearchHomeEntity(
                     regionList = emptyList(),
                     categoryList = emptyList(),
                     recentKeywords = emptyList(),
@@ -94,7 +94,7 @@ class SearchRepositoryImpl @Inject constructor(
             e.printStackTrace()
             
             // 빈 데이터 반환
-            return SearchHome(
+            return SearchHomeEntity(
                 regionList = emptyList(),
                 categoryList = emptyList(),
                 recentKeywords = emptyList(),

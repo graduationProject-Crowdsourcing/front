@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import project.graduation.crowd_sourcing.domain.model.entity.martsearch.Mart
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
 import project.graduation.crowd_sourcing.domain.usecase.MartSearchUseCase
 import javax.inject.Inject
 import kotlin.math.*
@@ -57,8 +57,8 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    private val _nearbyMarts = MutableStateFlow<List<Mart>>(emptyList())
-    val nearbyMarts: StateFlow<List<Mart>> = _nearbyMarts.asStateFlow()
+    private val _nearbyMarts = MutableStateFlow<List<MartEntity>>(emptyList())
+    val nearbyMarts: StateFlow<List<MartEntity>> = _nearbyMarts.asStateFlow()
     
     // 위치 정보 캐싱을 위한 변수
     private var lastLat: Double? = null
@@ -66,7 +66,7 @@ class HomeViewModel @Inject constructor(
     private var lastRadius: Int? = null
     
     // 마트 데이터 캐싱을 위한 변수 추가
-    private var cachedMarts: List<Mart> = emptyList()
+    private var cachedMartEntities: List<MartEntity> = emptyList()
     
     companion object {
         private const val TAG = "HomeViewModel"
@@ -171,7 +171,7 @@ class HomeViewModel @Inject constructor(
                 val radiusInMeters = (radiusInKm * 1000).toInt()
                 
                 // 위치가 변경된 경우에만 새로운 API 호출
-                val shouldRefreshData = lastLat != lat || lastLng != lng || cachedMarts.isEmpty()
+                val shouldRefreshData = lastLat != lat || lastLng != lng || cachedMartEntities.isEmpty()
                 
                 if (shouldRefreshData) {
                     Log.d(TAG, "위치 변경 또는 최초 로드: 새로운 마트 데이터 요청 ($lat, $lng)")
@@ -187,17 +187,17 @@ class HomeViewModel @Inject constructor(
                         Log.d(TAG, "API 응답: ${marts.size}개 마트 로드 성공")
                         
                         // 마트 데이터 캐싱
-                        cachedMarts = marts
+                        cachedMartEntities = marts
                     } catch (e: Exception) {
                         Log.e(TAG, "API 호출 실패: ${e.message}", e)
                         // API 호출 실패 시 캐시된 데이터 유지
                     }
                 } else {
-                    Log.d(TAG, "캐시된 마트 데이터 사용 (마트 ${cachedMarts.size}개)")
+                    Log.d(TAG, "캐시된 마트 데이터 사용 (마트 ${cachedMartEntities.size}개)")
                 }
                 
                 // 반경은 변경되었을 수 있으므로 매번 필터링
-                val filteredMarts = cachedMarts.filter { mart ->
+                val filteredMarts = cachedMartEntities.filter { mart ->
                     val distance = distanceInMeters(lat, lng, mart.lat, mart.lng)
                     val inRadius = distance <= radiusInMeters
                     Log.d(TAG, "마트: ${mart.martName}, 거리: ${distance.toInt()}m, " +
@@ -205,13 +205,13 @@ class HomeViewModel @Inject constructor(
                     inRadius
                 }
                 
-                Log.d(TAG, "필터링 결과: ${cachedMarts.size}개 중 ${filteredMarts.size}개 " +
+                Log.d(TAG, "필터링 결과: ${cachedMartEntities.size}개 중 ${filteredMarts.size}개 " +
                          "(설정 반경: ${radiusInMeters}m 이내만 표시)")
                 
                 // 필터링 결과 상태 업데이트
                 _uiState.update { currentState ->
                     when (currentState) {
-                        is HomeUiState.Success -> currentState.copy(nearbyMarts = filteredMarts)
+                        is HomeUiState.Success -> currentState.copy(nearbyMartEntities = filteredMarts)
                         else -> currentState
                     }
                 }

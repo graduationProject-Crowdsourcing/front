@@ -1,7 +1,7 @@
 package project.graduation.crowd_sourcing.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
-import project.graduation.crowd_sourcing.domain.model.entity.search.Commission
+import project.graduation.crowd_sourcing.domain.model.entity.search.CommissionEntity
 import project.graduation.crowd_sourcing.domain.repository.SearchRepository
 import javax.inject.Inject
 
@@ -14,7 +14,7 @@ class SearchCommissionUseCase @Inject constructor(
         category: String = "",
         sort: String = "latest",
         order: String = "desc"
-    ): Flow<List<Commission>> {
+    ): Flow<List<CommissionEntity>> {
         return repository.searchCommissions(
             searchKeyword = searchKeyword,
             region = region,

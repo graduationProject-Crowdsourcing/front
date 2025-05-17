@@ -5,7 +5,7 @@ import java.util.Date
 /**
  * 의뢰 상태 정보 도메인 모델
  */
-data class RequestStatus(
+data class RequestStatusEntity(
     val id: Long,
     val commission: String,
     val commissionCount: Int,

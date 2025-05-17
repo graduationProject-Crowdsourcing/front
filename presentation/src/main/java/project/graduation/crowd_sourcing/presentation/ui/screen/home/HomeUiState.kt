@@ -1,6 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.home
 
-import project.graduation.crowd_sourcing.domain.model.entity.martsearch.Mart
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
 
 // TODO: Domain Layer 구현 필요
 // - Location 도메인 모델 정의
@@ -25,7 +25,7 @@ sealed class HomeUiState {
      * @param requests 주변 의뢰 목록
      * @param searchRadius 검색 반경 (km 단위)
      * @param isRadiusDialogVisible 반경 설정 다이얼로그 표시 여부
-     * @param nearbyMarts 주변 마트 목록
+     * @param nearbyMartEntities 주변 마트 목록
      */
     data class Success(
         val searchQuery: String = "",
@@ -33,7 +33,7 @@ sealed class HomeUiState {
         val requests: List<Request> = emptyList(),
         val searchRadius: Float = 0.5f,
         val isRadiusDialogVisible: Boolean = false,
-        val nearbyMarts: List<Mart> = emptyList()
+        val nearbyMartEntities: List<MartEntity> = emptyList()
     ) : HomeUiState()
     
     /**
