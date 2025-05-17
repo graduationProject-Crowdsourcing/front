@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import project.graduation.crowd_sourcing.domain.model.entity.Mart
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.Mart
 import project.graduation.crowd_sourcing.domain.usecase.MartSearchUseCase
 import javax.inject.Inject
 import kotlin.math.*

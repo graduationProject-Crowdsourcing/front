@@ -30,6 +30,7 @@ fun HistoryView(
     navController: NavController
 ) {
     val viewModel: HistoryViewModel = hiltViewModel()
+    viewModel.setHistoryType(historyType)
     val uiState = viewModel.uiState.collectAsState()
 
     val listTitles = if (historyType == HistoryType.WORK) {
@@ -65,7 +66,6 @@ fun HistoryView(
                 historyList = uiState.value.totalHistoryList
             )
         }
-
     }
 }
 

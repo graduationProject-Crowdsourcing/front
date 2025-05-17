@@ -6,9 +6,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import project.graduation.crowd_sourcing.data.repository.LoginRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.MartSearchRepositoryImpl
+import project.graduation.crowd_sourcing.data.repository.RequesterRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.SearchRepositoryImpl
 import project.graduation.crowd_sourcing.domain.repository.LoginRepository
 import project.graduation.crowd_sourcing.domain.repository.MartSearchRepository
+import project.graduation.crowd_sourcing.domain.repository.RequesterRepository
 import project.graduation.crowd_sourcing.domain.repository.SearchRepository
 import javax.inject.Singleton
 
@@ -31,4 +33,10 @@ abstract class BindModule {
     abstract fun bindMartSearchRepository(
         martSearchRepositoryImpl: MartSearchRepositoryImpl
     ): MartSearchRepository
+    
+    @Binds
+    @Singleton
+    abstract fun bindRequesterRepository(
+        requesterRepositoryImpl: RequesterRepositoryImpl
+    ): RequesterRepository
 }

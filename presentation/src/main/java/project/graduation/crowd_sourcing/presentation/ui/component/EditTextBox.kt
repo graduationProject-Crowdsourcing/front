@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,6 +45,8 @@ fun EditTextBox(
     val shape = RoundedCornerShape(dimensionResource(R.dimen.round_common))
     val borderColor = colorResource(id = R.color.light_gray)
 
+    Log.d("EditTextBox", "EditTextBox 렌더링 됨: enabled=$enabled, readOnly=$readOnly, onClick=${onClick != null}")
+
     Box(
         modifier = modifier
             .height(dimensionResource(R.dimen.height_btn)) // 예: 48.dp
@@ -51,7 +54,13 @@ fun EditTextBox(
             .clip(shape)
             .border(1.dp, borderColor, shape)
             .background(Color.White)
-            .clickable(enabled = onClick != null) { onClick?.invoke() }
+            .clickable(
+                // 클릭 이벤트 핸들러가 있을 때만 클릭 가능하도록 수정 (enabled 상태와 무관하게)
+                enabled = onClick != null
+            ) { 
+                Log.d("EditTextBox", "Box 클릭됨")
+                onClick?.invoke() 
+            }
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         BasicTextField(
@@ -89,9 +98,6 @@ fun EditTextBox(
         )
     }
 }
-
-
-
 
 @Preview
 @Composable

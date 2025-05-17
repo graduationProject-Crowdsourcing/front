@@ -1,4 +1,4 @@
-package project.graduation.crowd_sourcing.data.response
+package project.graduation.crowd_sourcing.data.response.martsearch
 
 data class ApiResponseDtoListMartDto (
     val status: Int,

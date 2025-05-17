@@ -1,9 +1,9 @@
-package project.graduation.crowd_sourcing.data.response
+package project.graduation.crowd_sourcing.data.response.search
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import project.graduation.crowd_sourcing.domain.model.entity.Commission
-import project.graduation.crowd_sourcing.domain.model.entity.SearchHome
+import project.graduation.crowd_sourcing.domain.model.entity.search.Commission
+import project.graduation.crowd_sourcing.domain.model.entity.search.SearchHome
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -15,7 +15,7 @@ data class SearchCommissionResponse<T> (
 
 data class CommissionDto(
     val commission: String,
-    val commissionPoint: Int,
+    val commissionpoint: Int,
     val deadline: String
 ) {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -25,7 +25,7 @@ data class CommissionDto(
         
         return Commission(
             commission = commission,
-            commissionPoint = commissionPoint,
+            commissionpoint = commissionpoint,
             deadline = deadlineDateTime
         )
     }

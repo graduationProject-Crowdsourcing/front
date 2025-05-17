@@ -84,7 +84,7 @@ fun SearchResultView(
                 // 디버그를 위해 첫 번째 아이템 출력
                 if (searchResults.isNotEmpty()) {
                     val first = searchResults.first()
-                    println("DEBUG_RESULT: 첫 번째 결과 - id: ${first.id}, title: ${first.title}, reward: ${first.reward}")
+                    println("DEBUG_RESULT: 첫 번째 결과 - id: ${first.id}, title: ${first.title}, place: '${first.place}', reward: ${first.reward}, remainingDays: ${first.remainingDays}")
                 }
             } ?: println("DEBUG_RESULT: searchResults 배열이 null")
             
@@ -331,13 +331,16 @@ fun SearchResultItem(
             
             Spacer(modifier = Modifier.height(4.dp))
             
-            Text(
-                text = result.place,
-                color = Color.Gray,
-                fontSize = 14.sp
-            )
-            
-            Spacer(modifier = Modifier.height(4.dp))
+            // place가 빈 문자열이 아닌 경우에만 표시
+            if (result.place.isNotEmpty()) {
+                Text(
+                    text = result.place,
+                    color = Color.Gray,
+                    fontSize = 14.sp
+                )
+                
+                Spacer(modifier = Modifier.height(4.dp))
+            }
             
             Text(
                 text = "${result.reward} P",
@@ -354,17 +357,17 @@ fun SearchResultItem(
             ),
             shape = RoundedCornerShape(4.dp)
         ) {
-            // remainingDays가 음수이면 시간 단위, 양수이면 일 단위로 표시
-            val timeText = if (result.remainingDays < 0) {
-                "${-result.remainingDays} hours left"
-            } else {
-                "${result.remainingDays} days left"
+            // remainingDays 값에 따라 텍스트 표시
+            val timeText = when {
+                result.remainingDays > 0 -> "${result.remainingDays}일 남음"
+                result.remainingDays < 0 -> "${-result.remainingDays}시간 남음"
+                else -> "마감됨" // remainingDays가 0인 경우 마감됨으로 표시
             }
             
             Text(
                 text = timeText,
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                color = Color(0xFF1785E4),
+                color = if (result.remainingDays == 0) Color.Red else Color(0xFF1785E4),
                 fontSize = 12.sp
             )
         }

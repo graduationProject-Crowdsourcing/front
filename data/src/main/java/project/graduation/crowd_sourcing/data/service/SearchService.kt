@@ -1,8 +1,8 @@
 package project.graduation.crowd_sourcing.data.service
 
-import project.graduation.crowd_sourcing.data.response.CommissionDto
-import project.graduation.crowd_sourcing.data.response.SearchCommissionResponse
-import project.graduation.crowd_sourcing.data.response.SearchHomeDto
+import project.graduation.crowd_sourcing.data.response.search.CommissionDto
+import project.graduation.crowd_sourcing.data.response.search.SearchCommissionResponse
+import project.graduation.crowd_sourcing.data.response.search.SearchHomeDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 

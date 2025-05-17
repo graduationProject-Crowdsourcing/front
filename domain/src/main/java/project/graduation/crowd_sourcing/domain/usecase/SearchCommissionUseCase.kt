@@ -1,7 +1,7 @@
 package project.graduation.crowd_sourcing.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
-import project.graduation.crowd_sourcing.domain.model.entity.Commission
+import project.graduation.crowd_sourcing.domain.model.entity.search.Commission
 import project.graduation.crowd_sourcing.domain.repository.SearchRepository
 import javax.inject.Inject
 

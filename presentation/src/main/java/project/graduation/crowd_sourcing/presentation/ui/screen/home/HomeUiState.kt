@@ -1,6 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.home
 
-import project.graduation.crowd_sourcing.domain.model.entity.Mart
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.Mart
 
 // TODO: Domain Layer 구현 필요
 // - Location 도메인 모델 정의

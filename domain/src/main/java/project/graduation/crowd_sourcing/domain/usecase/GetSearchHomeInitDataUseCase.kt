@@ -1,6 +1,6 @@
 package project.graduation.crowd_sourcing.domain.usecase
 
-import project.graduation.crowd_sourcing.domain.model.entity.SearchHome
+import project.graduation.crowd_sourcing.domain.model.entity.search.SearchHome
 import project.graduation.crowd_sourcing.domain.repository.SearchRepository
 import javax.inject.Inject
 

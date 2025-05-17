@@ -1,6 +1,6 @@
 package project.graduation.crowd_sourcing.domain.repository
 
-import project.graduation.crowd_sourcing.domain.model.entity.Mart
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.Mart
 
 interface MartSearchRepository {
     suspend fun searchMartByZipcode(zipcode: String, radius: Int): List<Mart>

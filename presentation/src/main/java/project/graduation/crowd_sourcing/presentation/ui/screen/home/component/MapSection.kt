@@ -14,13 +14,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.naver.maps.geometry.LatLng
@@ -35,10 +31,9 @@ import com.naver.maps.map.compose.Marker
 import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
-import project.graduation.crowd_sourcing.domain.model.entity.Mart
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.Mart
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeUiState
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.Location
-import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.Request
 
 /** 위치 정보를 LatLng 객체로 변환하는 확장 함수 */

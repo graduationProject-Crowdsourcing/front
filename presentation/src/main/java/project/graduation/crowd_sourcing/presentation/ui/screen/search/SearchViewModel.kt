@@ -8,10 +8,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import project.graduation.crowd_sourcing.domain.model.entity.Commission
+import project.graduation.crowd_sourcing.domain.model.entity.search.Commission
 import project.graduation.crowd_sourcing.domain.usecase.GetSearchHomeInitDataUseCase
 import project.graduation.crowd_sourcing.domain.usecase.SearchCommissionUseCase
 import javax.inject.Inject
@@ -116,6 +115,8 @@ class SearchViewModel @Inject constructor(
         val results = mutableListOf<SearchResult>()
         
         try {
+            println("DEBUG_SEARCH: 검색 API 호출 시작 - 키워드: '$query', 카테고리: '$categoryParam', 지역: '$regionParam'")
+            
             searchCommissionUseCase(
                 searchKeyword = query,
                 category = categoryParam,
@@ -123,21 +124,38 @@ class SearchViewModel @Inject constructor(
                 sort = sortParam,
                 order = orderParam
             ).collect { commissions ->
+                println("DEBUG_SEARCH: API에서 응답 수신 - 결과 개수: ${commissions.size}")
+                
+                // 각 Commission 객체 로그 출력
+                commissions.forEachIndexed { index, commission ->
+                    println("DEBUG_SEARCH: Commission[$index] - commission: '${commission.commission}', point: ${commission.commissionpoint}, deadline: ${commission.deadline}")
+                }
+                
                 // Domain Commission 객체를 UI SearchResult 객체로 변환
                 val searchResults = commissions.map { commission -> 
                     convertCommissionToSearchResult(commission)
                 }
                 
+                // 변환된 SearchResult 로그 출력
+                searchResults.forEachIndexed { index, result ->
+                    println("DEBUG_SEARCH: SearchResult[$index] - id: '${result.id}', title: '${result.title}', reward: ${result.reward}, remainingDays: ${result.remainingDays}")
+                }
+                
+                results.clear()
                 results.addAll(searchResults)
                 
                 // UI 상태 업데이트
                 updateUiState { state ->
                     state.copy(searchResults = searchResults)
                 }
+                
+                println("DEBUG_SEARCH: 검색 결과 UI 상태 업데이트 완료 - 결과 개수: ${searchResults.size}")
             }
             
             return results
         } catch (e: Exception) {
+            println("DEBUG_SEARCH: 검색 API 호출 중 오류 발생 - ${e.message}")
+            e.printStackTrace()
             return emptyList()
         }
     }
@@ -150,27 +168,57 @@ class SearchViewModel @Inject constructor(
         val now = LocalDateTime.now()
         val deadline = commission.deadline
         
+        // 디버그 로깅 추가
+        println("DEBUG_TIME: 현재 시간: $now, 마감 시간: ${commission.deadline}")
+        println("DEBUG_TIME: 현재 시간 > 마감 시간: ${now.isAfter(deadline)}")
+        println("DEBUG_TIME: 마감 시간 > 현재 시간: ${deadline.isAfter(now)}")
+        println("DEBUG_TIME: 현재 시간 == 마감 시간: ${now.isEqual(deadline)}")
+        
         // 남은 일수 및 시간 계산
         val daysLeft = ChronoUnit.DAYS.between(now, deadline)
         val hoursLeft = ChronoUnit.HOURS.between(now, deadline)
         
-        // 남은 시간이 24시간 미만이면 시간으로, 그 이상이면 일수로 표시
-        val remainingDays = if (daysLeft < 1) {
-            // 만약 시간이 1시간 미만이면 최소 1시간으로 표시
-            if (hoursLeft < 1) 1 else hoursLeft.toInt()
-        } else {
-            daysLeft.toInt()
+        println("DEBUG_TIME: 남은 일수: $daysLeft, 남은 시간: $hoursLeft")
+        
+        // 마감 시간이 이미 지난 경우
+        if (now.isAfter(deadline)) {
+            println("DEBUG_TIME: 마감 시간이 이미 지났습니다.")
+            return SearchResult(
+                id = commission.commission,
+                title = commission.commission,
+                place = "",
+                remainingDays = 0, // 시간이 지났음을 표시하는 특별 값 (0)
+                reward = commission.commissionpoint
+            )
         }
         
-        // 시간 단위인지 일 단위인지 구분 (시간 단위 표시를 위해 음수 값 사용)
-        val timeUnit = if (daysLeft < 1) -1 else 1
-
+        // 남은 시간에 따른 표시 방식 결정
+        val (displayValue, isHourFormat) = when {
+            daysLeft > 0 -> {
+                // 하루 이상 남은 경우 일 단위로 표시
+                Pair(daysLeft.toInt(), false)
+            }
+            hoursLeft > 0 -> {
+                // 하루 미만 1시간 이상 남은 경우 시간 단위로 표시
+                Pair(hoursLeft.toInt(), true)
+            }
+            else -> {
+                // 1시간 미만 남은 경우 최소 1시간으로 표시
+                Pair(1, true)
+            }
+        }
+        
+        // 일/시간 형식을 구분하기 위해 시간 형식인 경우 음수 값 사용
+        val remainingTime = if (isHourFormat) -displayValue else displayValue
+        
+        println("DEBUG_TIME: 최종 표시 값: $remainingTime (${if (isHourFormat) "시간" else "일"} 단위)")
+        
         return SearchResult(
             id = commission.commission,
             title = commission.commission,
             place = "",
-            remainingDays = remainingDays * timeUnit, // 음수면 시간 단위, 양수면 일 단위
-            reward = commission.commissionPoint
+            remainingDays = remainingTime, // 음수면 시간 단위, 양수면 일 단위
+            reward = commission.commissionpoint
         )
     }
 

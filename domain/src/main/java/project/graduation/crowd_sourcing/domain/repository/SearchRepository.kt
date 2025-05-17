@@ -1,8 +1,8 @@
 package project.graduation.crowd_sourcing.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import project.graduation.crowd_sourcing.domain.model.entity.Commission
-import project.graduation.crowd_sourcing.domain.model.entity.SearchHome
+import project.graduation.crowd_sourcing.domain.model.entity.search.Commission
+import project.graduation.crowd_sourcing.domain.model.entity.search.SearchHome
 
 interface SearchRepository {
 //    suspend fun searchCommissions(): Flow<List<Commission>>

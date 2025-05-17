@@ -1,6 +1,6 @@
 package project.graduation.crowd_sourcing.domain.usecase
 
-import project.graduation.crowd_sourcing.domain.model.entity.Mart
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.Mart
 import project.graduation.crowd_sourcing.domain.repository.MartSearchRepository
 import javax.inject.Inject
 

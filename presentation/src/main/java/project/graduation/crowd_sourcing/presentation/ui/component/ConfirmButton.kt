@@ -10,8 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import project.graduation.crowd_sourcing.presentation.R
 
 @Composable
@@ -19,17 +17,20 @@ fun ConfirmButton(
     modifier: Modifier = Modifier,
     text: String,
     onConfirm: () -> Unit,
+    enabled: Boolean = true
 ) {
     Button(
         onClick = { onConfirm() },
         modifier = modifier.height(dimensionResource(R.dimen.height_btn)),
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.primary)),
         shape = RoundedCornerShape(dimensionResource(R.dimen.round_common)),
+        enabled = enabled
     ) {
         Text(text, color = Color.White)
     }
 }
 
+/* 
 @Preview
 @Composable
 fun ConfirmButtonPrev() {
@@ -37,3 +38,5 @@ fun ConfirmButtonPrev() {
         text = "apply"
     ) { }
 }
+
+ */

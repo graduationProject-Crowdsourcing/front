@@ -1,7 +1,7 @@
 package project.graduation.crowd_sourcing.data.repository
 
 import project.graduation.crowd_sourcing.data.service.MartSearchService
-import project.graduation.crowd_sourcing.domain.model.entity.Mart
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.Mart
 import project.graduation.crowd_sourcing.domain.repository.MartSearchRepository
 import javax.inject.Inject
 

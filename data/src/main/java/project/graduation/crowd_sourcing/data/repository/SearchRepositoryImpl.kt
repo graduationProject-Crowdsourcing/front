@@ -5,8 +5,8 @@ import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import project.graduation.crowd_sourcing.data.service.SearchService
-import project.graduation.crowd_sourcing.domain.model.entity.Commission
-import project.graduation.crowd_sourcing.domain.model.entity.SearchHome
+import project.graduation.crowd_sourcing.domain.model.entity.search.Commission
+import project.graduation.crowd_sourcing.domain.model.entity.search.SearchHome
 import project.graduation.crowd_sourcing.domain.repository.SearchRepository
 import javax.inject.Inject
 
@@ -40,7 +40,7 @@ class SearchRepositoryImpl @Inject constructor(
                 
                 // 디버깅을 위해 각 커미션 객체 출력
                 commissions.forEachIndexed { index, commission ->
-                    println("DEBUG_REPO: Commission[$index] - commission: ${commission.commission}, point: ${commission.commissionPoint}")
+                    println("DEBUG_REPO: Commission[$index] - commission: ${commission.commission}, point: ${commission.commissionpoint}")
                 }
                 
                 emit(commissions)

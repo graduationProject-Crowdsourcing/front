@@ -1,5 +1,7 @@
 package project.graduation.crowd_sourcing.data.di
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,9 +11,11 @@ import okhttp3.logging.HttpLoggingInterceptor
 import project.graduation.crowd_sourcing.data.network.AuthorizationInterceptor
 import project.graduation.crowd_sourcing.data.service.LoginService
 import project.graduation.crowd_sourcing.data.service.MartSearchService
+import project.graduation.crowd_sourcing.data.service.RequesterService
 import project.graduation.crowd_sourcing.data.service.SearchService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.Date
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -29,6 +33,13 @@ class NetworkModule {
     }
 
     @Provides
+    fun provideGson(): Gson {
+        return GsonBuilder()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            .create()
+    }
+
+    @Provides
     fun provideOkHttpClient(
         authorizationInterceptor: AuthorizationInterceptor,
         loggingInterceptor: HttpLoggingInterceptor
@@ -42,11 +53,12 @@ class NetworkModule {
     @Provides
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
+        gson: Gson
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://52.78.15.153:8080/")
+            .baseUrl("http://52.78.15.153:8112/")
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 
@@ -71,5 +83,10 @@ class NetworkModule {
         return retrofit.create(MartSearchService::class.java)
     }
 
-
+    @Provides
+    fun provideRequesterService(
+        retrofit: Retrofit
+    ): RequesterService {
+        return retrofit.create(RequesterService::class.java)
+    }
 }

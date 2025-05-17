@@ -1,4 +1,4 @@
-package project.graduation.crowd_sourcing.domain.model.entity
+package project.graduation.crowd_sourcing.domain.model.entity.search
 
 data class SearchHome(
     val regionList: List<String>,
