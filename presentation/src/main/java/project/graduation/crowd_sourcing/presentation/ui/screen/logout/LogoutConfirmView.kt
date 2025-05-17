@@ -30,7 +30,6 @@ fun LogoutConfirmView(
     viewModel: LogoutConfirmViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val context = LocalContext.current
     val logoutSuccess = viewModel.logoutSuccess
 
     if (logoutSuccess) {
@@ -46,22 +45,29 @@ fun LogoutConfirmView(
             .fillMaxSize()
             .padding(32.dp)
     ) {
-        // 가운데 텍스트
         Column(
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("로그아웃 하시겠습니까?", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        }
+            Spacer(modifier = Modifier.weight(1f))
 
-        // 하단 버튼
-        ConfirmButton(
-            text = "로그아웃",
-            onConfirm = { viewModel.logout() },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-        )
+            Text(
+                "로그아웃 하시겠습니까?",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            ConfirmButton(
+                text = "로그아웃",
+                onConfirm = { viewModel.logout() },
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
     }
 }
 

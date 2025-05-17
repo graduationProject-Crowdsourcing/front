@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -38,12 +39,22 @@ fun SubmitWorkView(
     viewModel: SubmitWorkViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     // 이미지 업로드 런처
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        viewModel.updateImage(uri)
+        uri?.let {
+            viewModel.updateImage(it)
+
+            // 선택 즉시 업로드 실행
+            viewModel.uploadImage(
+                context = context,
+                username = "worker123",          // TODO: 실제 ID
+                commissionId = uiState.workId    // 작업 ID
+            )
+        }
     }
 
     // workId가 바뀔 때마다 데이터 로드
