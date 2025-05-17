@@ -2,6 +2,10 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.view.MotionEvent
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -17,7 +21,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.dimensionResource
@@ -77,13 +84,18 @@ import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingThem
  * 5. 검색 기능
  */
 @SuppressLint("RememberReturnType")
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun HomeView() {
     val viewModel: HomeViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    //스크롤 상태
+    val scrollState = rememberScrollState()
+    // 'true'면 스크롤 잠금 → 맵만 드래그 가능
+    var isMapTouched by remember { mutableStateOf(false) }
     
     // 화면 콘텐츠 표시 여부를 제어하는 상태
     val showContent = remember { mutableStateOf(true) }
@@ -151,11 +163,30 @@ fun HomeView() {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.space_medium))
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(scrollState, enabled = !isMapTouched)
                 ) {
-                    Box {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f) // 정사각형 크기로
+                            .pointerInteropFilter { motionEvent ->
+                                when (motionEvent.actionMasked) {
+                                    MotionEvent.ACTION_DOWN -> {
+                                        isMapTouched = true
+                                    }
+                                    MotionEvent.ACTION_UP,
+                                    MotionEvent.ACTION_CANCEL -> {
+                                        isMapTouched = false
+                                    }
+                                }
+                                false // 이벤트는 그대로 내부(NaverMap)로 전달
+                            }
+                    ) {
                         // 맵 표시
-                        MapSection(isMapServiceAvailable = isMapServiceAvailable, state = state)
+                        MapSection(
+                            isMapServiceAvailable = isMapServiceAvailable,
+                            state = state
+                        )
 
                         // 현재 위치정보가 있으면 반경 버튼 표시
                         if (state.currentLocation != null) {
@@ -173,19 +204,62 @@ fun HomeView() {
                             }
                         }
                     }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .pointerInteropFilter { ev ->
+                                if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
+                                    isMapTouched = false // 터치 시 스크롤 복원
+                                }
+                                false
+                            }
+                    ){
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
 
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
+                        SearchSection(
+                            searchQuery = state.searchQuery,
+                            onSearchQueryChange = viewModel::updateSearchQuery,
+                            requests = state.requests
+                        )
 
-                    SearchSection(
-                        searchQuery = state.searchQuery,
-                        onSearchQueryChange = viewModel::updateSearchQuery,
-                        requests = state.requests
-                    )
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
 
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
+                        RequestsSection(viewModel = viewModel, state = state)
 
-                    RequestsSection(viewModel = viewModel, state = state)
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
+
+                        // 스크롤 테스트용 UI 요소
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(500.dp)
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(text = "스크롤 테스트용 요소입니다")
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(text = "여기까지 스크롤 되나요?")
+                                Spacer(modifier = Modifier.height(32.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .size(200.dp)
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(text = "테스트 박스")
+                                }
+                                Spacer(modifier = Modifier.height(32.dp))
+                                Text(text = "스크롤이 끝까지 내려갑니다")
+                            }
+                        }
+                    }
                 }
+
+
 
                 if (state.isRadiusDialogVisible) {
                     var tempRadius by remember { mutableStateOf(state.searchRadius) }
