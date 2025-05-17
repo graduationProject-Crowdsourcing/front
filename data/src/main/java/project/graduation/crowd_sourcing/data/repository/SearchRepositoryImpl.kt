@@ -2,8 +2,6 @@ package project.graduation.crowd_sourcing.data.repository
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import project.graduation.crowd_sourcing.data.service.SearchService
 import project.graduation.crowd_sourcing.domain.model.entity.search.CommissionEntity
 import project.graduation.crowd_sourcing.domain.model.entity.search.SearchHomeEntity
@@ -20,7 +18,7 @@ class SearchRepositoryImpl @Inject constructor(
         category: String,
         sort: String,
         order: String
-    ): Flow<List<CommissionEntity>> = flow {
+    ): List<CommissionEntity> {
         try {
             println("DEBUG_REPO: API 호출 시작 - 키워드: '$searchKeyword', 카테고리: '$category', 지역: '$region', 정렬: $sort $order")
             
@@ -43,12 +41,12 @@ class SearchRepositoryImpl @Inject constructor(
                     println("DEBUG_REPO: Commission[$index] - commission: ${commission.commission}, point: ${commission.commissionpoint}")
                 }
                 
-                emit(commissions)
-                println("DEBUG_REPO: 데이터 스트림으로 방출 완료")
+                println("DEBUG_REPO: 데이터 반환 완료")
+                return commissions
             } else {
                 // 에러 처리
                 println("DEBUG_REPO: API 오류 - 상태 코드: ${response.status}, 메시지: ${response.message}")
-                emit(emptyList())
+                return emptyList()
                 // 필요한 경우 예외 던지기
                 // throw Exception("API Error: ${response.message}")
             }
@@ -56,7 +54,7 @@ class SearchRepositoryImpl @Inject constructor(
             // 네트워크 오류 등의 예외 처리
             println("DEBUG_REPO: 예외 발생 - ${e.javaClass.simpleName}: ${e.message}")
             e.printStackTrace()
-            emit(emptyList())
+            return emptyList()
             // 필요한 경우 로깅이나 예외 전파
             // throw e
         }

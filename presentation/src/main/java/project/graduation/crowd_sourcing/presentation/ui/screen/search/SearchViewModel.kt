@@ -112,47 +112,43 @@ class SearchViewModel @Inject constructor(
         val orderParam = "asc"
 
         // 서버에서 데이터 가져오기
-        val results = mutableListOf<SearchResult>()
-        
         try {
             println("DEBUG_SEARCH: 검색 API 호출 시작 - 키워드: '$query', 카테고리: '$categoryParam', 지역: '$regionParam'")
             
-            searchCommissionUseCase(
+            // Flow 대신 직접 List 반환
+            val commissions = searchCommissionUseCase(
                 searchKeyword = query,
                 category = categoryParam,
                 region = regionParam,
                 sort = sortParam,
                 order = orderParam
-            ).collect { commissions ->
-                println("DEBUG_SEARCH: API에서 응답 수신 - 결과 개수: ${commissions.size}")
-                
-                // 각 Commission 객체 로그 출력
-                commissions.forEachIndexed { index, commission ->
-                    println("DEBUG_SEARCH: Commission[$index] - commission: '${commission.commission}', point: ${commission.commissionpoint}, deadline: ${commission.deadline}")
-                }
-                
-                // Domain Commission 객체를 UI SearchResult 객체로 변환
-                val searchResults = commissions.map { commission -> 
-                    convertCommissionToSearchResult(commission)
-                }
-                
-                // 변환된 SearchResult 로그 출력
-                searchResults.forEachIndexed { index, result ->
-                    println("DEBUG_SEARCH: SearchResult[$index] - id: '${result.id}', title: '${result.title}', reward: ${result.reward}, remainingDays: ${result.remainingDays}")
-                }
-                
-                results.clear()
-                results.addAll(searchResults)
-                
-                // UI 상태 업데이트
-                updateUiState { state ->
-                    state.copy(searchResults = searchResults)
-                }
-                
-                println("DEBUG_SEARCH: 검색 결과 UI 상태 업데이트 완료 - 결과 개수: ${searchResults.size}")
+            )
+            
+            println("DEBUG_SEARCH: API에서 응답 수신 - 결과 개수: ${commissions.size}")
+            
+            // 각 Commission 객체 로그 출력
+            commissions.forEachIndexed { index, commission ->
+                println("DEBUG_SEARCH: Commission[$index] - commission: '${commission.commission}', point: ${commission.commissionpoint}, deadline: ${commission.deadline}")
             }
             
-            return results
+            // Domain Commission 객체를 UI SearchResult 객체로 변환
+            val searchResults = commissions.map { commission -> 
+                convertCommissionToSearchResult(commission)
+            }
+            
+            // 변환된 SearchResult 로그 출력
+            searchResults.forEachIndexed { index, result ->
+                println("DEBUG_SEARCH: SearchResult[$index] - id: '${result.id}', title: '${result.title}', reward: ${result.reward}, remainingDays: ${result.remainingDays}")
+            }
+            
+            // UI 상태 업데이트
+            updateUiState { state ->
+                state.copy(searchResults = searchResults)
+            }
+            
+            println("DEBUG_SEARCH: 검색 결과 UI 상태 업데이트 완료 - 결과 개수: ${searchResults.size}")
+            
+            return searchResults
         } catch (e: Exception) {
             println("DEBUG_SEARCH: 검색 API 호출 중 오류 발생 - ${e.message}")
             e.printStackTrace()
