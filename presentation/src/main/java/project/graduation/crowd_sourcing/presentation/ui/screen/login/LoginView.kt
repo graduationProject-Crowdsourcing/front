@@ -64,11 +64,11 @@ fun LoginScreenContent(
 
         Spacer(modifier = Modifier.height(100.dp))
 
-        Text(text = "User Name", fontWeight = FontWeight.Bold)
+        Text(text = "ID", fontWeight = FontWeight.Bold)
         EditTextBox(
             value = state.email,
             onValueChange = onEmailChange,
-            placeHolder = "User Name"
+            placeHolder = "ID"
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
 

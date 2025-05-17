@@ -34,7 +34,6 @@ class AuthorizationInterceptor @Inject constructor(
             if (refreshToken != null) {
                 val refreshResult: Result<Pair<String, String>> = runBlocking {
                     try {
-                        // ✅ 여기서 Retrofit을 직접 생성해서 사용!
                         val retrofit = Retrofit.Builder()
                             .baseUrl("http://52.78.15.153:8112/")
                             .addConverterFactory(GsonConverterFactory.create())

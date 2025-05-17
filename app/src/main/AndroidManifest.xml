@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CrowdSourcing"
-        android:name=".HiltApplication">
+        android:name=".HiltApplication"
+        android:networkSecurityConfig="@xml/network_security_config">
         <!-- Google Maps API 키 설정 -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
