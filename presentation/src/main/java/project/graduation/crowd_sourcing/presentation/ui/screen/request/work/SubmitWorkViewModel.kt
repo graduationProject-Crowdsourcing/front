@@ -24,13 +24,8 @@ class SubmitWorkViewModel @Inject constructor(
     val uiState: StateFlow<SubmitWorkUiState> = _uiState
 
     fun loadWorkInfo(workId: String) {
-        val work = WorkRepository.getWorkById(workId)
-        _uiState.value = SubmitWorkUiState(
-            workId = workId,
-            title = work?.title.orEmpty(),
-            place = work?.place.orEmpty(),
-            reward = work?.reward ?: 0,
-        )
+        // TODO: 추후 작업 상세 API 연동 예정
+        _uiState.value = _uiState.value.copy(workId = workId)
     }
 
     fun updatePrice(price: String) {
@@ -60,7 +55,9 @@ class SubmitWorkViewModel @Inject constructor(
     fun uploadImage(context: Context, username: String, commissionId: String) {
         val uri = _uiState.value.imageUri ?: return
         val file = FileUtil.from(context, uri)
-        val directoryPath = "$username/${commissionId}_${System.currentTimeMillis()}.jpg"
+
+        val fileName = "${username}_${System.currentTimeMillis()}.jpg"
+        val directoryPath = "images/$fileName"
 
         viewModelScope.launch {
             val uploadResult = uploadImageUseCase(username, directoryPath, file)

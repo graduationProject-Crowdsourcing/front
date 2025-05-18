@@ -12,6 +12,7 @@ import project.graduation.crowd_sourcing.data.service.LoginService
 import project.graduation.crowd_sourcing.data.service.MyService
 import project.graduation.crowd_sourcing.data.service.StatisticsService
 import project.graduation.crowd_sourcing.data.service.UserPointService
+import project.graduation.crowd_sourcing.data.service.WorkService
 import project.graduation.crowd_sourcing.domain.usecase.RefreshTokenUseCase
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -76,5 +77,12 @@ class NetworkModule {
         retrofit: Retrofit
     ): StatisticsService {
         return retrofit.create(StatisticsService::class.java)
+    }
+
+    @Provides
+    fun provideWorkService(
+        retrofit: Retrofit
+    ): WorkService {
+        return retrofit.create(WorkService::class.java)
     }
 }

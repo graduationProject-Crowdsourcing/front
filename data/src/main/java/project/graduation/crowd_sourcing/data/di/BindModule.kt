@@ -41,6 +41,6 @@ abstract class BindModule {
 
     @Binds
     abstract fun bindWorkRepository(
-        impl: WorkRepositoryImpl
+        repository: WorkRepositoryImpl
     ): WorkRepository
 }
