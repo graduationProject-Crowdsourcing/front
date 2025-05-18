@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.login
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -54,6 +55,8 @@ class LoginViewModel @Inject constructor(
                         refreshToken = it.refreshToken,
                         userId = it.id
                     )
+                    Log.d("Login", "🔐 저장된 accessToken = ${it.accessToken}")
+
                 }
                 .onFailure {
                     // 로그인 실패 시

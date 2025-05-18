@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.data.repository
 
+import project.graduation.crowd_sourcing.data.local.TokenManager
 import project.graduation.crowd_sourcing.data.mapper.login.toEntity
 import project.graduation.crowd_sourcing.data.request.LoginRequest
 import project.graduation.crowd_sourcing.data.request.RefreshTokenRequest
@@ -33,18 +34,16 @@ class LoginRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun logout(): Result<Unit> {
+    override suspend fun logout(accessToken: String): Result<Unit> {
         return try {
-            val response = loginService.logout()
-            if (response.isSuccessful) {
-                Result.success(Unit)
-            } else {
-                Result.failure(Exception("로그아웃 실패: ${response.code()}"))
-            }
+            val response = loginService.logout("Bearer $accessToken")
+            if (response.isSuccessful) Result.success(Unit)
+            else Result.failure(Exception("로그아웃 실패: ${response.code()}"))
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
+
 
     override suspend fun refreshToken(refreshToken: String): Result<Pair<String, String>> {
         return try {

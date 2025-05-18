@@ -9,6 +9,7 @@ import project.graduation.crowd_sourcing.data.response.login.SignUpResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface LoginService {
@@ -24,6 +25,9 @@ interface LoginService {
     ): retrofit2.Response<RefreshTokenResponse>
 
     @DELETE("/api/v1/accounts/logout")
-    suspend fun logout(): Response<Unit>
+    suspend fun logout(
+        @Header("Authorization") accessToken: String
+    ): Response<Void>
+
 
 }

@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.logout
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -22,13 +23,16 @@ class LogoutConfirmViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            logoutUseCase()
+            val accessToken = tokenManager.getAccessToken()
+            Log.d("Logout", "🔑 accessToken = $accessToken")
+
+            logoutUseCase(accessToken ?: "")
                 .onSuccess {
-                    tokenManager.clear() // 토큰 초기화
-                    logoutSuccess = true // 성공 여부 갱신
+                    tokenManager.clear()
+                    logoutSuccess = true
                 }
                 .onFailure {
-                    // TODO : 실패 처리 시 추가 로직
+                    Log.e("Logout", "❌ 로그아웃 실패: ${it.message}")
                 }
         }
     }
