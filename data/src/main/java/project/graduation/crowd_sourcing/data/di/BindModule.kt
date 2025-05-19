@@ -10,11 +10,13 @@ import project.graduation.crowd_sourcing.data.repository.StatisticsRepositoryImp
 import project.graduation.crowd_sourcing.data.repository.UserPointRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.WorkRepositoryImpl
 import project.graduation.crowd_sourcing.domain.model.entity.userpoint.UserPointHistoryEntity
+import project.graduation.crowd_sourcing.data.repository.WorkerRepositoryImpl
 import project.graduation.crowd_sourcing.domain.repository.LoginRepository
 import project.graduation.crowd_sourcing.domain.repository.MyRepository
 import project.graduation.crowd_sourcing.domain.repository.StatisticsRepository
 import project.graduation.crowd_sourcing.domain.repository.UserPointRepository
 import project.graduation.crowd_sourcing.domain.repository.WorkRepository
+import project.graduation.crowd_sourcing.domain.repository.WorkerRepository
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -43,4 +45,9 @@ abstract class BindModule {
     abstract fun bindWorkRepository(
         repository: WorkRepositoryImpl
     ): WorkRepository
+
+    @Binds
+    abstract fun bindWorkerRepository(
+        repository: WorkerRepositoryImpl
+    ): WorkerRepository
 }
