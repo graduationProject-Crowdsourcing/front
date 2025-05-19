@@ -6,7 +6,7 @@ import okhttp3.Response
 
 class AuthorizationInterceptor: Interceptor {
     // 실제 Bearer 토큰 입력 : 추후 로그인 기능 구현되면 바꿔야함
-    private val accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwidG9rZW5UeXBlIjoiQUNDRVNTIiwibWVtYmVyUm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0NzYyNzE0OSwiZXhwIjoxNzQ3NjI4OTQ5fQ.hA2qumgjkM1dFFkr_IbIeEWfZgsvHZHPAh9LukMouF0"
+    private val accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwidG9rZW5UeXBlIjoiQUNDRVNTIiwibWVtYmVyUm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0NzYzMzU5MywiZXhwIjoxNzQ3NjM1MzkzfQ.p1iwajAdq0oaDEFY7T5_dymWYYSeTrkPampilX1arZs"
     
     override fun intercept(
         chain: Interceptor.Chain

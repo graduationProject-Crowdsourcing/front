@@ -31,7 +31,11 @@ class NetworkModule {
 
     @Provides
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().apply {
+        return HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+            override fun log(message: String) {
+                android.util.Log.d("API_LOG", message)
+            }
+        }).apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
     }
@@ -40,6 +44,30 @@ class NetworkModule {
     fun provideGson(): Gson {
         return GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            .setLenient()
+            .registerTypeAdapter(
+                java.time.LocalDateTime::class.java,
+                object : com.google.gson.JsonDeserializer<java.time.LocalDateTime> {
+                    override fun deserialize(
+                        json: com.google.gson.JsonElement,
+                        typeOfT: java.lang.reflect.Type,
+                        context: com.google.gson.JsonDeserializationContext
+                    ): java.time.LocalDateTime {
+                        try {
+                            val dateString = json.asString
+                            android.util.Log.d("DateConverter", "JSON 날짜 문자열: $dateString")
+                            return java.time.LocalDateTime.parse(
+                                dateString.replace("+00:00", "Z"),
+                                java.time.format.DateTimeFormatter.ISO_DATE_TIME
+                            )
+                        } catch (e: Exception) {
+                            android.util.Log.e("DateConverter", "날짜 변환 오류: ${e.message}")
+                            e.printStackTrace()
+                            return java.time.LocalDateTime.now()
+                        }
+                    }
+                }
+            )
             .create()
     }
 
