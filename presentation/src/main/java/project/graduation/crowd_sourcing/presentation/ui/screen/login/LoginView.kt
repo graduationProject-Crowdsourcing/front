@@ -64,11 +64,11 @@ fun LoginScreenContent(
 
         Spacer(modifier = Modifier.height(100.dp))
 
-        Text(text = "Email", fontWeight = FontWeight.Bold)
+        Text(text = "ID", fontWeight = FontWeight.Bold)
         EditTextBox(
             value = state.email,
             onValueChange = onEmailChange,
-            placeHolder = "Email"
+            placeHolder = "ID"
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
 
@@ -147,6 +147,7 @@ fun LoginView(navController: NavHostController) {
                     .padding(16.dp)
             ) {
                 SignUpView(
+                    viewModel = viewModel,
                     onSignUpSuccess = {
                         viewModel.onSignUpSuccess()
                         Toast.makeText(context, "회원가입 완료!", Toast.LENGTH_SHORT).show()

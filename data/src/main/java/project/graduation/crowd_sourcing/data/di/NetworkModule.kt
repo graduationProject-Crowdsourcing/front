@@ -6,11 +6,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import project.graduation.crowd_sourcing.data.local.TokenManager
 import project.graduation.crowd_sourcing.data.network.AuthorizationInterceptor
 import project.graduation.crowd_sourcing.data.service.LoginService
 import project.graduation.crowd_sourcing.data.service.MyService
 import project.graduation.crowd_sourcing.data.service.StatisticsService
 import project.graduation.crowd_sourcing.data.service.UserPointService
+import project.graduation.crowd_sourcing.data.service.WorkService
 import project.graduation.crowd_sourcing.data.service.WorkerService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,9 +21,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Module
 class NetworkModule {
     @Provides
-    fun provideAuthorizationInterceptor(): AuthorizationInterceptor {
-        return AuthorizationInterceptor()
+    fun provideAuthorizationInterceptor(
+        tokenManager: TokenManager,
+    ): AuthorizationInterceptor {
+        return AuthorizationInterceptor(tokenManager)
     }
+
 
     @Provides
     fun provideOkHttpClient(
@@ -40,7 +45,7 @@ class NetworkModule {
         okHttpClient: OkHttpClient,
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://52.78.15.153:8080")
+            .baseUrl("http://52.78.15.153:8112/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -72,6 +77,13 @@ class NetworkModule {
         retrofit: Retrofit
     ): StatisticsService {
         return retrofit.create(StatisticsService::class.java)
+    }
+
+    @Provides
+    fun provideWorkService(
+        retrofit: Retrofit
+    ): WorkService {
+        return retrofit.create(WorkService::class.java)
     }
 
     @Provides

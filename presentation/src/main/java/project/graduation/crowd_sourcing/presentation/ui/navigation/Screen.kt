@@ -5,6 +5,8 @@ import project.graduation.crowd_sourcing.presentation.R
 
 sealed class Screen(val title: String, val route: String) {
     data object LoginScreen : Screen(title = "Login", route = "login")
+    data object LogoutConfirmScreen : Screen(title = "로그아웃 확인", route = "logout_confirm")
+
     data object NotificationScreen : Screen(title = "알림", route = "notification")
 
     // 의뢰 작성 관련 화면
@@ -77,6 +79,8 @@ sealed class Screen(val title: String, val route: String) {
         fun fromRoute(route: String?): Screen {
             return when (route) {
                 LoginScreen.route -> LoginScreen
+                LogoutConfirmScreen.route -> LogoutConfirmScreen
+
                 NotificationScreen.route -> NotificationScreen
 
                 RequestFormScreen.route -> RequestFormScreen
