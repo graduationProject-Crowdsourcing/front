@@ -1,26 +1,32 @@
 package project.graduation.crowd_sourcing.presentation.utils
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-fun getTimeAgo(date: Date): String {
-    val now = System.currentTimeMillis()
-    val time = date.time
-    val diff = now - time
+@RequiresApi(Build.VERSION_CODES.O)
+fun getTimeAgo(date: LocalDateTime): String {
+    val now = LocalDateTime.now()
+    val minutes = ChronoUnit.MINUTES.between(date, now)
+    val hours = ChronoUnit.HOURS.between(date, now)
+    val days = ChronoUnit.DAYS.between(date, now)
 
     return when {
-        diff < TimeUnit.MINUTES.toMillis(1) -> "방금 전"
-        diff < TimeUnit.HOURS.toMillis(1) -> "${TimeUnit.MILLISECONDS.toMinutes(diff)}분 전"
-        diff < TimeUnit.DAYS.toMillis(1) -> "${TimeUnit.MILLISECONDS.toHours(diff)}시간 전"
-        diff < TimeUnit.DAYS.toMillis(7) -> "${TimeUnit.MILLISECONDS.toDays(diff)}일 전"
-        else -> SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(date)
+        minutes < 1 -> "방금 전"
+        minutes < 60 -> "${minutes}분 전"
+        hours < 24 -> "${hours}시간 전"
+        days < 7 -> "${days}일 전"
+        else -> date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
     }
 }
 
-val calendar = Calendar.getInstance().apply {
-    add(Calendar.DAY_OF_YEAR, -2) // 2일 전 날짜
-}
-val twoDaysAgo = calendar.time
+
+@RequiresApi(Build.VERSION_CODES.O)
+val twoDaysAgo = LocalDateTime.now().minusDays(2)

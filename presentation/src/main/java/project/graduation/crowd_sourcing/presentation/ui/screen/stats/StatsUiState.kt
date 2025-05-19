@@ -1,26 +1,29 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.stats
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import project.graduation.crowd_sourcing.presentation.utils.twoDaysAgo
-import java.util.Date
+import java.time.LocalDateTime
 
-data class StatsUiState (
+data class StatsUiState(
     val requestRegion: String,
-    val requestStartDate: Date,
-    val requestCompleteDate: Date,
+    val requestStartDate: LocalDateTime,
+    val requestCompleteDate: LocalDateTime,
     val requestProduct: String,
     val dataList: List<StatsListItem>,
     val type: StatsType
-    ){
+) {
     data class StatsListItem(
         val name: String,
         val price: Int
     )
 
-    companion object{
+    companion object {
+        @RequiresApi(Build.VERSION_CODES.O)
         fun test() = StatsUiState(
             requestRegion = "강남구",
             requestStartDate = twoDaysAgo,
-            requestCompleteDate = Date(),
+            requestCompleteDate = LocalDateTime.now(),
             requestProduct = "라면",
             dataList = listOf(
                 StatsListItem(name = "a mart", price = 200),
@@ -33,6 +36,6 @@ data class StatsUiState (
     }
 }
 
-enum class StatsType{
+enum class StatsType {
     MART, PRODUCT
 }

@@ -34,20 +34,15 @@ fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
             style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp)
         )
 
-        myUiState.recentWork.forEachIndexed { index, work ->
-            work.run {
-                CommonListItem(
-                    CommonListItemData(
-                        mainText = name,
-                        subText = getTimeAgo(date),
-                        icon = R.drawable.ic_list_box,
-                        onClick = {}
-                    )
+        myUiState.recentWork.run {
+            CommonListItem(
+                CommonListItemData(
+                    mainText = name,
+                    subText = getTimeAgo(date),
+                    icon = R.drawable.ic_list_box,
+                    onClick = {}
                 )
-                if (index < myUiState.recentWork.size - 1) {
-                    GrayDivider(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.space_small)))
-                }
-            }
+            )
         }
 
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_small)))
@@ -57,21 +52,15 @@ fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
             style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp)
         )
 
-        myUiState.recentRequest.forEachIndexed { index, request ->
-            request.run {
-                CommonListItem(
-                    CommonListItemData(
-                        mainText = name,
-                        subText = getTimeAgo(date),
-                        icon = R.drawable.ic_list_box,
-                        onClick = { navController.navigate(Screen.DetailStatsScreen.route) }
-                    )
+        myUiState.recentRequest.run {
+            CommonListItem(
+                CommonListItemData(
+                    mainText = name,
+                    subText = getTimeAgo(date),
+                    icon = R.drawable.ic_list_box,
+                    onClick = { navController.navigate(Screen.DetailStatsScreen.route) }
                 )
-
-                if (index < myUiState.recentWork.size - 1) {
-                    GrayDivider(Modifier.padding(horizontal = dimensionResource(R.dimen.space_small)))
-                }
-            }
+            )
         }
     }
 }

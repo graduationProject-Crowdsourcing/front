@@ -13,6 +13,10 @@ import project.graduation.crowd_sourcing.data.service.LoginService
 import project.graduation.crowd_sourcing.data.service.MartSearchService
 import project.graduation.crowd_sourcing.data.service.RequesterService
 import project.graduation.crowd_sourcing.data.service.SearchService
+import project.graduation.crowd_sourcing.data.service.MyService
+import project.graduation.crowd_sourcing.data.service.StatisticsService
+import project.graduation.crowd_sourcing.data.service.UserPointService
+import project.graduation.crowd_sourcing.data.service.WorkerService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Date
@@ -65,7 +69,7 @@ class NetworkModule {
     @Provides
     fun provideLoginService(
         retrofit: Retrofit
-    ): LoginService{
+    ): LoginService {
         return retrofit.create(LoginService::class.java)
     }
 
@@ -88,5 +92,30 @@ class NetworkModule {
         retrofit: Retrofit
     ): RequesterService {
         return retrofit.create(RequesterService::class.java)
+    fun provideMyService(
+        retrofit: Retrofit
+    ): MyService {
+        return retrofit.create(MyService::class.java)
+    }
+
+    @Provides
+    fun provideUserPointService(
+        retrofit: Retrofit
+    ): UserPointService {
+        return retrofit.create(UserPointService::class.java)
+    }
+
+    @Provides
+    fun provideStatisticsService(
+        retrofit: Retrofit
+    ): StatisticsService {
+        return retrofit.create(StatisticsService::class.java)
+    }
+
+    @Provides
+    fun provideWorkerService(
+        retrofit: Retrofit
+    ): WorkerService {
+        return retrofit.create(WorkerService::class.java)
     }
 }

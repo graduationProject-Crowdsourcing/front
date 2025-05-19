@@ -5,8 +5,8 @@ import okhttp3.Response
 
 
 class AuthorizationInterceptor: Interceptor {
-    // 실제 Bearer 토큰 입력
-    private val testToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwidG9rZW5UeXBlIjoiQUNDRVNTIiwibWVtYmVyUm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0NzQ5MTgwNSwiZXhwIjoxNzQ3NDkzNjA1fQ.VYilzxZvg2bp_xtMs_0RxRB8VonbSPhWqcU-6ISAtX4"
+    // 실제 Bearer 토큰 입력 : 추후 로그인 기능 구현되면 바꿔야함
+    private val accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwidG9rZW5UeXBlIjoiQUNDRVNTIiwibWVtYmVyUm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0NzQ5MTgwNSwiZXhwIjoxNzQ3NDkzNjA1fQ.VYilzxZvg2bp_xtMs_0RxRB8VonbSPhWqcU-6ISAtX4"
     
     override fun intercept(
         chain: Interceptor.Chain
@@ -16,7 +16,7 @@ class AuthorizationInterceptor: Interceptor {
         
         // 기존 요청에 Authorization 헤더 추가
         val newRequest = originalRequest.newBuilder()
-            .header("Authorization", testToken)  // header로 변경 (기존 헤더 덮어쓰기)
+            .header("Authorization", "Bearer ${accessToken}")  // header로 변경 (기존 헤더 덮어쓰기)
             .header("accept", "*/*")             // Accept 헤더 추가
             .build()
         
