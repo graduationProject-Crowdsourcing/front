@@ -11,18 +11,31 @@ import project.graduation.crowd_sourcing.domain.repository.LoginRepository
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor(
-    private val loginService: LoginService
+    private val loginService: LoginService,
+    private val tokenManager: TokenManager
 ) : LoginRepository {
 
     override suspend fun login(username: String, password: String): Result<LoginEntity> {
         return try {
-            val request = LoginRequest(username, password)
-            val response = loginService.login(request)
-            Result.success(response.toEntity())
+            val response = loginService.login(LoginRequest(username, password))
+            val token = response.headers()["authorization"]?.removePrefix("Bearer")
+            val loginResponse = response.body()
+
+            if (response.isSuccessful && token != null && loginResponse != null) {
+                tokenManager.save(
+                    accessToken = token.trim(),
+                    refreshToken = "",
+                    userId = loginResponse.data.id
+                )
+                Result.success(loginResponse.toEntity())
+            } else {
+                Result.failure(Exception("로그인 실패: ${response.code()}"))
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
+
 
     override suspend fun signUp(username: String, password: String, nickname: String): Result<String> {
         return try {

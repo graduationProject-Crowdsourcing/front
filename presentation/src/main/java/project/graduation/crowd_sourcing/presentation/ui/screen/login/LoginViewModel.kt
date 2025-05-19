@@ -48,13 +48,8 @@ class LoginViewModel @Inject constructor(
 
             loginUseCase(_uiState.value.email, _uiState.value.password)
                 .onSuccess {
-                    // 로그인 성공 시
                     isLoginSuccess = true
-                    tokenManager.save(
-                        accessToken = it.accessToken,
-                        refreshToken = it.refreshToken,
-                        userId = it.id
-                    )
+
                     Log.d("Login", "🔐 저장된 accessToken = ${it.accessToken}")
 
                 }
