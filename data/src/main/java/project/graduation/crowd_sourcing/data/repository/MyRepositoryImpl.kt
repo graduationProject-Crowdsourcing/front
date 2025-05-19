@@ -12,7 +12,6 @@ import javax.inject.Inject
 class MyRepositoryImpl @Inject constructor(
     private val myService: MyService
 ) : MyRepository {
-
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getRecentWork(userId: Int): Result<RecentWorkEntity> {
         return try {

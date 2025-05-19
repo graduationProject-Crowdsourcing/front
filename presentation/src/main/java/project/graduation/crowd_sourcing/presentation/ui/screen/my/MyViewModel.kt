@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyViewModel @Inject constructor(
     private val myUseCase: MyUseCase,
-    private val historyUseCase: HistoryUseCase
+    private val historyUseCase: HistoryUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MyUiState.init())
     val uiState = _uiState.asStateFlow()

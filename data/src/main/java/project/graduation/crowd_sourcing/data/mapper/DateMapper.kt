@@ -15,3 +15,7 @@ fun stringToDate(isoString: String): LocalDateTime {
         LocalDateTime.now()
     }
 }
+
+fun dateToString(dateTime: LocalDateTime): String{
+    return "nn"
+}
