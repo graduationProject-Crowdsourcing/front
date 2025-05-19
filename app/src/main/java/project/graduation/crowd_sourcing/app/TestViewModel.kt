@@ -38,7 +38,7 @@ class TestViewModel @Inject constructor(
         Log.d("token",tokenManager.getAccessToken().toString())
     }
 
-    fun testMy() = viewModelScope.launch { // 403 error
+    fun testMy() = viewModelScope.launch { //
         myRepository.getRecentWork(userId)
         myRepository.getRecentCommission(userId)
     }
@@ -92,11 +92,11 @@ class TestViewModel @Inject constructor(
     }
 
     fun testUserPointHistory() = viewModelScope.launch { // ok
-//        userPointHistoryRepository.getUserPointHistory(userId)
+        userPointHistoryRepository.getUserPointHistory(userId)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun testWorker() = viewModelScope.launch { // ok
+    fun testWorker() = viewModelScope.launch { //
         workerRepository.run {
 //            postWork(
 //                work = "test",
@@ -118,8 +118,13 @@ class TestViewModel @Inject constructor(
 //            getWorkerHour(username)
 //
 //            getWorkHistory(username, WorkStatus.COMPLETED)
-//
-//            getWorkMost(username)
+
+            getWorkMost(username) //
+                .onSuccess {
+                    Log.d("work", "$it")
+                }.onFailure {
+                    Log.e("ork", "$it")
+                }
         }
     }
 }

@@ -59,7 +59,11 @@ fun TestServer() {
     fun testWorker(){
         testViewModel.testWorker()
     }
-//    testMy() // 체크중
-    testStatistics() //체크중
+
+    testMy()
+//    testUserPointHistory()
+//    testMy()
+//    testStatistics()
+//    testWorker()
 
 }
