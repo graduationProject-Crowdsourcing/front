@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.domain.model.entity.requester
 
+import java.time.LocalDateTime
 import java.util.Date
 
 /**
@@ -11,7 +12,7 @@ data class RequestStatusEntity(
     val commissionCount: Int,
     val commissionPoint: Int,
     val commissionRegion: String,
-    val commissionDate: Date,
+    val commissionDate: LocalDateTime,
     val commissionStatus: String,
     val memberId: Int
 ) 

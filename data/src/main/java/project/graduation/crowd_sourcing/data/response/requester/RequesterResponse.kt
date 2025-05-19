@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.data.response.requester
 
+import java.time.LocalDateTime
 import java.util.Date
 
 /**
@@ -23,7 +24,7 @@ data class RequestStatusDto(
     val commissionCount: Int,
     val commissionPoint: Int,
     val commissionRegion: String,
-    val commissionDate: Date,
+    val commissionDate: LocalDateTime,
     val commissionStatus: String,
     val memberId: Int
 )
@@ -67,7 +68,7 @@ data class RequestHistoryDto(
     val commissionPoint: Int,
     val category: String,
     val commissionRegion: String,
-    val commissionDate: Date,
+    val commissionDate: LocalDateTime,
     val commissionStatus: String,
     val memberId: Int
 ) 

@@ -92,11 +92,15 @@ class NetworkModule {
         retrofit: Retrofit
     ): RequesterService {
         return retrofit.create(RequesterService::class.java)
+    }
+
+    @Provides
     fun provideMyService(
         retrofit: Retrofit
     ): MyService {
         return retrofit.create(MyService::class.java)
     }
+
 
     @Provides
     fun provideUserPointService(
