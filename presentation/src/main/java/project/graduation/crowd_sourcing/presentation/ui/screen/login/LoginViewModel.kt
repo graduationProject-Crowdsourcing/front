@@ -48,7 +48,7 @@ class LoginViewModel @Inject constructor(
                 .onSuccess {
                     isLoginSuccess = true
 
-                    Log.d("Login", "🔐 저장된 accessToken = ${it.accessToken}")
+                    Log.d("Login", "🔐 저장된 accessToken = ${tokenManager.getAccessToken()}")
 
                 }
                 .onFailure {
