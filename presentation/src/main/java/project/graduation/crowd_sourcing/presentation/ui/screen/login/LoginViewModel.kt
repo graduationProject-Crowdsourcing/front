@@ -12,14 +12,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.data.local.TokenManager
-import project.graduation.crowd_sourcing.domain.usecase.LoginUseCase
-import project.graduation.crowd_sourcing.domain.usecase.SignUpUseCase
+import project.graduation.crowd_sourcing.domain.usecase.MemberUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase,
-    private val signUpUseCase: SignUpUseCase,
+    private val memberUseCase: MemberUseCase,
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
@@ -46,7 +44,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(errorMessage = null)
 
-            loginUseCase(_uiState.value.email, _uiState.value.password)
+            memberUseCase.login(_uiState.value.email, _uiState.value.password)
                 .onSuccess {
                     isLoginSuccess = true
 
@@ -67,7 +65,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(errorMessage = null)
 
-            signUpUseCase(username, password, nickname)
+            memberUseCase.signUp(username, password, nickname)
                 .onSuccess {
                     isSignUpCompleted = true
                     _uiState.value = _uiState.value.copy(errorMessage = null)
