@@ -9,10 +9,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.TabRequestButton
@@ -48,6 +46,7 @@ fun TabRequestView(
     }
 }
 
+/*
 @Composable
 @Preview(showBackground = true)
 fun RequestViewPreview() {
@@ -55,4 +54,5 @@ fun RequestViewPreview() {
 
     TabRequestView(navController = navController)
 }
+*/
 

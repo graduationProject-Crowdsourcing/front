@@ -3,6 +3,7 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.home
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +15,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
+import project.graduation.crowd_sourcing.domain.usecase.MartSearchUseCase
 import javax.inject.Inject
+import kotlin.math.*
 
 // TODO: Domain Layer 구현 필요
 // 1. UseCase 주입 및 사용
@@ -47,12 +51,26 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val martSearchUseCase: MartSearchUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
+    private val _nearbyMarts = MutableStateFlow<List<MartEntity>>(emptyList())
+    val nearbyMarts: StateFlow<List<MartEntity>> = _nearbyMarts.asStateFlow()
+    
+    // 위치 정보 캐싱을 위한 변수
+    private var lastLat: Double? = null
+    private var lastLng: Double? = null
+    private var lastRadius: Int? = null
+    
+    // 마트 데이터 캐싱을 위한 변수 추가
+    private var cachedMartEntities: List<MartEntity> = emptyList()
+    
     companion object {
+        private const val TAG = "HomeViewModel"
+        
         /**
          * 테스트용 더미 의뢰 데이터
          * Domain 계층 구현 시 실제 데이터로 교체 필요
@@ -93,11 +111,31 @@ class HomeViewModel @Inject constructor(
                 
                 fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                     location?.let {
-                        updateCurrentLocation(it.latitude, it.longitude)
+                        val latitude = it.latitude
+                        val longitude = it.longitude
+                        
+                        Log.d(TAG, "현재 위치: $latitude, $longitude")
+                        
+                        // 위치가 변경된 경우에만 업데이트 및 마트 검색
+                        if (lastLat != latitude || lastLng != longitude) {
+                            lastLat = latitude
+                            lastLng = longitude
+                            
+                            Log.d(TAG, "위치 변경됨: 새로운 위치로 업데이트")
+                            updateCurrentLocation(latitude, longitude)
+                            
+                            // 현재 반경 값으로 주변 마트 검색
+                            val currentState = _uiState.value as? HomeUiState.Success
+                            val radius = (currentState?.searchRadius ?: 0.1f).coerceIn(0.1f, 0.5f)
+                            searchNearbyMarts(latitude, longitude, radius)
+                        } else {
+                            Log.d(TAG, "위치 변경 없음: 마트 검색 스킵")
+                        }
                     }
                 }
             }
         } catch (e: Exception) {
+            Log.e(TAG, "위치 정보 오류: ${e.message}", e)
             _uiState.update { 
                 HomeUiState.Error("위치 정보를 가져오는데 실패했습니다: ${e.message}")
             }
@@ -113,15 +151,88 @@ class HomeViewModel @Inject constructor(
             try {
                 _uiState.update { 
                     HomeUiState.Success(
-                        requests = DUMMY_REQUESTS
+                        requests = emptyList()
                     )
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "초기 데이터 로드 오류: ${e.message}", e)
                 _uiState.update { 
                     HomeUiState.Error("데이터를 불러오는데 실패했습니다: ${e.message}")
                 }
             }
         }
+    }
+
+    private fun searchNearbyMarts(lat: Double, lng: Double, searchRadius: Float? = null) {
+        viewModelScope.launch {
+            try {
+                val currentState = _uiState.value as? HomeUiState.Success ?: return@launch
+                val radiusInKm = (searchRadius ?: currentState.searchRadius).coerceIn(0.1f, 0.5f)
+                val radiusInMeters = (radiusInKm * 1000).toInt()
+                
+                // 위치가 변경된 경우에만 새로운 API 호출
+                val shouldRefreshData = lastLat != lat || lastLng != lng || cachedMartEntities.isEmpty()
+                
+                if (shouldRefreshData) {
+                    Log.d(TAG, "위치 변경 또는 최초 로드: 새로운 마트 데이터 요청 ($lat, $lng)")
+                    
+                    // 위치 정보 캐싱
+                    lastLat = lat
+                    lastLng = lng
+                    
+                    // 서버에 고정 반경(500m)으로 API 요청
+                    val apiRadius = 500
+                    try {
+                        val marts = martSearchUseCase.searchMartByLocation(lat, lng, apiRadius)
+                        Log.d(TAG, "API 응답: ${marts.size}개 마트 로드 성공")
+                        
+                        // 마트 데이터 캐싱
+                        cachedMartEntities = marts
+                    } catch (e: Exception) {
+                        Log.e(TAG, "API 호출 실패: ${e.message}", e)
+                        // API 호출 실패 시 캐시된 데이터 유지
+                    }
+                } else {
+                    Log.d(TAG, "캐시된 마트 데이터 사용 (마트 ${cachedMartEntities.size}개)")
+                }
+                
+                // 반경은 변경되었을 수 있으므로 매번 필터링
+                val filteredMarts = cachedMartEntities.filter { mart ->
+                    val distance = distanceInMeters(lat, lng, mart.lat, mart.lng)
+                    val inRadius = distance <= radiusInMeters
+                    Log.d(TAG, "마트: ${mart.martName}, 거리: ${distance.toInt()}m, " +
+                          "설정반경: ${radiusInMeters}m, 포함여부: $inRadius")
+                    inRadius
+                }
+                
+                Log.d(TAG, "필터링 결과: ${cachedMartEntities.size}개 중 ${filteredMarts.size}개 " +
+                         "(설정 반경: ${radiusInMeters}m 이내만 표시)")
+                
+                // 필터링 결과 상태 업데이트
+                _uiState.update { currentState ->
+                    when (currentState) {
+                        is HomeUiState.Success -> currentState.copy(nearbyMartEntities = filteredMarts)
+                        else -> currentState
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "마트 검색 오류: ${e.message}", e)
+                _uiState.update { 
+                    HomeUiState.Error("주변 마트 검색에 실패했습니다: ${e.message}")
+                }
+            }
+        }
+    }
+
+    fun distanceInMeters(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
+        val R = 6371000.0 // 지구 반지름(m)
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLng = Math.toRadians(lng2 - lng1)
+        val a = sin(dLat / 2).pow(2.0) +
+                cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) *
+                sin(dLng / 2).pow(2.0)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        return R * c
     }
 
     /**
@@ -199,9 +310,21 @@ class HomeViewModel @Inject constructor(
      * @param radius 새로운 검색 반경 (km 단위)
      */
     fun updateSearchRadius(radius: Float) {
+        val limitedRadius = radius.coerceIn(0.1f, 0.5f) // 0.1~0.5km(100~500m)로 제한
+        Log.d(TAG, "반경 업데이트: ${limitedRadius}km (${(limitedRadius * 1000).toInt()}m)")
+        
         _uiState.update { currentState ->
             when (currentState) {
-                is HomeUiState.Success -> currentState.copy(searchRadius = radius)
+                is HomeUiState.Success -> {
+                    val newState = currentState.copy(searchRadius = limitedRadius)
+                    
+                    currentState.currentLocation?.let { location ->
+                        // 위치 정보가 있으면 새 반경으로 마트 검색
+                        searchNearbyMarts(location.latitude, location.longitude, limitedRadius)
+                    }
+                    
+                    newState
+                }
                 else -> currentState
             }
         }

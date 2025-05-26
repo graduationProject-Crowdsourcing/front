@@ -5,12 +5,12 @@ import android.app.TimePickerDialog
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,6 +19,9 @@ import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.*
 import java.util.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import android.util.Log
+import androidx.compose.foundation.clickable
 
 // ──────────────────────────── 진입 함수 ────────────────────────────
 @Composable
@@ -27,19 +30,42 @@ fun RequestFormView(
     viewModel: RequestFormViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
+    val requestState by viewModel.requestState.collectAsState()
+    val searchKeyword by viewModel.searchKeyword.collectAsState()
+    val isSearching by viewModel.isSearching.collectAsState()
+    val searchResults by viewModel.searchResults.collectAsState()
+    
+    // 요청 상태 처리
+    LaunchedEffect(requestState) {
+        when (requestState) {
+            is RequestState.Success -> {
+                // 요청 성공 시 완료 화면으로 이동
+                navController.navigate(Screen.RequestCompleteScreen.route) {
+                    // 현재 화면은 백스택에서 제거
+                    popUpTo(Screen.RequestFormScreen.route) { inclusive = true }
+                }
+                // 요청 상태 초기화
+                viewModel.resetRequestState()
+            }
+            else -> {} // 다른 상태는 UI에서 처리
+        }
+    }
 
     // 주요 입력 컴포넌트 호출
     RequestFormContent(
         state = state,
+        requestState = requestState,
+        searchKeyword = searchKeyword,
+        isSearching = isSearching,
+        searchResults = searchResults,
         viewModel = viewModel,
         onMartChange = viewModel::onMartChange,
         onMaxPeopleChange = viewModel::onMaxPeopleChange,
         onPointPerPersonChange = viewModel::onPointPerPersonChange,
         onItemChange = viewModel::onItemChange,
         onDateTimeChange = viewModel::onDateTimeChange,
-        onSubmit = {
-            navController.navigate(Screen.RequestCompleteScreen.route)
-        }
+        onMartSelected = viewModel::setSelectedMart,
+        onSubmit = viewModel::submitRequest
     )
 }
 
@@ -47,69 +73,96 @@ fun RequestFormView(
 @Composable
 fun RequestFormContent(
     state: RequestFormUiState,
+    requestState: RequestState,
+    searchKeyword: String,
+    isSearching: Boolean,
+    searchResults: List<MartInfo>,
     viewModel: RequestFormViewModel,
     onMartChange: (String) -> Unit,
     onMaxPeopleChange: (String) -> Unit,
     onPointPerPersonChange: (String) -> Unit,
     onItemChange: (String) -> Unit,
     onDateTimeChange: (String) -> Unit,
+    onMartSelected: (MartInfo) -> Unit,
     onSubmit: () -> Unit
 ) {
     val context = LocalContext.current
-    val calendar = remember { Calendar.getInstance() }
-
-    // 날짜, 시간 상태 저장용
-    val dateState = remember { mutableStateOf("") }
-    val timeState = remember { mutableStateOf("") }
-
-    // 날짜 선택 다이얼로그
-    val datePickerDialog = remember(context) {
-        DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                dateState.value = "%04d-%02d-%02d".format(year, month + 1, dayOfMonth)
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
+    
+    // 날짜 선택 다이얼로그 표시 상태 (rememberSaveable로 변경)
+    var showDatePicker by rememberSaveable { mutableStateOf(false) }
+    
+    // 달력 아이콘 리소스 안전하게 가져오기
+    val calendarIconResId = try {
+        R.drawable.ic_calendar
+    } catch (e: Exception) {
+        // 달력 아이콘을 사용할 수 없는 경우, 다른 아이콘으로 대체
+        R.drawable.ic_item // 또는 다른 존재하는 아이콘
     }
 
-    // 시간 선택 다이얼로그
-    val timePickerDialog = remember(context) {
-        TimePickerDialog(
-            context,
-            { _, hour, minute ->
-                timeState.value = "%02d:%02d".format(hour, minute)
-                if (dateState.value.isNotBlank()) {
-                    val combined = "${dateState.value} ${timeState.value}"
-                    onDateTimeChange(combined)
-                }
-            },
-            calendar.get(Calendar.HOUR_OF_DAY),
-            calendar.get(Calendar.MINUTE),
-            true
-        )
-    }
-
-    // 전체 폼 UI
     Column(
         modifier = Modifier
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
+        // 상태에 따른 메시지 표시
+        when (requestState) {
+            is RequestState.Error -> {
+                Text(
+                    text = requestState.message,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
+            is RequestState.Loading -> {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                )
+            }
+            else -> {}
+        }
 
-        // 마트 선택 드롭다운
-        MartDropdownField(
-            label = "마트 선택",
-            selectedMart = state.martName,
-            martList = dummyMartList,
-            onMartSelected = {
-                viewModel.setSelectedMart(it)
-            },
+        // 마트 검색 필드 (새로운 컴포넌트)
+        MartSearchField(
+            query = if (searchResults.isNotEmpty() || searchKeyword.isNotEmpty()) searchKeyword else state.martName,
+            onQueryChange = onMartChange,
+            isSearching = isSearching,
+            searchResults = searchResults,
+            onMartSelected = onMartSelected,
             iconResId = R.drawable.ic_mart
         )
 
+        // 선택된 마트 표시
+        if (state.martName.isNotEmpty() && state.martLat != null && searchResults.isEmpty()) {
+            Text(
+                text = "선택된 마트: ${state.martName}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .padding(start = 40.dp, top = 4.dp, bottom = 8.dp)
+            )
+            
+            // 마트 선택 시 지도 표시 - 마트 검색창 바로 아래로 이동
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(bottom = 16.dp)
+            ) {
+                // null 체크를 추가하여 non-null 값만 전달
+                val lat = state.martLat
+                val lng = state.martLng
+                if (lat != null && lng != null) {
+                    MartLocationMapView(
+                        latitude = lat,
+                        longitude = lng,
+                        title = state.martName
+                    )
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -150,41 +203,52 @@ fun RequestFormContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         // 날짜/시간 선택 필드
-        DateTimeSelectorField(
-            label = "기간 설정",
-            dateTimeText = state.dateTime,
-            iconResId = R.drawable.ic_calendar,
-            onClick = {
-                datePickerDialog.show()
-                datePickerDialog.setOnDismissListener {
-                    timePickerDialog.show()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    Log.d("RequestFormView", "기간 설정 Box 클릭됨")
+                    showDatePicker = true
                 }
-            }
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // 마트 선택 시 지도 표시
-        if (state.martLat != null && state.martLng != null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-            ) {
-                MartLocationMapView(
-                    latitude = state.martLat,
-                    longitude = state.martLng,
-                    title = state.martName
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
+        ) {
+            DateTimeSelectorField(
+                label = "기간 설정",
+                dateTimeText = state.dateTime,
+                iconResId = calendarIconResId,
+                onClick = {
+                    Log.d("RequestFormView", "기간 설정 필드 클릭됨, 현재 상태: showDatePicker=$showDatePicker")
+                    showDatePicker = true
+                    Log.d("RequestFormView", "showDatePicker 상태 변경됨: $showDatePicker")
+                }
+            )
         }
+        
+        // 날짜 선택 다이얼로그 표시
+        Log.d("RequestFormView", "showDatePicker 검사: $showDatePicker")
+        if (showDatePicker) {
+            Log.d("RequestFormView", "DateTimePickerDialog 표시 조건 충족됨")
+            DateTimePickerDialog(
+                onDateTimeSelected = { dateTime ->
+                    Log.d("RequestFormView", "날짜/시간 선택됨: $dateTime")
+                    onDateTimeChange(dateTime)
+                    showDatePicker = false
+                    Log.d("RequestFormView", "showDatePicker 상태 false로 변경됨")
+                },
+                onDismiss = { 
+                    Log.d("RequestFormView", "날짜/시간 선택 취소됨")
+                    showDatePicker = false
+                    Log.d("RequestFormView", "showDatePicker 상태 false로 변경됨")
+                }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // 의뢰 신청 버튼
         ConfirmButton(
             text = "의뢰 신청하기",
             onConfirm = onSubmit,
+            enabled = requestState !is RequestState.Loading,
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
@@ -192,26 +256,31 @@ fun RequestFormContent(
     }
 }
 
-// ──────────────────────────── 프리뷰 ────────────────────────────
+/* 
+@Preview 주석 처리
 @Preview(showBackground = true)
 @Composable
-fun RequestFormContentPreview() {
-    val fakeViewModel = object : RequestFormViewModel() {}
-
+fun RequestFormPreview() {
+    // 프리뷰용 뷰모델
+    val viewModel = RequestFormViewModel()
+    
+    // 더미 데이터 세팅
+    viewModel.setSelectedMart(dummyMartList[0])
+    viewModel.onMaxPeopleChange("3")
+    viewModel.onPointPerPersonChange("1000")
+    viewModel.onItemChange("바나나 가격")
+    viewModel.onDateTimeChange("2023-06-01 14:00")
+    
     RequestFormContent(
-        state = RequestFormUiState(
-            martName = "상암 홈플러스",
-            maxPeople = "10",
-            pointPerPerson = "100",
-            item = "서울우유 500ML",
-            dateTime = "2025-04-12 14:00"
-        ),
-        viewModel = fakeViewModel,
-        onMartChange = {},
-        onMaxPeopleChange = {},
-        onPointPerPersonChange = {},
-        onItemChange = {},
-        onDateTimeChange = {},
+        state = viewModel.uiState.value,
+        requestState = RequestState.Initial,
+        viewModel = viewModel,
+        onMartChange = viewModel::onMartChange,
+        onMaxPeopleChange = viewModel::onMaxPeopleChange,
+        onPointPerPersonChange = viewModel::onPointPerPersonChange,
+        onItemChange = viewModel::onItemChange,
+        onDateTimeChange = viewModel::onDateTimeChange,
         onSubmit = {}
     )
 }
+*/

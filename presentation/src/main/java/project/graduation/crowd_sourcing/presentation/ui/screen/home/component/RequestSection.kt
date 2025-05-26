@@ -79,9 +79,9 @@ fun CurrentRequestsList(
             text = "현재 의뢰",
             style = MaterialTheme.typography.titleMedium
         )
-        IconButton(onClick = {}) {
-            Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
-        }
+//        IconButton(onClick = {}) {
+//            Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
+//        }
     }
     CommonList(
         list = state.requests.map {
@@ -111,9 +111,9 @@ fun RecommendedRequestsList(
             text = "추천 의뢰",
             style = MaterialTheme.typography.titleMedium
         )
-        IconButton(onClick = {}) {
-            Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
-        }
+//        IconButton(onClick = {}) {
+//            Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
+//        }
     }
     CommonList(
         list = state.requests.map {
