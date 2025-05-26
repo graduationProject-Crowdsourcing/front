@@ -5,9 +5,9 @@ import androidx.annotation.RequiresApi
 import project.graduation.crowd_sourcing.data.mapper.statistics.toEntity
 import project.graduation.crowd_sourcing.data.service.StatisticsService
 import project.graduation.crowd_sourcing.domain.model.entity.statistics.DetailEntity
-import project.graduation.crowd_sourcing.domain.model.entity.statistics.ItemListPriceEntity
-import project.graduation.crowd_sourcing.domain.model.entity.statistics.ItemMinMaxPriceEntity
 import project.graduation.crowd_sourcing.domain.model.entity.statistics.MartListPriceEntity
+import project.graduation.crowd_sourcing.domain.model.entity.statistics.ItemMinMaxPriceEntity
+import project.graduation.crowd_sourcing.domain.model.entity.statistics.ItemListPriceEntity
 import project.graduation.crowd_sourcing.domain.model.entity.statistics.MartMinMaxPriceEntity
 import project.graduation.crowd_sourcing.domain.repository.StatisticsRepository
 import javax.inject.Inject

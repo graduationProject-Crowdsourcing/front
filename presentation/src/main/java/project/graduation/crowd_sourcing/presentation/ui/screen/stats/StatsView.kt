@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -22,6 +23,10 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.stats.component.
 fun StatsView() {
     val viewModel: StatsViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState.value.type) {
+        viewModel.getDataList()
+    }
 
     Column(
         modifier = Modifier

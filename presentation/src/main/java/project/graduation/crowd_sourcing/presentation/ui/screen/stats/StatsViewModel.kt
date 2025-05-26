@@ -3,10 +3,12 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.stats
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.domain.usecase.StatisticsUseCase
 import project.graduation.crowd_sourcing.domain.usecase.WorkerUseCase
 import javax.inject.Inject
@@ -21,6 +23,22 @@ class StatsViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     val uiState = _uiState.asStateFlow()
 
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getDataList() = viewModelScope.launch {
+//        when(uiState.value.type){
+//            StatsType.MART -> {
+//                statisticsUseCase.getMart(
+//
+//                )
+//            }
+//            StatsType.PRODUCT -> {
+//                statisticsUseCase.getItem(
+//
+//                )
+//            }
+//        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onSwitchType(){
