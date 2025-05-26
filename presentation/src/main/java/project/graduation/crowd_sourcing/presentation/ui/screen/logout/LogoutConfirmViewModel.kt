@@ -9,12 +9,12 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.data.local.TokenManager
-import project.graduation.crowd_sourcing.domain.usecase.LogoutUseCase
+import project.graduation.crowd_sourcing.domain.usecase.MemberUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class LogoutConfirmViewModel @Inject constructor(
-    private val logoutUseCase: LogoutUseCase,
+    private val memberUseCase: MemberUseCase,
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
@@ -26,7 +26,7 @@ class LogoutConfirmViewModel @Inject constructor(
             val accessToken = tokenManager.getAccessToken()
             Log.d("Logout", "🔑 accessToken = $accessToken")
 
-            logoutUseCase(accessToken ?: "")
+            memberUseCase.logout(accessToken ?: "")
                 .onSuccess {
                     tokenManager.clear()
                     logoutSuccess = true
