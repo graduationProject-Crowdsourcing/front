@@ -7,4 +7,6 @@ interface MyRepository {
     suspend fun getRecentWork(): Result<RecentWorkEntity>
 
     suspend fun getRecentCommission(): Result<RecentCommissionEntity>
+
+    suspend fun putNickname(nickname: String): Result<Unit>
 }

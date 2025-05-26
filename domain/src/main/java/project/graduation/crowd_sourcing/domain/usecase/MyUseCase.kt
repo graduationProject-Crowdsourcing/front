@@ -21,4 +21,8 @@ class MyUseCase @Inject constructor(
             Result.failure(exception ?: Exception("알 수 없는 오류"))
         }
     }
+
+    suspend fun putNickname(nickname:String): Result<Unit>{
+        return repository.putNickname(nickname)
+    }
 }
