@@ -1,5 +1,7 @@
 package project.graduation.crowd_sourcing.presentation.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -13,6 +15,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import project.graduation.crowd_sourcing.domain.model.Category
+import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.presentation.ui.screen.alarm.AlarmView
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.HistoryType
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.HistoryView
@@ -35,6 +39,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchRes
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchView
 import project.graduation.crowd_sourcing.presentation.ui.screen.stats.StatsView
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(
     navController: NavHostController,
@@ -162,8 +167,19 @@ fun Navigation(
             NotificationView()
         }
 
-        composable(route = Screen.DetailStatsScreen.route) {
-            StatsView()
+        composable(
+            route = Screen.DetailStatsScreen.route,
+            arguments = listOf(
+                navArgument("region") { type = NavType.StringType },
+                navArgument("category") { type = NavType.StringType },
+                navArgument("statsId"){ type = NavType.IntType}
+            )
+        ) { backStackEntry ->
+            val region = Region.from(backStackEntry.arguments?.getString("region") ?: "")
+            val category = Category.from(backStackEntry.arguments?.getString("category") ?: "")
+            val id = backStackEntry.arguments?.getInt("statsId") ?: 0
+
+            StatsView(region = region, category = category, id = id)
         }
     }
 }

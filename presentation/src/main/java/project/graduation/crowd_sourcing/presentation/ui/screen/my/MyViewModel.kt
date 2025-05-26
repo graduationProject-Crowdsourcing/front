@@ -43,12 +43,14 @@ class MyViewModel @Inject constructor(
             .onSuccess { (work, commission) ->
                 val recentWork = MyUiState.RecentListItem(
                     name = work.item,
-                    date = work.workDate
+                    date = work.workDate,
+                    id = work.id
                 )
 
                 val recentCommission = MyUiState.RecentListItem(
                     name = commission.commission,
-                    date = commission.commissionDate
+                    date = commission.commissionDate,
+                    id = commission.id
                 )
 
                 _uiState.update { prev ->

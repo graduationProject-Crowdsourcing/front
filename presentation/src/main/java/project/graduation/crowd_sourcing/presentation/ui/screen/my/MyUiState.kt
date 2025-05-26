@@ -15,6 +15,7 @@ data class MyUiState(
     val isDialogVisible: Boolean = false
 ) {
     data class RecentListItem(
+        val id:Int,
         val name: String,
         val date: LocalDateTime
     )
@@ -24,8 +25,8 @@ data class MyUiState(
             profileImage = null,
             nickname = "user name",
             point = 0,
-            recentRequest = RecentListItem(name = "test1", date = twoDaysAgo),
-            recentWork = RecentListItem(name = "test1", date = twoDaysAgo)
+            recentRequest = RecentListItem(0,name = "test1", date = twoDaysAgo),
+            recentWork = RecentListItem(0,name = "test1", date = twoDaysAgo)
         )
     }
 }

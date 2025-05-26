@@ -1,6 +1,8 @@
 package project.graduation.crowd_sourcing.presentation.ui.navigation
 
 import androidx.annotation.DrawableRes
+import project.graduation.crowd_sourcing.domain.model.Category
+import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.presentation.R
 
 sealed class Screen(val title: String, val route: String) {
@@ -41,8 +43,12 @@ sealed class Screen(val title: String, val route: String) {
 
     data object AlarmSettingScreen: Screen(title = "알람 설정", route = "alarm")
 
-    data object DetailStatsScreen: Screen(title = "세부 통계", route = "detail_stats")
-    
+    data object DetailStatsScreen : Screen(title = "세부 통계", route = "detail_stats/{region}/{category}/{statsId}") {
+        fun createRoute(region: Region, category: Category, statsId: Int): String {
+            return "detail_stats/${region.name}/${category.name}/$statsId"
+        }
+    }
+
     // 검색 관련 화면
     data object FilterSelectionScreen: Screen(title = "필터 선택", route = "filter_selection")
     data object SearchResultScreen: Screen(title = "검색 결과", route = "search_result")
