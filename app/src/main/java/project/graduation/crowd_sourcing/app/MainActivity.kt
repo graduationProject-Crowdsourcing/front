@@ -16,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import project.graduation.crowd_sourcing.presentation.ui.screen.base.BaseView
 import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingTheme
 import androidx.hilt.navigation.compose.hiltViewModel
+import project.graduation.crowd_sourcing.data.local.TokenManager
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -53,12 +54,12 @@ fun TestServer() {
         testViewModel.testStatistics()
     }
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun testWorker(){
         testViewModel.testWorker()
     }
 //    testMy() // 체크중
-//    testStatistics() //체크중
-    testWorker()
+    testStatistics() //체크중
 
 }

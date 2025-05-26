@@ -10,7 +10,7 @@ import project.graduation.crowd_sourcing.domain.repository.StatisticsRepository
 import project.graduation.crowd_sourcing.domain.repository.UserPointRepository
 import project.graduation.crowd_sourcing.domain.repository.WorkerRepository
 import project.graduation.crowd_sourcing.domain.usecase.HistoryUseCase
-import project.graduation.crowd_sourcing.domain.usecase.LoginUseCase
+import project.graduation.crowd_sourcing.domain.usecase.MemberUseCase
 import project.graduation.crowd_sourcing.domain.usecase.MyUseCase
 import project.graduation.crowd_sourcing.domain.usecase.StatisticsUseCase
 import project.graduation.crowd_sourcing.domain.usecase.WorkerUseCase
@@ -18,10 +18,11 @@ import project.graduation.crowd_sourcing.domain.usecase.WorkerUseCase
 @Module
 @InstallIn(ActivityComponent::class)
 object PresentationModule {
+
     @Provides
-    fun provideLoginUseCase(repository: LoginRepository): LoginUseCase {
-        return LoginUseCase(repository)
-    }
+    fun provideMemberUseCase(
+        loginRepository: LoginRepository
+    ): MemberUseCase = MemberUseCase(loginRepository)
 
     @Provides
     fun provideMyUseCase(repository: MyRepository): MyUseCase {

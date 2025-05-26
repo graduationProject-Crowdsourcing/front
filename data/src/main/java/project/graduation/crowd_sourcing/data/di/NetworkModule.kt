@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import project.graduation.crowd_sourcing.data.local.TokenManager
 import project.graduation.crowd_sourcing.data.network.AuthorizationInterceptor
 import project.graduation.crowd_sourcing.data.service.LoginService
 import project.graduation.crowd_sourcing.data.service.MartSearchService
@@ -16,6 +17,7 @@ import project.graduation.crowd_sourcing.data.service.SearchService
 import project.graduation.crowd_sourcing.data.service.MyService
 import project.graduation.crowd_sourcing.data.service.StatisticsService
 import project.graduation.crowd_sourcing.data.service.UserPointService
+import project.graduation.crowd_sourcing.data.service.WorkService
 import project.graduation.crowd_sourcing.data.service.WorkerService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -25,9 +27,12 @@ import java.util.Date
 @Module
 class NetworkModule {
     @Provides
-    fun provideAuthorizationInterceptor(): AuthorizationInterceptor {
-        return AuthorizationInterceptor()
+    fun provideAuthorizationInterceptor(
+        tokenManager: TokenManager,
+    ): AuthorizationInterceptor {
+        return AuthorizationInterceptor(tokenManager)
     }
+
 
     @Provides
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
@@ -142,6 +147,13 @@ class NetworkModule {
         retrofit: Retrofit
     ): StatisticsService {
         return retrofit.create(StatisticsService::class.java)
+    }
+
+    @Provides
+    fun provideWorkService(
+        retrofit: Retrofit
+    ): WorkService {
+        return retrofit.create(WorkService::class.java)
     }
 
     @Provides

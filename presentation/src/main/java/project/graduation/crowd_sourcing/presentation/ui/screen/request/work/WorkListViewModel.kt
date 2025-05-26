@@ -14,5 +14,6 @@ data class Work(
 )
 
 class WorkListViewModel : ViewModel() {
-    var workList by mutableStateOf(WorkRepository.workList)
+    // TODO: 추후 작업 리스트 API 연결 예정
+    var workList by mutableStateOf(emptyList<Work>())
 }

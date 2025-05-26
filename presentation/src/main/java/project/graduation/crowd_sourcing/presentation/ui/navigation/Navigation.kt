@@ -18,6 +18,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.history.HistoryT
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.HistoryView
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeView
 import project.graduation.crowd_sourcing.presentation.ui.screen.login.LoginView
+import project.graduation.crowd_sourcing.presentation.ui.screen.logout.LogoutConfirmView
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyView
 import project.graduation.crowd_sourcing.presentation.ui.screen.notification.NotificationView
 import project.graduation.crowd_sourcing.presentation.ui.screen.point.PointView
@@ -41,7 +42,9 @@ fun Navigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.BottomScreen.HomeScreen.bRoute,
+        // startDestination = Screen.BottomScreen.HomeScreen.bRoute,
+        startDestination = Screen.LoginScreen.route,
+
         modifier = Modifier
             .padding(pd)
             .fillMaxSize(),
@@ -57,6 +60,11 @@ fun Navigation(
         composable(route = Screen.LoginScreen.route) {
             LoginView(navController = navController)
         }
+
+        composable(route = Screen.LogoutConfirmScreen.route) {
+            LogoutConfirmView(navController = navController)
+        }
+
 
         composable(route = Screen.BottomScreen.HomeScreen.bRoute) {
             HomeView()
