@@ -3,7 +3,7 @@ package project.graduation.crowd_sourcing.data.network
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
-import project.graduation.crowd_sourcing.data.local.TokenManager
+import project.graduation.crowd_sourcing.domain.local.TokenManager
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject

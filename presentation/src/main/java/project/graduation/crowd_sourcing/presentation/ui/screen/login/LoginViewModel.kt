@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import project.graduation.crowd_sourcing.data.local.TokenManager
+import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.domain.usecase.MemberUseCase
 import javax.inject.Inject
 
@@ -46,6 +46,7 @@ class LoginViewModel @Inject constructor(
 
             memberUseCase.login(_uiState.value.email, _uiState.value.password)
                 .onSuccess {
+                    tokenManager.saveUsername(uiState.value.email)
                     isLoginSuccess = true
 
                     Log.d("Login", "🔐 저장된 accessToken = ${tokenManager.getAccessToken()}")

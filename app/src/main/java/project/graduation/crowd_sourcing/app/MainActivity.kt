@@ -16,7 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import project.graduation.crowd_sourcing.presentation.ui.screen.base.BaseView
 import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingTheme
 import androidx.hilt.navigation.compose.hiltViewModel
-import project.graduation.crowd_sourcing.data.local.TokenManager
+import project.graduation.crowd_sourcing.domain.local.TokenManager
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

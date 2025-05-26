@@ -2,7 +2,7 @@ package project.graduation.crowd_sourcing.data.repository
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import project.graduation.crowd_sourcing.data.local.TokenManager
+import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.data.mapper.my.toEntity
 import project.graduation.crowd_sourcing.data.request.MyNicknameRequest
 import project.graduation.crowd_sourcing.data.service.MyService

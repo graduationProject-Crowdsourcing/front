@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import project.graduation.crowd_sourcing.data.local.TokenManager
+import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.data.response.worker.WorkCountEntity
 import project.graduation.crowd_sourcing.data.response.worker.WorkHistoryEntity
 import project.graduation.crowd_sourcing.data.response.worker.WorkHourEntity
