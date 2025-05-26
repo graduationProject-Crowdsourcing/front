@@ -39,8 +39,8 @@ class TestViewModel @Inject constructor(
     }
 
     fun testMy() = viewModelScope.launch { //
-        myRepository.getRecentWork(userId)
-        myRepository.getRecentCommission(userId)
+        myRepository.getRecentWork()
+        myRepository.getRecentCommission()
     }
 
     fun testStatistics() = viewModelScope.launch { // region, category 입력 api 403 error

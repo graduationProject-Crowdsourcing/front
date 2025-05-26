@@ -8,9 +8,9 @@ import javax.inject.Inject
 class MyUseCase @Inject constructor(
     private val repository: MyRepository
 ) {
-    suspend fun getRecentHistory(userId: Int): Result<Pair<RecentWorkEntity, RecentCommissionEntity>> {
-        val recentWorkResult = repository.getRecentWork(userId)
-        val recentCommissionResult = repository.getRecentCommission(userId)
+    suspend fun getRecentHistory(): Result<Pair<RecentWorkEntity, RecentCommissionEntity>> {
+        val recentWorkResult = repository.getRecentWork()
+        val recentCommissionResult = repository.getRecentCommission()
 
         return if (recentWorkResult.isSuccess && recentCommissionResult.isSuccess) {
             val recentWork = recentWorkResult.getOrThrow()

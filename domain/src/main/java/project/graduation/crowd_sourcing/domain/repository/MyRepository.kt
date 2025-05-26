@@ -4,7 +4,7 @@ import project.graduation.crowd_sourcing.domain.model.entity.my.RecentCommission
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentWorkEntity
 
 interface MyRepository {
-    suspend fun getRecentWork(userId: Int): Result<RecentWorkEntity>
+    suspend fun getRecentWork(): Result<RecentWorkEntity>
 
-    suspend fun getRecentCommission(userId: Int): Result<RecentCommissionEntity>
+    suspend fun getRecentCommission(): Result<RecentCommissionEntity>
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -25,6 +26,10 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyR
 fun MyView(navController: NavController) {
     val viewModel: MyViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.getRecentHistory()
+    }
 
     Column(
         modifier = Modifier
