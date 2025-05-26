@@ -14,13 +14,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.naver.maps.geometry.LatLng
@@ -35,9 +36,9 @@ import com.naver.maps.map.compose.Marker
 import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeUiState
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.Location
-import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.Request
 
 /** 위치 정보를 LatLng 객체로 변환하는 확장 함수 */
@@ -124,7 +125,10 @@ private fun NaverMapView(state: HomeUiState.Success) {
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+    ) {
         NaverMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
@@ -152,6 +156,9 @@ private fun NaverMapView(state: HomeUiState.Success) {
                     center = currentLatLng,
                     radiusInKm = state.searchRadius
                 )
+
+                // 주변 마트 마커들
+                DrawMartMarkers(state.nearbyMartEntities)
 
                 // 의뢰 위치 마커들
                 DrawRequestMarkers(state.requests)
@@ -211,6 +218,21 @@ private fun DrawSearchRadiusCircle(center: LatLng, radiusInKm: Float) {
         outlineWidth = MapConstants.CIRCLE_OUTLINE_WIDTH,
         zIndex = MapConstants.CIRCLE_ZINDEX
     )
+}
+
+/**
+ * 주변 마트 마커들 표시
+ */
+@OptIn(ExperimentalNaverMapApi::class)
+@Composable
+private fun DrawMartMarkers(martEntities: List<MartEntity>) {
+    martEntities.forEach { mart ->
+        Marker(
+            state = MarkerState(position = LatLng(mart.lat, mart.lng)),
+            captionText = mart.martName,
+            zIndex = MapConstants.MARKER_ZINDEX
+        )
+    }
 }
 
 /**

@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -132,7 +131,9 @@ fun MyProfileEditDialog(
                         text = "취소") { onDismiss() }
                     ConfirmButton(
                         modifier = Modifier.weight(1f),
-                        text = "수정") { }
+                        text = "수정",
+                        onConfirm = { onSave(nickname, profileImage) }
+                    )
                 }
             },
             dismissButton = {
@@ -142,6 +143,7 @@ fun MyProfileEditDialog(
     }
 }
 
+/* 
 @Preview(showBackground = true)
 @Composable
 fun ProfileEditDialogPreview() {
@@ -151,3 +153,4 @@ fun ProfileEditDialogPreview() {
         onSave = { nickname, image -> /* Handle save */ }
     )
 }
+*/
