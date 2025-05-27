@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "229547909137",
+    "project_id": "price-it-69711",
+    "storage_bucket": "price-it-69711.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229547909137:android:9a81951171b79448f2d1b0",
+        "android_client_info": {
+          "package_name": "project.graduation.crowd_sourcing"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5FSTEB1s6ZEWwhQFqiDXrBizHidkedy0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
