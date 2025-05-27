@@ -65,7 +65,41 @@ class HistoryViewModel @Inject constructor(
                     }
                 }
 
-                HistoryType.REQUEST -> loadRequestHistoryData()
+                HistoryType.REQUEST -> {
+                    historyUseCase.getRequest().onSuccess { data ->
+                        _uiState.update {
+                            HistoryUiState(
+                                stats = StatsType.Work.All(
+                                    totalWork = data.completed,
+                                    totalTime = data.hour,
+                                    totalPoint = data.point
+                                ) to StatsType.Work.Detail(
+                                    mostRegion = data.mostRegion.name,
+                                    averageTime = data.hour / data.completed,
+                                    mostCategory = data.mostCategory.name
+                                ),
+                                currentHistoryList = data.currentList.map {
+                                    HistoryItem(
+                                        product = it.commission,
+                                        category = it.commission,
+                                        date = it.commissionDate,
+                                        point = it.commissionPoint
+                                    )
+                                },
+                                totalHistoryList = data.completedList.map {
+                                    HistoryItem(
+                                        product = it.commission,
+                                        category = it.commission,
+                                        date = it.commissionDate,
+                                        point = it.commissionPoint
+                                    )
+                                }
+                            )
+                        }
+                    }.onFailure {
+
+                    }
+                }
             }
         }
     }
@@ -100,7 +134,7 @@ class HistoryViewModel @Inject constructor(
                 mostRegion = requestDetail.mostRequestedRegion,
                 averagePoint = if (requestStats.commissionCount > 0)
                     requestPoint.totalPoints / requestStats.commissionCount else 0,
-                mostCategory = requestDetail.mostRequestedDayOfWeek // 현재 API에서는 카테고리 정보가 없어 요일 정보로 대체
+                mostCategory = requestDetail.mostRequestedCategory // 현재 API에서는 카테고리 정보가 없어 요일 정보로 대체
             )
 
             // 현재 진행중인 의뢰 목록 변환

@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.domain.usecase
 
+import project.graduation.crowd_sourcing.data.response.worker.WorkHistoryEntity
 import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.domain.model.Category
 import project.graduation.crowd_sourcing.domain.model.Region
@@ -49,5 +50,49 @@ class HistoryUseCase @Inject constructor(
 
 
 
-    fun getUserRequestHistory() {}
+    suspend fun getRequest() : Result<HistoryStats>{
+        return try{
+            tokenManager.getUserName()?.let{ username->
+                val count = requesterRepository.getRequestStats(username).commissionCount
+                val point = requesterRepository.getRequestPoint(username).totalPoints
+                val completedList = requesterRepository.getRequestStatus(username, WorkStatus.COMPLETED.toString())
+                val currentList = requesterRepository.getOngoingRequests(username)
+                val most = requesterRepository.getRequestDetail(username)
+
+                Result.success(HistoryStats(
+                    hour = 0,
+                    point = point,
+                    completed = completedList.size,
+                    completedList = completedList.map {
+                        WorkHistoryEntity(
+                            id = it.id.toInt(),
+                            commission = it.commission,
+                            commissionCount = it.commissionCount,
+                            commissionPoint = it.commissionPoint,
+                            commissionRegion = Region.from(it.commissionRegion),
+                            commissionDate = it.commissionDate,
+                            commissionStatus = WorkStatus.valueOf(it.commissionStatus),
+                            memberId = it.memberId
+                        )
+                    },
+                    currentList = currentList.map {
+                        WorkHistoryEntity(
+                            id = it.id.toInt(),
+                            commission = it.commission,
+                            commissionCount = it.commissionCount,
+                            commissionPoint = it.commissionPoint,
+                            commissionRegion = Region.from(it.commissionRegion),
+                            commissionDate = it.commissionDate,
+                            commissionStatus = WorkStatus.valueOf(it.commissionStatus),
+                            memberId = it.memberId
+                        )
+                    },
+                    mostRegion = Region.from(most.mostRequestedRegion),
+                    mostCategory = Category.from(most.mostRequestedCategory)
+                ))
+            } ?: Result.failure(IllegalStateException("로그인된 사용자 정보가 없습니다."))
+        }catch (e:Exception){
+            Result.failure(e)
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package project.graduation.crowd_sourcing.domain.model.entity.requester
 
+import project.graduation.crowd_sourcing.domain.model.Region
+import project.graduation.crowd_sourcing.domain.model.WorkStatus
 import java.time.LocalDateTime
 import java.util.Date
 
@@ -16,4 +18,4 @@ data class RequestHistoryEntity(
     val commissionDate: LocalDateTime,
     val commissionStatus: String,
     val memberId: Int
-) 
+)
