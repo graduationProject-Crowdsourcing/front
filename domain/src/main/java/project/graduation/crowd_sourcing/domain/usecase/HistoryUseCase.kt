@@ -33,7 +33,7 @@ class HistoryUseCase @Inject constructor(
 
                 Result.success(
                     HistoryStats(
-                        hour = hour,
+                        countOrHour = hour,
                         point = point,
                         completed = completedList.size,
                         completedList = completedList,
@@ -60,7 +60,7 @@ class HistoryUseCase @Inject constructor(
                 val most = requesterRepository.getRequestDetail(username)
 
                 Result.success(HistoryStats(
-                    hour = 0,
+                    countOrHour = count,
                     point = point,
                     completed = completedList.size,
                     completedList = completedList.map {

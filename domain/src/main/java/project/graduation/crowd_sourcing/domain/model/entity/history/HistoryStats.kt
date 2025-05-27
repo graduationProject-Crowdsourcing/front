@@ -5,7 +5,7 @@ import project.graduation.crowd_sourcing.domain.model.Category
 import project.graduation.crowd_sourcing.domain.model.Region
 
 data class HistoryStats(
-    val hour:Int,
+    val countOrHour:Int,
     val point: Int,
     val completed:Int,
     val completedList: List<WorkHistoryEntity>,
