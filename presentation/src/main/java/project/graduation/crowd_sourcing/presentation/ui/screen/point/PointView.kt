@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -20,6 +21,11 @@ import project.graduation.crowd_sourcing.presentation.utils.getTimeAgo
 fun PointView() {
     val viewModel: PointViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.getHistoryData()
+    }
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -30,7 +36,7 @@ fun PointView() {
                 item.run {
                     CommonListItem(
                         CommonListItemData(
-                            mainText = type.type,
+                            mainText = type,
                             subText = "${getTimeAgo(date)} / ${region} / ${name}",
                             leftText = "${point} points",
                             icon = R.drawable.ic_list_box,
