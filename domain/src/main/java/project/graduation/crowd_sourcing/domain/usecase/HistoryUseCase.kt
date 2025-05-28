@@ -18,8 +18,8 @@ class HistoryUseCase @Inject constructor(
     private val workerRepository: WorkerRepository,
     private val tokenManager: TokenManager
 ) {
-    suspend fun getUsePointHistory(memberId: Int): Result<List<UserPointHistoryEntity>> {
-        return userPointRepository.getUserPointHistory(memberId)
+    suspend fun getUsePointHistory(): Result<List<UserPointHistoryEntity>> {
+        return userPointRepository.getUserPointHistory()
     }
     suspend fun getCommission(): Result<HistoryStats> {
         return try {
