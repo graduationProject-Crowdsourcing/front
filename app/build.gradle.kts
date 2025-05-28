@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.androidx.scenecore)
     implementation(libs.play.services.basement)
     implementation(libs.androidx.work.runtime)
+    implementation(libs.firebase.messaging.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

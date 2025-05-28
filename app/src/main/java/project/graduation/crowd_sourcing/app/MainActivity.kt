@@ -60,6 +60,7 @@ fun TestServer() {
         testViewModel.testWorker()
     }
 
+    testViewModel.getFcmToken()
     testMy()
 //    testUserPointHistory()
 //    testMy()

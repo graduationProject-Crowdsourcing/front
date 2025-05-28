@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.domain.local.TokenManager
@@ -126,5 +127,19 @@ class TestViewModel @Inject constructor(
                     Log.e("ork", "$it")
                 }
         }
+    }
+
+    fun getFcmToken(){
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("FCM", "토큰 가져오기 실패", task.exception)
+                    return@addOnCompleteListener
+                }
+
+                val token = task.result
+                Log.d("FCM", "FCM 직접 가져온 토큰: $token")
+            }
+
     }
 }

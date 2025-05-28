@@ -120,7 +120,7 @@ class RequesterRepositoryImpl @Inject constructor(
             val response = requesterService.getRequestDetail(username)
             RequestDetailEntity(
                 mostRequestedRegion = response.mostRequestedRegion,
-                mostRequestedDayOfWeek = response.mostRequestedDayOfWeek
+                mostRequestedCategory = response.mostRequestedCategory
             )
         } catch (e: Exception) {
             RequestDetailEntity("", "")
