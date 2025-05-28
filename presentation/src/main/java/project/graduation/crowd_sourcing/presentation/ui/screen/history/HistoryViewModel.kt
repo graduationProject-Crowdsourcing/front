@@ -22,8 +22,7 @@ class HistoryViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
 
-    fun loadHistoryData(historyType: HistoryType) {
-        viewModelScope.launch {
+    fun loadHistoryData(historyType: HistoryType) = viewModelScope.launch {
             when (historyType) {
                 HistoryType.WORK -> {
                     historyUseCase.getCommission().onSuccess { data ->
@@ -57,7 +56,7 @@ class HistoryViewModel @Inject constructor(
                             )
                         }
                     }.onFailure {
-
+                        it.printStackTrace()
                     }
                 }
 
@@ -93,10 +92,9 @@ class HistoryViewModel @Inject constructor(
                             )
                         }
                     }.onFailure {
-
+                        it.printStackTrace()
                     }
                 }
             }
         }
-    }
 }

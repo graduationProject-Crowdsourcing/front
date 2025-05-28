@@ -46,7 +46,6 @@ class LoginViewModel @Inject constructor(
 
             memberUseCase.login(_uiState.value.email, _uiState.value.password)
                 .onSuccess {
-                    tokenManager.saveUsername(uiState.value.email)
                     isLoginSuccess = true
 
                     Log.d("Login", "🔐 저장된 accessToken = ${tokenManager.getAccessToken()}")

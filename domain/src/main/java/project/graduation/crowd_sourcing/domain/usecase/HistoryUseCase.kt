@@ -35,7 +35,7 @@ class HistoryUseCase @Inject constructor(
                     HistoryStats(
                         countOrHour = hour,
                         point = point,
-                        completed = completedList.size,
+                        completed = (completedList.size).coerceAtLeast(1),
                         completedList = completedList,
                         currentList = currentList,
                         mostRegion = most?.region ?: Region.UNKNOWN,
@@ -62,7 +62,7 @@ class HistoryUseCase @Inject constructor(
                 Result.success(HistoryStats(
                     countOrHour = count,
                     point = point,
-                    completed = completedList.size,
+                    completed = (completedList.size).coerceAtLeast(1),
                     completedList = completedList.map {
                         WorkHistoryEntity(
                             id = it.id.toInt(),

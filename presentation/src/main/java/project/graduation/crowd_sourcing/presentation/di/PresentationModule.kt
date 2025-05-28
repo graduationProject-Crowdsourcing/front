@@ -24,8 +24,9 @@ object PresentationModule {
 
     @Provides
     fun provideMemberUseCase(
-        loginRepository: LoginRepository
-    ): MemberUseCase = MemberUseCase(loginRepository)
+        loginRepository: LoginRepository,
+        tokenManager: TokenManager
+    ): MemberUseCase = MemberUseCase(loginRepository, tokenManager)
 
     @Provides
     fun provideMyUseCase(repository: MyRepository): MyUseCase {

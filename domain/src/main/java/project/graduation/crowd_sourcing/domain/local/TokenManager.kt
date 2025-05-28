@@ -19,8 +19,8 @@ class TokenManager @Inject constructor(
             apply()
         }
     }
-    fun saveUsername(userName:String){
-        prefs.edit().putString("USER_NAME", userName)
+    fun saveUsername(userName: String) {
+        prefs.edit().putString("USER_NAME", userName).apply()
     }
 
     fun getAccessToken(): String? = prefs.getString("ACCESS_TOKEN", null)
