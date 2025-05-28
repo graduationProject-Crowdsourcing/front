@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import project.graduation.crowd_sourcing.data.local.TokenManager
+import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.domain.usecase.MemberUseCase
 import javax.inject.Inject
 

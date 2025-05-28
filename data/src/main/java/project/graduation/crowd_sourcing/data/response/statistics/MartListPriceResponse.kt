@@ -5,6 +5,6 @@ import com.google.gson.annotations.SerializedName
 data class MartListPriceResponse(
     @SerializedName("region") val region: String,
     @SerializedName("category") val category: String,
-    @SerializedName("item") val item: String,
-    @SerializedName("averagePrice") val averagePrice: Int
+    @SerializedName("mart") val mart: String,
+    @SerializedName("categoryPrice") val categoryPrice: Int
 )

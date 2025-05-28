@@ -55,7 +55,7 @@ data class RequestSuccessDto(
  */
 data class RequestDetailDto(
     val mostRequestedRegion: String,
-    val mostRequestedDayOfWeek: String
+    val mostRequestedCategory: String
 )
 
 /**

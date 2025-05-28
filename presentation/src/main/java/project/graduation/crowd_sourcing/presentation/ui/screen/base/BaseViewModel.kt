@@ -29,11 +29,13 @@ class BaseViewModel () : ViewModel() {
         }
     }
 
-    private val locationRequest = LocationRequest.create().apply {
-        interval = 5_000L           // 요청 간격: 5초
-        fastestInterval = 5_000L     // 가장 빠른 요청 간격: 5초
-        priority = Priority.PRIORITY_HIGH_ACCURACY
-    }
+    private val locationRequest = LocationRequest.Builder(
+        Priority.PRIORITY_HIGH_ACCURACY, // 우선순위 + interval
+        5_000L                           // 요청 간격(ms)
+    ).apply {
+        setMinUpdateIntervalMillis(5_000L) // 가장 빠른 요청 간격
+    }.build()
+
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {

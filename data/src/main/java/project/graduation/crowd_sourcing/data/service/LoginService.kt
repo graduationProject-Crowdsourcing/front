@@ -29,5 +29,4 @@ interface LoginService {
         @Header("Authorization") accessToken: String
     ): Response<Void>
 
-
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,13 +31,16 @@ fun HistoryView(
     navController: NavController
 ) {
     val viewModel: HistoryViewModel = hiltViewModel()
-    viewModel.setHistoryType(historyType)
     val uiState = viewModel.uiState.collectAsState()
 
     val listTitles = if (historyType == HistoryType.WORK) {
         listOf("현재 작업 목록", "작업 기록")
     } else {
         listOf("현재 의뢰 목록", "의뢰 목록")
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadHistoryData(historyType)
     }
 
     Box(

@@ -13,6 +13,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import project.graduation.crowd_sourcing.domain.model.Category
+import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
 import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonList
@@ -58,7 +60,7 @@ fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
                     mainText = name,
                     subText = getTimeAgo(date),
                     icon = R.drawable.ic_list_box,
-                    onClick = { navController.navigate(Screen.DetailStatsScreen.route) }
+                    onClick = { navController.navigate(Screen.DetailStatsScreen.createRoute(Region.DONGDAEMUN, Category.Ramen, id)) }
                 )
             )
         }

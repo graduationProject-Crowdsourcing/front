@@ -8,8 +8,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import project.graduation.crowd_sourcing.data.local.TokenManager
+import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.data.network.AuthorizationInterceptor
+import project.graduation.crowd_sourcing.data.network.TokenAuthenticator
 import project.graduation.crowd_sourcing.data.service.LoginService
 import project.graduation.crowd_sourcing.data.service.MartSearchService
 import project.graduation.crowd_sourcing.data.service.RequesterService
@@ -22,6 +23,7 @@ import project.graduation.crowd_sourcing.data.service.WorkerService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Date
+import javax.inject.Named
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -76,14 +78,18 @@ class NetworkModule {
             .create()
     }
 
+
+
     @Provides
     fun provideOkHttpClient(
         authorizationInterceptor: AuthorizationInterceptor,
-        loggingInterceptor: HttpLoggingInterceptor
+        loggingInterceptor: HttpLoggingInterceptor,
+        tokenAuthenticator: TokenAuthenticator
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(authorizationInterceptor)
             .addInterceptor(loggingInterceptor)
+            .authenticator(tokenAuthenticator)
             .build()
     }
 
@@ -99,67 +105,64 @@ class NetworkModule {
             .build()
     }
 
-    @Provides
-    fun provideLoginService(
-        retrofit: Retrofit
-    ): LoginService {
-        return retrofit.create(LoginService::class.java)
-    }
+    private inline fun <reified T> provideService(retrofit: Retrofit): T =
+        retrofit.create(T::class.java)
 
-    @Provides
-    fun provideSearchService(
-        retrofit: Retrofit
-    ): SearchService{
-        return retrofit.create(SearchService::class.java)
-    }
 
-    @Provides
-    fun provideMartSearchService(
-        retrofit: Retrofit
-    ): MartSearchService {
-        return retrofit.create(MartSearchService::class.java)
-    }
+    @Provides fun provideLoginService(retrofit: Retrofit): LoginService =
+        provideService(retrofit)
 
-    @Provides
-    fun provideRequesterService(
-        retrofit: Retrofit
-    ): RequesterService {
-        return retrofit.create(RequesterService::class.java)
-    }
+    @Provides fun provideSearchService(retrofit: Retrofit): SearchService =
+        provideService(retrofit)
 
-    @Provides
-    fun provideMyService(
-        retrofit: Retrofit
-    ): MyService {
-        return retrofit.create(MyService::class.java)
-    }
+    @Provides fun provideMartSearchService(retrofit: Retrofit): MartSearchService =
+        provideService(retrofit)
+
+    @Provides fun provideRequesterService(retrofit: Retrofit): RequesterService =
+        provideService(retrofit)
+
+    @Provides fun provideMyService(retrofit: Retrofit): MyService =
+        provideService(retrofit)
+
+    @Provides fun provideUserPointService(retrofit: Retrofit): UserPointService =
+        provideService(retrofit)
+
+    @Provides fun provideStatisticsService(retrofit: Retrofit): StatisticsService =
+        provideService(retrofit)
+
+    @Provides fun provideWorkService(retrofit: Retrofit): WorkService =
+        provideService(retrofit)
+
+    @Provides fun provideWorkerService(retrofit: Retrofit): WorkerService =
+        provideService(retrofit)
 
 
     @Provides
-    fun provideUserPointService(
-        retrofit: Retrofit
-    ): UserPointService {
-        return retrofit.create(UserPointService::class.java)
+    @Named("no-auth")
+    fun provideNoAuthOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
     }
 
     @Provides
-    fun provideStatisticsService(
-        retrofit: Retrofit
-    ): StatisticsService {
-        return retrofit.create(StatisticsService::class.java)
+    @Named("no-auth")
+    fun provideNoAuthRetrofit(
+        @Named("no-auth") okHttpClient: OkHttpClient,
+        gson: Gson
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("http://52.78.15.153:8112/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
     }
 
     @Provides
-    fun provideWorkService(
-        retrofit: Retrofit
-    ): WorkService {
-        return retrofit.create(WorkService::class.java)
-    }
-
-    @Provides
-    fun provideWorkerService(
-        retrofit: Retrofit
-    ): WorkerService {
-        return retrofit.create(WorkerService::class.java)
-    }
+    @Named("no-auth")
+    fun provideNoAuthLoginService(
+        @Named("no-auth") retrofit: Retrofit
+    ): LoginService = provideService(retrofit)
 }
