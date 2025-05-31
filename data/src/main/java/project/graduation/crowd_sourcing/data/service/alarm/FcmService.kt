@@ -36,5 +36,4 @@ interface FcmService {
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double
     ): Response<Unit>
-
 }

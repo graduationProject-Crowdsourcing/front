@@ -20,6 +20,7 @@ import project.graduation.crowd_sourcing.data.service.StatisticsService
 import project.graduation.crowd_sourcing.data.service.UserPointService
 import project.graduation.crowd_sourcing.data.service.WorkService
 import project.graduation.crowd_sourcing.data.service.WorkerService
+import project.graduation.crowd_sourcing.data.service.alarm.FcmService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Date
@@ -136,6 +137,8 @@ class NetworkModule {
     @Provides fun provideWorkerService(retrofit: Retrofit): WorkerService =
         provideService(retrofit)
 
+    @Provides fun provideFcmService(retrofit: Retrofit): FcmService =
+        provideService(retrofit)
 
     @Provides
     @Named("no-auth")
