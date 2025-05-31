@@ -61,7 +61,7 @@ class MyViewModel @Inject constructor(
                 }
             }
             .onFailure { e ->
-
+                e.printStackTrace()
             }
     }
 

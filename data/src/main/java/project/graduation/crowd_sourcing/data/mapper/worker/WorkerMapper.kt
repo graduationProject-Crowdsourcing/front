@@ -27,7 +27,7 @@ fun WorkHistoryResponse.toEntity() = WorkHistoryEntity(
     commissionCount = commissionCount,
     commissionPoint = commissionPoint,
     commissionRegion = stringToRegion(this.commissionRegion),
-    commissionDate = stringToDate(commissionDate),
+    commissionDate = commissionDate,
     commissionStatus = stringToWorkStatus(commissionStatus),
     memberId = memberId
 )

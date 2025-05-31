@@ -2,13 +2,11 @@ package project.graduation.crowd_sourcing.data.mapper.my
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import project.graduation.crowd_sourcing.data.mapper.stringToDate
 import project.graduation.crowd_sourcing.data.mapper.stringToRegion
 import project.graduation.crowd_sourcing.data.response.my.RecentCommissionResponse
 import project.graduation.crowd_sourcing.data.response.my.RecentWorkResponse
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentCommissionEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentWorkEntity
-import java.util.Date
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun RecentCommissionResponse.toEntity(): RecentCommissionEntity = RecentCommissionEntity(
@@ -16,7 +14,7 @@ fun RecentCommissionResponse.toEntity(): RecentCommissionEntity = RecentCommissi
     commission = this.commission,
     region = stringToRegion(this.region),
     category = this.category,
-    commissionDate = stringToDate(this.commissionDate),
+    commissionDate = this.commissionDate,
     commissionPoint = this.commissionPoint
 )
 
@@ -28,5 +26,5 @@ fun RecentWorkResponse.toEntity(): RecentWorkEntity = RecentWorkEntity(
     category = this.category,
     item = this.item,
     itemPrice = this.itemPrice,
-    workDate = stringToDate(this.workDate)
+    workDate = this.workDate
 )
