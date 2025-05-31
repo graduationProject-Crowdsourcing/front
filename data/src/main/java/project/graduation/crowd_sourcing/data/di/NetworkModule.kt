@@ -1,7 +1,11 @@
 package project.graduation.crowd_sourcing.data.di
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,6 +27,9 @@ import project.graduation.crowd_sourcing.data.service.WorkerService
 import project.graduation.crowd_sourcing.data.service.alarm.FcmService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.reflect.Type
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import javax.inject.Named
 
@@ -51,27 +58,28 @@ class NetworkModule {
     @Provides
     fun provideGson(): Gson {
         return GsonBuilder()
-            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             .setLenient()
             .registerTypeAdapter(
-                java.time.LocalDateTime::class.java,
-                object : com.google.gson.JsonDeserializer<java.time.LocalDateTime> {
+                LocalDateTime::class.java,
+                object : JsonDeserializer<LocalDateTime> {
                     override fun deserialize(
-                        json: com.google.gson.JsonElement,
-                        typeOfT: java.lang.reflect.Type,
-                        context: com.google.gson.JsonDeserializationContext
-                    ): java.time.LocalDateTime {
-                        try {
-                            val dateString = json.asString
-                            android.util.Log.d("DateConverter", "JSON 날짜 문자열: $dateString")
-                            return java.time.LocalDateTime.parse(
-                                dateString.replace("+00:00", "Z"),
-                                java.time.format.DateTimeFormatter.ISO_DATE_TIME
-                            )
+                        json: JsonElement,
+                        typeOfT: Type,
+                        context: JsonDeserializationContext
+                    ): LocalDateTime {
+                        val raw = json.asString
+                        Log.d("DateConverter", "원본 날짜 문자열: $raw")
+
+                        // 소수점 이하(.SSS...)를 잘라냄 → 초까지만 남김
+                        val trimmed = raw.substringBefore(".")
+                        Log.d("DateConverter", "소수점 제거된 문자열: $trimmed")
+
+                        return try {
+                            LocalDateTime.parse(trimmed, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
                         } catch (e: Exception) {
-                            android.util.Log.e("DateConverter", "날짜 변환 오류: ${e.message}")
+                            Log.e("DateConverter", "날짜 파싱 실패: ${e.message}")
                             e.printStackTrace()
-                            return java.time.LocalDateTime.now()
+                            LocalDateTime.now()
                         }
                     }
                 }

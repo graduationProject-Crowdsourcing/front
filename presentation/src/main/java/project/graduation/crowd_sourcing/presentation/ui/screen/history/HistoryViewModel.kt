@@ -33,24 +33,26 @@ class HistoryViewModel @Inject constructor(
                                     totalTime = data.countOrHour,
                                     totalPoint = data.point
                                 ) to StatsType.Work.Detail(
-                                    mostRegion = data.mostRegion.name,
+                                    mostRegion = data.mostRegion.koreanName,
                                     averageTime = data.countOrHour / data.completed,
-                                    mostCategory = data.mostCategory.name
+                                    mostCategory = data.mostCategory.koreanName
                                 ),
                                 currentHistoryList = data.currentList.map {
                                     HistoryItem(
                                         product = it.commission,
                                         category = it.commission,
                                         date = it.commissionDate,
-                                        point = it.commissionPoint
+                                        point = it.commissionPoint,
+                                        id = it.id
                                     )
                                 },
-                                totalHistoryList = data.completedList.map {
+                                totalHistoryList = (data.currentList + data.completedList).map {
                                     HistoryItem(
                                         product = it.commission,
                                         category = it.commission,
                                         date = it.commissionDate,
-                                        point = it.commissionPoint
+                                        point = it.commissionPoint,
+                                        id = it.id
                                     )
                                 }
                             )
@@ -69,8 +71,8 @@ class HistoryViewModel @Inject constructor(
                                     totalPoint = data.point,
                                     completedRequests = data.completed
                                 ) to StatsType.Request.Detail(
-                                    mostRegion = data.mostRegion.name,
-                                    mostCategory = data.mostCategory.name,
+                                    mostRegion = data.mostRegion.koreanName,
+                                    mostCategory = data.mostCategory.koreanName,
                                     averagePoint = data.countOrHour / data.completed
                                 ),
                                 currentHistoryList = data.currentList.map {
@@ -78,15 +80,17 @@ class HistoryViewModel @Inject constructor(
                                         product = it.commission,
                                         category = it.commission,
                                         date = it.commissionDate,
-                                        point = it.commissionPoint
+                                        point = it.commissionPoint,
+                                        id = it.id
                                     )
                                 },
-                                totalHistoryList = data.completedList.map {
+                                totalHistoryList = (data.currentList + data.completedList).map {
                                     HistoryItem(
                                         product = it.commission,
                                         category = it.commission,
                                         date = it.commissionDate,
-                                        point = it.commissionPoint
+                                        point = it.commissionPoint,
+                                        id = it.id
                                     )
                                 }
                             )

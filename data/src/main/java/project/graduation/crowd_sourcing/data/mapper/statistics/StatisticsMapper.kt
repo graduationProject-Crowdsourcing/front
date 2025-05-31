@@ -9,6 +9,7 @@ import project.graduation.crowd_sourcing.data.response.statistics.MartListPriceR
 import project.graduation.crowd_sourcing.data.response.statistics.ItemMinMaxPriceResponse
 import project.graduation.crowd_sourcing.data.response.statistics.ItemListPriceResponse
 import project.graduation.crowd_sourcing.data.response.statistics.MartMinMaxPriceResponse
+import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.domain.model.entity.statistics.DetailEntity
 import project.graduation.crowd_sourcing.domain.model.entity.statistics.MartListPriceEntity
 import project.graduation.crowd_sourcing.domain.model.entity.statistics.ItemMinMaxPriceEntity
@@ -18,9 +19,10 @@ import project.graduation.crowd_sourcing.domain.model.entity.statistics.MartMinM
 @RequiresApi(Build.VERSION_CODES.O)
 fun DetailResponse.toEntity() = DetailEntity(
     commission = this.commission,
-    commissionregion = stringToRegion(this.commissionregion),
+    commissionregion = Region.from(this.commissionregion),
     category = this.category,
-    commissionDate = stringToDate(this.commissionDate),
+    commissionDate = this.commissionDate,
+    expirationDate = this.expirationDate,
     commisionCount = this.commisionCount,
     commisionpoint = this.commisionpoint
 )

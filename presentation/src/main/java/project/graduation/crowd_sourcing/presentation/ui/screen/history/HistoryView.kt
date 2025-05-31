@@ -20,7 +20,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import project.graduation.crowd_sourcing.domain.model.Category
+import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.component.HistoryList
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.component.HistorySearch
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.component.HistoryStats
@@ -33,10 +36,13 @@ fun HistoryView(
     val viewModel: HistoryViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
 
-    val listTitles = if (historyType == HistoryType.WORK) {
-        listOf("현재 작업 목록", "작업 기록")
+    val listTitles: Pair<List<String>, (String, String, Int) -> Unit>
+    = if (historyType == HistoryType.WORK) {
+        listOf("현재 작업 목록", "작업 기록") to {p1, p2, p3 -> }
     } else {
-        listOf("현재 의뢰 목록", "의뢰 목록")
+        listOf("현재 의뢰 목록", "의뢰 목록") to { region, category, statsId ->
+            navController.navigate(Screen.DetailStatsScreen.createRoute(region = Region.from("도봉구"), category = Category.from("라면"), statsId = statsId))
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -60,14 +66,16 @@ fun HistoryView(
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
 
             HistoryList(
-                listTitle = listTitles[0],
-                historyList = uiState.value.currentHistoryList
+                listTitle = listTitles.first[0],
+                historyList = uiState.value.currentHistoryList,
+                onClick = listTitles.second
             )
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
 
             HistoryList(
-                listTitle = listTitles[1],
-                historyList = uiState.value.totalHistoryList
+                listTitle = listTitles.first[1],
+                historyList = uiState.value.totalHistoryList,
+                onClick = listTitles.second
             )
         }
     }

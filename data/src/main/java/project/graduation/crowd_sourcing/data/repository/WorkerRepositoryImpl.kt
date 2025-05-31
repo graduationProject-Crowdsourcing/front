@@ -34,7 +34,7 @@ class WorkerRepositoryImpl @Inject constructor(
                     work = work,
                     workCount = workCount,
                     workPoint = workPoint,
-                    region = region.name,
+                    region = region.koreanName,
                     item = item,
                     itemPrice = itemPrice,
                     workDate = dateToString(workDate),

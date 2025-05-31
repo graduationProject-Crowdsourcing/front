@@ -14,7 +14,7 @@ class StatisticsUseCase @Inject constructor(
 
     suspend fun getMart(region: Region, category: Category): Result<List<MartListPriceEntity>> {
         return try {
-            repository.getMartList(region.name, category.name)
+            repository.getMartList(region.koreanName, category.koreanName)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -22,7 +22,7 @@ class StatisticsUseCase @Inject constructor(
 
     suspend fun getItem(region: Region, category: Category): Result<List<ItemListPriceEntity>> {
         return try {
-            repository.getItemList(region.name, category.name)
+            repository.getItemList(region.koreanName, category.koreanName)
         } catch (e: Exception) {
             Result.failure(e)
         }

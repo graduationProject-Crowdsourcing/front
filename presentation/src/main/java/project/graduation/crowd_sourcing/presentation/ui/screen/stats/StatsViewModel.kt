@@ -33,14 +33,14 @@ class StatsViewModel @Inject constructor(
         statisticsUseCase.getDetail(id).onSuccess {
             _uiState.update { prev ->
                 prev.copy(
-                    requestRegion = it.commissionregion.name,
+                    requestRegion = it.commissionregion.koreanName,
                     requestStartDate = it.commissionDate,
-                    requestCompleteDate = it.commissionDate,
+                    requestCompleteDate = it.expirationDate,
                     requestProduct = it.category
                 )
             }
         }.onFailure {
-
+            it.printStackTrace()
         }
     }
 
@@ -51,7 +51,6 @@ class StatsViewModel @Inject constructor(
                 statisticsUseCase.getMart(
                     region, category
                 ).onSuccess { dataList ->
-
                     _uiState.update { prev ->
                         prev.copy(
                             dataList = dataList.map {
