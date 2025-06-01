@@ -59,7 +59,7 @@ fun MyView(navController: NavController) {
     MyProfileEditDialog(
         onDismiss = { viewModel.setDialogVisibility(false) },
         onSave = { nickname ->
-            viewModel.setDialogVisibility(false)
+            viewModel.putNickname(nickname)
         },
         onImgProfile = { uri->
             viewModel.changeImg(uri)

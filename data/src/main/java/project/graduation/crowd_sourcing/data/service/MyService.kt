@@ -32,7 +32,7 @@ interface MyService {
     suspend fun putNickname(
         @Path("memberId") memberId: Int,
         @Body request: MyNicknameRequest
-    ): Unit
+    ): Response<Unit>
 
 
     @Multipart
@@ -41,7 +41,6 @@ interface MyService {
         @Query("username") username: String,
         @Part file: MultipartBody.Part
     ): Response<ProfileImgResponse>
-
 
     // 프로필 조회
     @GET("/api/v1/mypage/profile")
