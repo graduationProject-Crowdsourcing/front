@@ -78,4 +78,18 @@ class MyViewModel @Inject constructor(
         }
     }
 
+    fun loadProfile() = viewModelScope.launch{
+        myUseCase.loadProfile().onSuccess {
+            _uiState.update { prev->
+                prev.copy(
+                    profileImage = it.second,
+                    nickname = it.first.nickname,
+                    point = it.first.point
+                )
+            }
+        }.onFailure {
+
+        }
+    }
+
 }

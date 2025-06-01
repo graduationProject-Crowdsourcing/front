@@ -1,6 +1,7 @@
 package project.graduation.crowd_sourcing.domain.usecase
 
 import android.net.Uri
+import project.graduation.crowd_sourcing.domain.model.entity.my.ProfileEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentCommissionEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentWorkEntity
 import project.graduation.crowd_sourcing.domain.repository.MyRepository
@@ -35,4 +36,21 @@ class MyUseCase @Inject constructor(
             Result.failure(e)
         }
     }
+
+    suspend fun loadProfile(): Result<Pair<ProfileEntity, String>> {
+        return try {
+            val profileResult = repository.getProfile()
+            val imageResult = repository.getProfileImg()
+
+            if (profileResult.isSuccess && imageResult.isSuccess) {
+                Result.success(Pair(profileResult.getOrThrow(), imageResult.getOrThrow()))
+            } else {
+                val error = profileResult.exceptionOrNull() ?: imageResult.exceptionOrNull()
+                Result.failure(error ?: Exception("Unknown error"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 }

@@ -15,6 +15,7 @@ import project.graduation.crowd_sourcing.data.mapper.my.toEntity
 import project.graduation.crowd_sourcing.data.request.MyNicknameRequest
 import project.graduation.crowd_sourcing.data.service.MyService
 import project.graduation.crowd_sourcing.domain.local.TokenManager
+import project.graduation.crowd_sourcing.domain.model.entity.my.ProfileEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentCommissionEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentWorkEntity
 import project.graduation.crowd_sourcing.domain.repository.MyRepository
@@ -77,6 +78,34 @@ class MyRepositoryImpl @Inject constructor(
             } else {
                 Result.failure(Exception("API error: ${response.code()}"))
             }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getProfile(): Result<ProfileEntity> {
+        val username = tokenManager.getUserName()
+            ?: return Result.failure(IllegalStateException("No username found"))
+
+        return try {
+            val response = myService.getProfile(username)
+            val entity = response.body()?.toEntity()
+                ?: return Result.failure(NullPointerException("Response body is null"))
+            Result.success(entity)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+
+    override suspend fun getProfileImg(): Result<String> {
+        val username = tokenManager.getUserName()
+            ?: return Result.failure(IllegalStateException("No username found"))
+        return try {
+            val response = myService.getProfileImg(username)
+            val url = response.body()?.data?.imageUrl
+                ?: return Result.failure(NullPointerException("Response body is null"))
+            Result.success(url)
         } catch (e: Exception) {
             Result.failure(e)
         }

@@ -21,6 +21,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,7 +52,10 @@ fun MyProfileEditDialog(
     onImgProfile: (Uri) -> Unit
 ) {
     var nickname by remember { mutableStateOf(uiState.nickname) }
-    val context = LocalContext.current
+
+    LaunchedEffect(uiState.nickname) {
+        nickname = uiState.nickname
+    }
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),

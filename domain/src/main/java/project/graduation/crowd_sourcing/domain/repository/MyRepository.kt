@@ -1,9 +1,9 @@
 package project.graduation.crowd_sourcing.domain.repository
 
 import android.net.Uri
+import project.graduation.crowd_sourcing.domain.model.entity.my.ProfileEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentCommissionEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentWorkEntity
-import retrofit2.Response
 
 interface MyRepository {
     suspend fun getRecentWork(): Result<RecentWorkEntity>
@@ -13,4 +13,8 @@ interface MyRepository {
     suspend fun putNickname(nickname: String): Result<Unit>
 
     suspend fun postProfileImage(imageUri: Uri): Result<String>
+
+    suspend fun getProfile(): Result<ProfileEntity>
+
+    suspend fun getProfileImg(): Result<String>
 }

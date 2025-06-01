@@ -2,6 +2,7 @@ package project.graduation.crowd_sourcing.data.service
 
 import okhttp3.MultipartBody
 import project.graduation.crowd_sourcing.data.request.MyNicknameRequest
+import project.graduation.crowd_sourcing.data.response.my.ProfileImgResponse
 import project.graduation.crowd_sourcing.data.response.my.ProfileResponse
 import project.graduation.crowd_sourcing.data.response.my.RecentCommissionResponse
 import project.graduation.crowd_sourcing.data.response.my.RecentWorkResponse
@@ -39,11 +40,17 @@ interface MyService {
     suspend fun postProfileImage(
         @Query("username") username: String,
         @Part file: MultipartBody.Part
-    ): Response<ProfileResponse>
+    ): Response<ProfileImgResponse>
 
 
     // 프로필 조회
+    @GET("/api/v1/mypage/profile")
+    suspend fun getProfile(
+        @Query("username") username: String
+    ):Response<ProfileResponse>
 
-
-
+    @GET("/api/v1/mypage/myimage")
+    suspend fun getProfileImg(
+        @Query("username") username: String
+    ): Response<ProfileImgResponse>
 }

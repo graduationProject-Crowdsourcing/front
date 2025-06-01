@@ -29,6 +29,7 @@ fun MyView(navController: NavController) {
 
     LaunchedEffect(Unit) {
         viewModel.getRecentHistory()
+        viewModel.loadProfile()
     }
 
     Column(

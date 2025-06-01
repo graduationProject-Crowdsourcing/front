@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -28,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyUiState
 
@@ -42,15 +45,29 @@ fun MyProfile(
             .padding(bottom = dimensionResource(id = R.dimen.space_medium)),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(R.drawable.ic_my),
-            contentDescription = "profile image",
-            modifier = Modifier
-                .size(60.dp)
-                .clip(CircleShape)
-                .border(1.dp, colorResource(R.color.gray), CircleShape),
-            alignment = Alignment.Center
-        )
+        if (myUiState.profileImage != null) {
+            AsyncImage(
+                model = myUiState.profileImage,
+                contentDescription = "profile image",
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(CircleShape)
+                    .border(1.dp, colorResource(R.color.gray), CircleShape),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Image(
+                painter = painterResource(R.drawable.ic_my),
+                contentDescription = "profile image",
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(CircleShape)
+                    .border(1.dp, colorResource(R.color.gray), CircleShape),
+                alignment = Alignment.Center
+            )
+        }
+
+
 
         Column(
             modifier = Modifier
