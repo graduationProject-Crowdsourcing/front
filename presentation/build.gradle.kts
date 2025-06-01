@@ -99,4 +99,8 @@ dependencies {
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.google.firebase:firebase-analytics")
+
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }

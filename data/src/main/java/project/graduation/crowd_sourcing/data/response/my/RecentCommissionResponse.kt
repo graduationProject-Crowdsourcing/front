@@ -1,13 +1,21 @@
 package project.graduation.crowd_sourcing.data.response.my
 
-import com.google.gson.annotations.SerializedName
 import java.time.LocalDateTime
 
 data class RecentCommissionResponse(
-    @SerializedName("id") val id: Int,
-    @SerializedName("commission") val commission: String,
-    @SerializedName("region") val region: String,
-    @SerializedName("category") val category: String,
-    @SerializedName("commissionDate") val commissionDate: LocalDateTime,
-    @SerializedName("commissionPoint") val commissionPoint: Int
+    val workId: Int,
+    val workName: String,
+    val category: String,
+    val item: String,
+    val itemPrice: Int,
+    val workStatus: String,
+    val workCount: Int,
+    val workpoint: Int,
+    val workhour: Int,
+    val martName: String,
+    val region: String,
+    val workDate: LocalDateTime,
+    val expirationDate: LocalDateTime,
+    val createdAt: LocalDateTime,
+    val accepted: Boolean
 )

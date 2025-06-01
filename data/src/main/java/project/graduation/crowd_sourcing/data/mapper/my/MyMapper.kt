@@ -7,24 +7,25 @@ import project.graduation.crowd_sourcing.data.response.my.RecentCommissionRespon
 import project.graduation.crowd_sourcing.data.response.my.RecentWorkResponse
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentCommissionEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentWorkEntity
+import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun RecentCommissionResponse.toEntity(): RecentCommissionEntity = RecentCommissionEntity(
-    id = this.id,
-    commission = this.commission,
+    id = this.workId,
+    commission = this.workName,
     region = stringToRegion(this.region),
     category = this.category,
-    commissionDate = this.commissionDate,
-    commissionPoint = this.commissionPoint
+    commissionDate = this.createdAt,
+    commissionPoint = this.workpoint
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun RecentWorkResponse.toEntity(): RecentWorkEntity = RecentWorkEntity(
-    id = this.id,
-    work = this.work,
-    region = stringToRegion(this.region),
-    category = this.category,
-    item = this.item,
-    itemPrice = this.itemPrice,
-    workDate = this.workDate
+    id = this.workId,
+    work = this.workName,
+    region = stringToRegion(""),
+    category = "",
+    item = "",
+    itemPrice = 0,
+    workDate = LocalDateTime.now()
 )

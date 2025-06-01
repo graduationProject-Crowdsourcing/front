@@ -1,12 +1,17 @@
 package project.graduation.crowd_sourcing.data.service
 
+import okhttp3.MultipartBody
 import project.graduation.crowd_sourcing.data.request.MyNicknameRequest
+import project.graduation.crowd_sourcing.data.response.my.ProfileResponse
 import project.graduation.crowd_sourcing.data.response.my.RecentCommissionResponse
 import project.graduation.crowd_sourcing.data.response.my.RecentWorkResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -27,4 +32,18 @@ interface MyService {
         @Path("memberId") memberId: Int,
         @Body request: MyNicknameRequest
     ): Unit
+
+
+    @Multipart
+    @POST("/api/v1/mypage/myimage")
+    suspend fun postProfileImage(
+        @Query("username") username: String,
+        @Part file: MultipartBody.Part
+    ): Response<ProfileResponse>
+
+
+    // 프로필 조회
+
+
+
 }

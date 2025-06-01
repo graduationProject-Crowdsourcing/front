@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.my
 
+import android.net.Uri
 import android.opengl.Visibility
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -63,6 +64,18 @@ class MyViewModel @Inject constructor(
             .onFailure { e ->
                 e.printStackTrace()
             }
+    }
+
+    fun changeImg(uri: Uri) = viewModelScope.launch{
+        myUseCase.changeMyProfileImage(uri).onSuccess {
+            _uiState.update { prev->
+                prev.copy(
+                    profileImage = it
+                )
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }
     }
 
 }
