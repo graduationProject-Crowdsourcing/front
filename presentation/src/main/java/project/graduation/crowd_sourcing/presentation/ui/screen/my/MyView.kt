@@ -29,6 +29,7 @@ fun MyView(navController: NavController) {
 
     LaunchedEffect(Unit) {
         viewModel.getRecentHistory()
+        viewModel.loadProfile()
     }
 
     Column(
@@ -57,8 +58,11 @@ fun MyView(navController: NavController) {
 
     MyProfileEditDialog(
         onDismiss = { viewModel.setDialogVisibility(false) },
-        onSave = { nickname, profileImage ->
-            viewModel.setDialogVisibility(false)
+        onSave = { nickname ->
+            viewModel.putNickname(nickname)
+        },
+        onImgProfile = { uri->
+            viewModel.changeImg(uri)
         },
         uiState = uiState.value
     )

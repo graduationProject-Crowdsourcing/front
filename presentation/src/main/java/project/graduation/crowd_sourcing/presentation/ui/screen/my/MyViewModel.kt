@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.my
 
+import android.net.Uri
 import android.opengl.Visibility
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,7 +33,12 @@ class MyViewModel @Inject constructor(
     fun putNickname(nickname:String) = viewModelScope.launch {
         myUseCase.putNickname(nickname)
             .onSuccess {
-                //성공 시 회원 정보 다시 가져와서 uiState에 업데이트. 아직 회원 정보 조회 기능 없어서 주석처리
+               _uiState.update { prev->
+                   prev.copy(
+                       nickname = nickname,
+                       isDialogVisible = false
+                   )
+               }
             }.onFailure {
 
             }
@@ -61,8 +67,34 @@ class MyViewModel @Inject constructor(
                 }
             }
             .onFailure { e ->
-
+                e.printStackTrace()
             }
+    }
+
+    fun changeImg(uri: Uri) = viewModelScope.launch{
+        myUseCase.changeMyProfileImage(uri).onSuccess {
+            _uiState.update { prev->
+                prev.copy(
+                    profileImage = it
+                )
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }
+    }
+
+    fun loadProfile() = viewModelScope.launch{
+        myUseCase.loadProfile().onSuccess {
+            _uiState.update { prev->
+                prev.copy(
+                    profileImage = it.second,
+                    nickname = it.first.nickname,
+                    point = it.first.point
+                )
+            }
+        }.onFailure {
+
+        }
     }
 
 }

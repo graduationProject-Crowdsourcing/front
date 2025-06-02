@@ -21,7 +21,8 @@ import project.graduation.crowd_sourcing.presentation.utils.getTimeAgo
 fun HistoryList(
     listTitle: String,
     historyList: List<HistoryUiState.HistoryItem>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (String, String, Int) -> Unit
 ) {
     if(historyList.isNotEmpty()) {
         Column(
@@ -42,7 +43,9 @@ fun HistoryList(
                             mainText = product,
                             subText = "${getTimeAgo(date)} / ${category}",
                             leftText = "${point} points",
-                            onClick = {}
+                            onClick = {
+                                historyItem.run { onClick(product, category, id) }
+                            }
                         )
                     )
                 }
@@ -55,5 +58,5 @@ fun HistoryList(
 @Preview
 @Composable
 fun HistoryListPrev() {
-    HistoryList("title", emptyList())
+//    HistoryList("title", emptyList())
 }

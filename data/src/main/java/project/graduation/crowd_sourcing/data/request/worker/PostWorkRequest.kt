@@ -1,6 +1,7 @@
 package project.graduation.crowd_sourcing.data.request.worker
 
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDateTime
 
 data class PostWorkRequest(
     @SerializedName("work") val work: String,

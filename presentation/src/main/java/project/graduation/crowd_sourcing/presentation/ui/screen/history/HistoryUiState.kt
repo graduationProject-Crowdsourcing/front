@@ -10,6 +10,7 @@ data class HistoryUiState(
     val totalHistoryList: List<HistoryItem>,
 ) {
     data class HistoryItem(
+        val id: Int,
         val product: String,
         val category: String,
         val date: LocalDateTime,
@@ -84,51 +85,6 @@ data class HistoryUiState(
             stats = StatsType.Init to StatsType.Init,
             currentHistoryList = emptyList(),
             totalHistoryList = emptyList(),
-        )
-
-        fun initTest() = HistoryUiState(
-            stats = StatsType.Work.All(
-                totalWork = 20,
-                totalPoint = 300,
-                totalTime = 2
-            ) to StatsType.Work.Detail(mostRegion = "강남구", mostCategory = "라면", averageTime = 2),
-            currentHistoryList = listOf(
-                HistoryItem(
-                    product = "product",
-                    date = twoDaysAgo,
-                    point = 20,
-                    category = "가공식품"
-                ),
-                HistoryItem(
-                    product = "product",
-                    date = twoDaysAgo,
-                    point = 20,
-                    category = "가공식품"
-                ),
-            ),
-            totalHistoryList = listOf(
-                HistoryItem(
-                    product = "product",
-                    date = twoDaysAgo,
-                    point = 20,
-                    category = "가공식품"
-                ), HistoryItem(
-                    product = "product",
-                    date = twoDaysAgo,
-                    point = 20,
-                    category = "가공식품"
-                ), HistoryItem(
-                    product = "product",
-                    date = twoDaysAgo,
-                    point = 20,
-                    category = "가공식품"
-                ), HistoryItem(
-                    product = "product",
-                    date = twoDaysAgo,
-                    point = 20,
-                    category = "가공식품"
-                ),
-            ),
         )
     }
 }

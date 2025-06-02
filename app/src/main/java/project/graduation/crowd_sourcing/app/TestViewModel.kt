@@ -93,7 +93,7 @@ class TestViewModel @Inject constructor(
     }
 
     fun testUserPointHistory() = viewModelScope.launch { // ok
-        userPointHistoryRepository.getUserPointHistory(userId)
+        userPointHistoryRepository.getUserPointHistory()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

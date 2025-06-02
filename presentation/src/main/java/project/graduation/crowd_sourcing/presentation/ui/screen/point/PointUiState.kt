@@ -11,7 +11,7 @@ data class PointUiState(
         val name: String,
         val date: LocalDateTime,
         val region: String,
-        val type: PointType,
+        val type: String,
         val point: Int
     )
 
@@ -26,7 +26,7 @@ data class PointUiState(
                     name = "삼양라면",
                     date = twoDaysAgo,
                     region = "동대문구",
-                    type = PointType.REQUEST,
+                    type = PointType.REQUEST.type,
                     point = -200
                 )
             )

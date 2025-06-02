@@ -8,6 +8,7 @@ data class DetailEntity(
     val commissionregion: Region,
     val category: String,
     val commissionDate: LocalDateTime,
+    val expirationDate: LocalDateTime,
     val commisionCount: Int,
     val commisionpoint: Int
 )

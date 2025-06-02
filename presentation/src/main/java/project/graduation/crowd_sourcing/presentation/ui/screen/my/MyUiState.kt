@@ -7,7 +7,7 @@ import java.util.Calendar
 import java.util.Date
 
 data class MyUiState(
-    val profileImage: Bitmap?,
+    val profileImage: String?,
     val nickname: String,
     val point: Int,
     val recentRequest: RecentListItem,
@@ -23,7 +23,7 @@ data class MyUiState(
     companion object {
         fun init() = MyUiState(
             profileImage = null,
-            nickname = "user name",
+            nickname = "",
             point = 0,
             recentRequest = RecentListItem(0,name = "test1", date = twoDaysAgo),
             recentWork = RecentListItem(0,name = "test1", date = twoDaysAgo)

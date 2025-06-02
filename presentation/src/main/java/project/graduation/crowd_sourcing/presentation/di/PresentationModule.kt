@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import project.graduation.crowd_sourcing.domain.local.TokenManager
+import project.graduation.crowd_sourcing.domain.repository.FcmRepository
 import project.graduation.crowd_sourcing.domain.repository.LoginRepository
 import project.graduation.crowd_sourcing.domain.repository.MyRepository
 import project.graduation.crowd_sourcing.domain.repository.RequesterRepository
@@ -25,8 +26,9 @@ object PresentationModule {
     @Provides
     fun provideMemberUseCase(
         loginRepository: LoginRepository,
+        fcmRepository: FcmRepository,
         tokenManager: TokenManager
-    ): MemberUseCase = MemberUseCase(loginRepository, tokenManager)
+    ): MemberUseCase = MemberUseCase(loginRepository, fcmRepository,tokenManager)
 
     @Provides
     fun provideMyUseCase(repository: MyRepository): MyUseCase {
