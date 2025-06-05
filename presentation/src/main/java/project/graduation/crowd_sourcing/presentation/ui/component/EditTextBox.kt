@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import project.graduation.crowd_sourcing.presentation.R
 
+
 @Composable
 fun EditTextBox(
     value: String,
@@ -40,7 +42,9 @@ fun EditTextBox(
     readOnly: Boolean = false,
     enabled: Boolean = true,
     trailingIcon: @Composable (() -> Unit)? = null,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     val shape = RoundedCornerShape(dimensionResource(R.dimen.round_common))
     val borderColor = colorResource(id = R.color.light_gray)
@@ -49,17 +53,16 @@ fun EditTextBox(
 
     Box(
         modifier = modifier
-            .height(dimensionResource(R.dimen.height_btn)) // 예: 48.dp
+            .height(dimensionResource(R.dimen.height_btn))
             .fillMaxWidth()
             .clip(shape)
             .border(1.dp, borderColor, shape)
             .background(Color.White)
             .clickable(
-                // 클릭 이벤트 핸들러가 있을 때만 클릭 가능하도록 수정 (enabled 상태와 무관하게)
                 enabled = onClick != null
-            ) { 
+            ) {
                 Log.d("EditTextBox", "Box 클릭됨")
-                onClick?.invoke() 
+                onClick?.invoke()
             }
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
@@ -69,7 +72,8 @@ fun EditTextBox(
             enabled = enabled,
             readOnly = readOnly,
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            keyboardOptions = keyboardOptions.copy(keyboardType = keyboardType),
+            keyboardActions = keyboardActions,
             textStyle = LocalTextStyle.current.copy(
                 color = Color.Black,
                 fontSize = 14.sp
@@ -98,6 +102,7 @@ fun EditTextBox(
         )
     }
 }
+
 
 @Preview
 @Composable
