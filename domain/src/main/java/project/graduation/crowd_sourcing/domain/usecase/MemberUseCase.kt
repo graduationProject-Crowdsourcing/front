@@ -28,8 +28,12 @@ class MemberUseCase @Inject constructor(
     }
 
     // 로그아웃
-    suspend fun logout(accessToken: String): Result<Unit> {
-        return repository.logout(accessToken)
+    suspend fun logout(): Result<Unit> {
+        return tokenManager.getAccessToken()?.let{
+            repository.logout(it).onSuccess {
+                tokenManager.clear()
+            }
+        } ?: Result.failure(IllegalStateException("로그인된 사용자 정보가 없습니다."))
     }
 
     // 회원가입
@@ -52,5 +56,11 @@ class MemberUseCase @Inject constructor(
                     cont.resumeWithException(task.exception ?: Exception("FCM 토큰 가져오기 실패"))
                 }
             }
+    }
+
+    fun getIsLogined() : Boolean{
+        return tokenManager.getAccessToken()?.let{
+           true
+        } ?: false
     }
 }

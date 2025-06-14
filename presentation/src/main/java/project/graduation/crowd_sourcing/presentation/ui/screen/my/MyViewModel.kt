@@ -4,6 +4,7 @@ import android.net.Uri
 import android.opengl.Visibility
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.viewModelFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.domain.usecase.HistoryUseCase
+import project.graduation.crowd_sourcing.domain.usecase.MemberUseCase
 import project.graduation.crowd_sourcing.domain.usecase.MyUseCase
 import project.graduation.crowd_sourcing.presentation.utils.getTimeAgo
 import javax.inject.Inject
@@ -24,21 +26,22 @@ class MyViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(MyUiState.init())
     val uiState = _uiState.asStateFlow()
 
+
     fun setDialogVisibility(visibility: Boolean) {
         _uiState.update { prev ->
             prev.copy(isDialogVisible = visibility)
         }
     }
 
-    fun putNickname(nickname:String) = viewModelScope.launch {
+    fun putNickname(nickname: String) = viewModelScope.launch {
         myUseCase.putNickname(nickname)
             .onSuccess {
-               _uiState.update { prev->
-                   prev.copy(
-                       nickname = nickname,
-                       isDialogVisible = false
-                   )
-               }
+                _uiState.update { prev ->
+                    prev.copy(
+                        nickname = nickname,
+                        isDialogVisible = false
+                    )
+                }
             }.onFailure {
 
             }
@@ -71,9 +74,9 @@ class MyViewModel @Inject constructor(
             }
     }
 
-    fun changeImg(uri: Uri) = viewModelScope.launch{
+    fun changeImg(uri: Uri) = viewModelScope.launch {
         myUseCase.changeMyProfileImage(uri).onSuccess {
-            _uiState.update { prev->
+            _uiState.update { prev ->
                 prev.copy(
                     profileImage = it
                 )
@@ -83,9 +86,9 @@ class MyViewModel @Inject constructor(
         }
     }
 
-    fun loadProfile() = viewModelScope.launch{
+    fun loadProfile() = viewModelScope.launch {
         myUseCase.loadProfile().onSuccess {
-            _uiState.update { prev->
+            _uiState.update { prev ->
                 prev.copy(
                     profileImage = it.second,
                     nickname = it.first.nickname,
@@ -96,5 +99,4 @@ class MyViewModel @Inject constructor(
 
         }
     }
-
 }

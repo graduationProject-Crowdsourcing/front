@@ -23,10 +23,7 @@ class LogoutConfirmViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            val accessToken = tokenManager.getAccessToken()
-            Log.d("Logout", "🔑 accessToken = $accessToken")
-
-            memberUseCase.logout(accessToken ?: "")
+            memberUseCase.logout()
                 .onSuccess {
                     tokenManager.clear()
                     logoutSuccess = true
@@ -35,5 +32,10 @@ class LogoutConfirmViewModel @Inject constructor(
                     Log.e("Logout", "❌ 로그아웃 실패: ${it.message}")
                 }
         }
+    }
+
+    fun logoutWithoutServer(){
+        tokenManager.clear()
+        logoutSuccess = true
     }
 }
