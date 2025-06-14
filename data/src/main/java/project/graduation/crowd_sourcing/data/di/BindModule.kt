@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import project.graduation.crowd_sourcing.data.repository.FcmRepositoryImpl
+import project.graduation.crowd_sourcing.data.repository.LocationRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.LoginRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.MartSearchRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.MyRepositoryImpl
@@ -15,6 +16,7 @@ import project.graduation.crowd_sourcing.data.repository.UserPointRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.WorkRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.WorkerRepositoryImpl
 import project.graduation.crowd_sourcing.domain.repository.FcmRepository
+import project.graduation.crowd_sourcing.domain.repository.LocationRepository
 import project.graduation.crowd_sourcing.domain.repository.LoginRepository
 import project.graduation.crowd_sourcing.domain.repository.MartSearchRepository
 import project.graduation.crowd_sourcing.domain.repository.MyRepository
@@ -81,4 +83,10 @@ abstract class BindModule {
     abstract fun bindFcmRepository(
         repository: FcmRepositoryImpl
     ): FcmRepository
+
+    @Binds
+    abstract fun bindLocationRepository(
+        repository: LocationRepositoryImpl
+    ): LocationRepository
+
 }
