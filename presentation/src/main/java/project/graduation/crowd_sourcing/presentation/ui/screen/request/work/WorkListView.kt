@@ -1,31 +1,36 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.request.work
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
 import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonList
-import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonListItem
 import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonListItemData
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
-import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.WorkListItem
 
 // 작업 제출 버튼 클릭 시 등장 - 작업 리스트 페이지
 @Composable
 fun WorkListView(
     navController: NavController,
-    viewModel: WorkListViewModel = viewModel()
+    viewModel: WorkListViewModel = hiltViewModel()
 ) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)
+    LaunchedEffect(Unit) {
+        viewModel.getWorkList()
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
 
         Text(
@@ -49,10 +54,11 @@ fun WorkListView(
             list = viewModel.workList.map {
                 CommonListItemData(
                     mainText = it.title,
-                    subText = it.place,
+                    subText = it.place.koreanName,
                     leftText = "리워드 : ${it.reward}p",
                     icon = null,
-                    onClick = { navController.navigate(Screen.SubmitWorkScreen.createRoute(it.id))
+                    onClick = {
+                        navController.navigate(Screen.SubmitWorkScreen.createRoute(it.id))
                     }
                 )
             }

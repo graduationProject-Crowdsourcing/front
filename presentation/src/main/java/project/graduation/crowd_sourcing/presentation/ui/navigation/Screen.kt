@@ -27,7 +27,7 @@ sealed class Screen(val title: String, val route: String) {
     data object SubmitWorkScreen : Screen(title = "작업 제출", route = "submit_work/{workId}") {
         const val routeWithArg = "submit_work/{workId}"
 
-        fun createRoute(workId: String): String = "submit_work/$workId"
+        fun createRoute(workId: Int): String = "submit_work/$workId"
     }
     data object WorkCompleteScreen : Screen(title = "작업 완료", route = "work_complete") {
         const val routeWithArgs = "work_complete/{place}/{title}/{reward}"

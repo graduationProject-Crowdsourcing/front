@@ -56,7 +56,7 @@ object PresentationModule {
     }
 
     @Provides
-    fun provideWorkerUseCase(repository: WorkerRepository): WorkerUseCase {
-        return WorkerUseCase(repository)
+    fun provideWorkerUseCase(repository: WorkerRepository, tokenManager: TokenManager): WorkerUseCase {
+        return WorkerUseCase(repository, tokenManager)
     }
 }
