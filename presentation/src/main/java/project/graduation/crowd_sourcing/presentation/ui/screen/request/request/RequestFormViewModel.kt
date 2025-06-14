@@ -74,15 +74,20 @@ class RequestFormViewModel @Inject constructor(
             try {
                 _isSearching.value = true
                 
-                // 검색 API 호출 - radius는 서버가 처리하도록 기본값(500) 사용
-                val searchResults = martSearchUseCase.searchMartByKeyword(keyword, 500)
+                // 검색 API 호출 - radius는 서버가 처리하도록 기본값(600) 사용
+                val searchResults = martSearchUseCase.searchMartByKeyword(keyword, 600.0)
+                
+                // 검색 키워드와의 유사도 순으로 정렬
+                val sortedResults = searchResults.sortedByDescending { mart ->
+                    calculateRelevanceScore(mart.martName, keyword)
+                }
                 
                 // 결과를 MartInfo 타입으로 변환
-                val martInfoList = searchResults.map { mart ->
+                val martInfoList = sortedResults.map { mart ->
                     MartInfo(
                         name = mart.martName,
-                        latitude = mart.lat,
-                        longitude = mart.lng
+                        latitude = mart.latitude,
+                        longitude = mart.longitude
                     )
                 }
                 
@@ -94,6 +99,47 @@ class RequestFormViewModel @Inject constructor(
                 _isSearching.value = false
             }
         }
+    }
+
+    /**
+     * 검색 키워드와 마트 이름의 유사도 점수 계산
+     * 점수가 높을수록 더 관련성이 높음
+     */
+    private fun calculateRelevanceScore(martName: String, keyword: String): Int {
+        val lowerMartName = martName.lowercase()
+        val lowerKeyword = keyword.lowercase()
+        
+        var score = 0
+        
+        // 1. 완전 일치 (가장 높은 점수)
+        if (lowerMartName == lowerKeyword) {
+            score += 100
+        }
+        
+        // 2. 시작 부분 일치
+        if (lowerMartName.startsWith(lowerKeyword)) {
+            score += 50
+        }
+        
+        // 3. 포함 여부
+        if (lowerMartName.contains(lowerKeyword)) {
+            score += 30
+        }
+        
+        // 4. 키워드가 마트 이름에 포함된 비율
+        val containsRatio = lowerKeyword.length.toFloat() / lowerMartName.length.toFloat()
+        score += (containsRatio * 20).toInt()
+        
+        // 5. 각 글자별 일치도 (부분 일치)
+        var charMatches = 0
+        for (char in lowerKeyword) {
+            if (lowerMartName.contains(char)) {
+                charMatches++
+            }
+        }
+        score += (charMatches.toFloat() / lowerKeyword.length * 10).toInt()
+        
+        return score
     }
 
     fun onMaxPeopleChange(value: String) {

@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.Request
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
 
 @Composable
 fun SearchResultDialog(
@@ -77,6 +78,68 @@ fun SearchResultDialog(
 }
 
 @Composable
+fun MartSearchResultDialog(
+    marts: List<MartEntity>,
+    onDismiss: () -> Unit,
+    searchQuery: String
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.surface
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "\"$searchQuery\" 검색 결과",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    IconButton(onClick = onDismiss) {
+                        Text("✕", fontSize = 20.sp)
+                    }
+                }
+                
+                Text(
+                    text = if (marts.isNotEmpty()) "다음과 같은 마트를 찾았습니다." else "검색 결과가 없습니다.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                if (marts.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 400.dp)
+                    ) {
+                        items(marts) { mart ->
+                            MartDialogItem(mart = mart)
+                            if (marts.indexOf(mart) < marts.lastIndex) {
+                                Divider(
+                                    modifier = Modifier.padding(vertical = 8.dp),
+                                    color = Color.LightGray
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun DialogItem(request: Request) {
     Row(
         modifier = Modifier
@@ -117,6 +180,59 @@ private fun DialogItem(request: Request) {
             text = "리워드: ${request.reward}p",
             style = MaterialTheme.typography.bodyMedium,
             color = Color.Gray
+        )
+    }
+}
+
+@Composable
+private fun MartDialogItem(mart: MartEntity) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(
+                shape = CircleShape,
+                color = Color(0xFF4CAF50),
+                modifier = Modifier.size(24.dp)
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(
+                        text = "🏪",
+                        color = Color.White,
+                        fontSize = 12.sp
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.width(12.dp))
+            
+            Column {
+                Text(
+                    text = mart.martName,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(
+                    text = "${mart.sido} ${mart.sigungu ?: ""} ${mart.dong ?: ""}".trim(),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
+            }
+        }
+        
+        Text(
+            text = if (mart.existCommission > 0) "의뢰 ${mart.existCommission}개" else "의뢰 없음",
+            style = MaterialTheme.typography.bodyMedium,
+            color = if (mart.existCommission > 0) Color(0xFF1785E4) else Color.Gray
         )
     }
 } 

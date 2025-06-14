@@ -151,7 +151,8 @@ class HomeViewModel @Inject constructor(
             try {
                 _uiState.update { 
                     HomeUiState.Success(
-                        requests = emptyList()
+                        currentRequests = emptyList(),
+                        recommendedRequests = DUMMY_REQUESTS
                     )
                 }
             } catch (e: Exception) {
@@ -181,7 +182,7 @@ class HomeViewModel @Inject constructor(
                     lastLng = lng
                     
                     // 서버에 고정 반경(500m)으로 API 요청
-                    val apiRadius = 500
+                    val apiRadius = 500.0
                     try {
                         val marts = martSearchUseCase.searchMartByLocation(lat, lng, apiRadius)
                         Log.d(TAG, "API 응답: ${marts.size}개 마트 로드 성공")
@@ -198,7 +199,7 @@ class HomeViewModel @Inject constructor(
                 
                 // 반경은 변경되었을 수 있으므로 매번 필터링
                 val filteredMarts = cachedMartEntities.filter { mart ->
-                    val distance = distanceInMeters(lat, lng, mart.lat, mart.lng)
+                    val distance = distanceInMeters(lat, lng, mart.latitude, mart.longitude)
                     val inRadius = distance <= radiusInMeters
                     Log.d(TAG, "마트: ${mart.martName}, 거리: ${distance.toInt()}m, " +
                           "설정반경: ${radiusInMeters}m, 포함여부: $inRadius")
@@ -267,17 +268,44 @@ class HomeViewModel @Inject constructor(
     }
 
     /**
-     * 의뢰 목록을 업데이트
+     * 현재 작업중인 의뢰 목록을 업데이트
      * 
-     * @param requests 새로운 의뢰 목록
+     * @param requests 새로운 현재 작업중인 의뢰 목록
      */
-    fun updateRequests(requests: List<Request>) {
+    fun updateCurrentRequests(requests: List<Request>) {
         _uiState.update { currentState ->
             when (currentState) {
-                is HomeUiState.Success -> currentState.copy(requests = requests)
+                is HomeUiState.Success -> currentState.copy(currentRequests = requests)
                 else -> currentState
             }
         }
+    }
+
+    /**
+     * 추천 의뢰 목록을 업데이트
+     * 
+     * @param requests 새로운 추천 의뢰 목록
+     */
+    fun updateRecommendedRequests(requests: List<Request>) {
+        _uiState.update { currentState ->
+            when (currentState) {
+                is HomeUiState.Success -> currentState.copy(recommendedRequests = requests)
+                else -> currentState
+            }
+        }
+    }
+
+    /**
+     * 현재 작업중인 의뢰 목록을 가져오는 함수
+     * TODO: 향후 worker usecase의 getWorking을 사용하도록 변경
+     */
+    fun loadCurrentRequests() {
+        // TODO: worker usecase의 getWorking을 사용하여 현재 작업중인 의뢰 목록을 가져오기
+        // 예: val workingRequests = workerUseCase.getWorking()
+        // updateCurrentRequests(workingRequests)
+        
+        // 임시로 빈 목록 설정 (usecase 연결 준비)
+        updateCurrentRequests(emptyList())
     }
 
     /**
@@ -325,6 +353,129 @@ class HomeViewModel @Inject constructor(
                     
                     newState
                 }
+                else -> currentState
+            }
+        }
+    }
+
+    /**
+     * 키워드로 마트 검색
+     * 
+     * @param keyword 검색할 키워드
+     */
+    fun searchMartsByKeyword(keyword: String) {
+        if (keyword.isBlank()) return
+        
+        viewModelScope.launch {
+            try {
+                Log.d(TAG, "마트 키워드 검색 시작: $keyword")
+                
+                // 키워드로 검색 (radius 0.0으로 전달하여 서버 디폴트 값 사용)
+                val searchResults = martSearchUseCase.searchMartByKeyword(keyword, 600.0)
+                
+                // 현재 위치 정보 가져오기
+                val currentState = _uiState.value as? HomeUiState.Success
+                val currentLocation = currentState?.currentLocation
+                
+                // 검색 키워드와의 유사도 순으로 정렬, 점수가 같으면 거리 순으로 정렬
+                val sortedResults = searchResults.sortedWith(compareByDescending<MartEntity> { mart ->
+                    calculateRelevanceScore(mart.martName, keyword)
+                }.thenBy { mart ->
+                    // 점수가 같으면 현재 위치에서 가까운 순으로 정렬
+                    currentLocation?.let { location ->
+                        distanceInMeters(location.latitude, location.longitude, mart.latitude, mart.longitude)
+                    } ?: Double.MAX_VALUE // 현재 위치가 없으면 가장 뒤로
+                })
+                
+                Log.d(TAG, "마트 검색 결과: ${searchResults.size}개 (유사도 순 + 거리 순 정렬 완료)")
+                
+                _uiState.update { currentState ->
+                    when (currentState) {
+                        is HomeUiState.Success -> currentState.copy(
+                            searchedMarts = sortedResults,
+                            isSearchResultDialogVisible = true
+                        )
+                        else -> currentState
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "마트 검색 오류: ${e.message}", e)
+                _uiState.update { currentState ->
+                    when (currentState) {
+                        is HomeUiState.Success -> currentState.copy(
+                            searchedMarts = emptyList(),
+                            isSearchResultDialogVisible = true
+                        )
+                        else -> currentState
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 검색 키워드와 마트 이름의 유사도 점수 계산
+     * 점수가 높을수록 더 관련성이 높음
+     */
+    private fun calculateRelevanceScore(martName: String, keyword: String): Int {
+        val lowerMartName = martName.lowercase()
+        val lowerKeyword = keyword.lowercase()
+        
+        var score = 0
+        
+        // 1. 완전 일치 (가장 높은 점수)
+        if (lowerMartName == lowerKeyword) {
+            score += 100
+        }
+        
+        // 2. 시작 부분 일치
+        if (lowerMartName.startsWith(lowerKeyword)) {
+            score += 50
+        }
+        
+        // 3. 포함 여부
+        if (lowerMartName.contains(lowerKeyword)) {
+            score += 30
+        }
+        
+        // 4. 키워드가 마트 이름에 포함된 비율
+        val containsRatio = lowerKeyword.length.toFloat() / lowerMartName.length.toFloat()
+        score += (containsRatio * 20).toInt()
+        
+        // 5. 각 글자별 일치도 (부분 일치)
+        var charMatches = 0
+        for (char in lowerKeyword) {
+            if (lowerMartName.contains(char)) {
+                charMatches++
+            }
+        }
+        score += (charMatches.toFloat() / lowerKeyword.length * 10).toInt()
+        
+        return score
+    }
+
+    /**
+     * 검색 결과 다이얼로그를 표시
+     */
+    fun showSearchResultDialog() {
+        _uiState.update { currentState ->
+            when (currentState) {
+                is HomeUiState.Success -> currentState.copy(isSearchResultDialogVisible = true)
+                else -> currentState
+            }
+        }
+    }
+
+    /**
+     * 검색 결과 다이얼로그를 숨김
+     */
+    fun hideSearchResultDialog() {
+        _uiState.update { currentState ->
+            when (currentState) {
+                is HomeUiState.Success -> currentState.copy(
+                    isSearchResultDialogVisible = false,
+                    searchedMarts = emptyList()
+                )
                 else -> currentState
             }
         }

@@ -7,6 +7,17 @@ data class ApiResponseDtoListMartDto (
 )
 
 data class MartDto(
+    val martId: Int,
+    val martName: String,
+    val latitude: Double,
+    val longitude: Double,
+    val sido: String,
+    val sigungu: String?,
+    val dong: String?,
+    val existCommission: Int
+)
+
+data class MartDto1(
     val sigungu: String,
     val martName: String,
     val lat: Double,

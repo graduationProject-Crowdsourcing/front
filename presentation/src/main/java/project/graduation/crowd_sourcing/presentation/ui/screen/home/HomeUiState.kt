@@ -22,18 +22,24 @@ sealed class HomeUiState {
      * 
      * @param searchQuery 검색어
      * @param currentLocation 사용자의 현재 위치 (null일 경우 위치 정보 없음)
-     * @param requests 주변 의뢰 목록
+     * @param currentRequests 현재 작업중인 의뢰 목록
+     * @param recommendedRequests 추천 의뢰 목록
      * @param searchRadius 검색 반경 (km 단위)
      * @param isRadiusDialogVisible 반경 설정 다이얼로그 표시 여부
      * @param nearbyMartEntities 주변 마트 목록
+     * @param searchedMarts 키워드로 검색된 마트 목록
+     * @param isSearchResultDialogVisible 검색 결과 다이얼로그 표시 여부
      */
     data class Success(
         val searchQuery: String = "",
         val currentLocation: Location? = null,
-        val requests: List<Request> = emptyList(),
+        val currentRequests: List<Request> = emptyList(),
+        val recommendedRequests: List<Request> = emptyList(),
         val searchRadius: Float = 0.5f,
         val isRadiusDialogVisible: Boolean = false,
-        val nearbyMartEntities: List<MartEntity> = emptyList()
+        val nearbyMartEntities: List<MartEntity> = emptyList(),
+        val searchedMarts: List<MartEntity> = emptyList(),
+        val isSearchResultDialogVisible: Boolean = false
     ) : HomeUiState()
     
     /**

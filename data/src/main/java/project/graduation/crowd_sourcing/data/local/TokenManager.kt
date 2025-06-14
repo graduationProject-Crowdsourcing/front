@@ -20,7 +20,13 @@ class TokenManager @Inject constructor(
         }
     }
 
-    fun getAccessToken(): String? = prefs.getString("ACCESS_TOKEN", null)
+    fun getAccessToken(): String? {
+        // 임시로 하드코딩
+        return "3cc3c08e-dd85-4264-893c-0f5ddfaddaea"
+        
+        // 원래 코드 (로그인 기능 활성화 시 주석 해제)
+        // return prefs.getString("ACCESS_TOKEN", null)
+    }
 
     fun getRefreshToken(): String? = prefs.getString("REFRESH_TOKEN", null)
 

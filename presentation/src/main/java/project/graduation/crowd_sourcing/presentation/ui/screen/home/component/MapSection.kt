@@ -160,8 +160,8 @@ private fun NaverMapView(state: HomeUiState.Success) {
                 // 주변 마트 마커들
                 DrawMartMarkers(state.nearbyMartEntities)
 
-                // 의뢰 위치 마커들
-                DrawRequestMarkers(state.requests)
+                // 의뢰 위치 마커들 (현재 작업중인 의뢰 + 추천 의뢰)
+                // DrawRequestMarkers(state.currentRequests + state.recommendedRequests)
             }
         }
 
@@ -228,7 +228,7 @@ private fun DrawSearchRadiusCircle(center: LatLng, radiusInKm: Float) {
 private fun DrawMartMarkers(martEntities: List<MartEntity>) {
     martEntities.forEach { mart ->
         Marker(
-            state = MarkerState(position = LatLng(mart.lat, mart.lng)),
+            state = MarkerState(position = LatLng(mart.latitude, mart.longitude)),
             captionText = mart.martName,
             zIndex = MapConstants.MARKER_ZINDEX
         )

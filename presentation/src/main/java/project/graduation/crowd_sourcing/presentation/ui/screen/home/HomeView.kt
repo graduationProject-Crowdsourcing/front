@@ -43,6 +43,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RadiusSettingDialog
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RequestsSection
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.SearchSection
+import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.MartSearchResultDialog
 import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingTheme
 
 // TODO: Domain Layer 구현 필요
@@ -219,7 +220,8 @@ fun HomeView() {
                         SearchSection(
                             searchQuery = state.searchQuery,
                             onSearchQueryChange = viewModel::updateSearchQuery,
-                            requests = state.requests
+                            requests = state.recommendedRequests,
+                            viewModel = viewModel
                         )
 
                         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
@@ -259,8 +261,6 @@ fun HomeView() {
                     }
                 }
 
-
-
                 if (state.isRadiusDialogVisible) {
                     var tempRadius by remember { mutableStateOf(state.searchRadius) }
                     RadiusSettingDialog(
@@ -271,6 +271,15 @@ fun HomeView() {
                             viewModel.updateSearchRadius(tempRadius)
                             viewModel.hideRadiusDialog()
                         }
+                    )
+                }
+
+                // 마트 검색 결과 다이얼로그
+                if (state.isSearchResultDialogVisible) {
+                    MartSearchResultDialog(
+                        marts = state.searchedMarts,
+                        onDismiss = viewModel::hideSearchResultDialog,
+                        searchQuery = state.searchQuery
                     )
                 }
             } else {
