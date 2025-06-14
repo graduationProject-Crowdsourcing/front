@@ -10,14 +10,16 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface LoginService {
     @POST("/api/v1/accounts/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json")
     @POST("/api/v1/accounts/register")
-    suspend fun signUp(@Body request: SignUpRequest): SignUpResponse
+    suspend fun signUp(@Body request: SignUpRequest): Response<SignUpResponse>
 
     @POST("/api/v1/accounts/refresh")
     suspend fun refreshToken(
