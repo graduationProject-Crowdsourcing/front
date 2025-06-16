@@ -81,7 +81,8 @@ fun SearchResultDialog(
 fun MartSearchResultDialog(
     marts: List<MartEntity>,
     onDismiss: () -> Unit,
-    searchQuery: String
+    searchQuery: String,
+    onMartClick: (MartEntity) -> Unit = {}
 ) {
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -124,7 +125,10 @@ fun MartSearchResultDialog(
                             .heightIn(max = 400.dp)
                     ) {
                         items(marts) { mart ->
-                            MartDialogItem(mart = mart)
+                            MartDialogItem(
+                                mart = mart,
+                                onMartClick = onMartClick
+                            )
                             if (marts.indexOf(mart) < marts.lastIndex) {
                                 Divider(
                                     modifier = Modifier.padding(vertical = 8.dp),
@@ -184,15 +188,24 @@ private fun DialogItem(request: Request) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MartDialogItem(mart: MartEntity) {
-    Row(
+private fun MartDialogItem(
+    mart: MartEntity,
+    onMartClick: (MartEntity) -> Unit = {}
+) {
+    Surface(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth(),
+        onClick = { onMartClick(mart) }
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -229,10 +242,11 @@ private fun MartDialogItem(mart: MartEntity) {
             }
         }
         
-        Text(
-            text = if (mart.existCommission > 0) "의뢰 ${mart.existCommission}개" else "의뢰 없음",
-            style = MaterialTheme.typography.bodyMedium,
-            color = if (mart.existCommission > 0) Color(0xFF1785E4) else Color.Gray
-        )
+            Text(
+                text = if (mart.existCommission > 0) "의뢰 ${mart.existCommission}개" else "의뢰 없음",
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (mart.existCommission > 0) Color(0xFF1785E4) else Color.Gray
+            )
+        }
     }
 } 

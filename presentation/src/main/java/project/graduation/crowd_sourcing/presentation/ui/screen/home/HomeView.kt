@@ -253,7 +253,11 @@ fun HomeView() {
                     MartSearchResultDialog(
                         marts = state.searchedMarts,
                         onDismiss = viewModel::hideSearchResultDialog,
-                        searchQuery = state.searchQuery
+                        searchQuery = state.searchQuery,
+                        onMartClick = { mart ->
+                            viewModel.hideSearchResultDialog()
+                            viewModel.onMartClicked(mart)
+                        }
                     )
                 }
 
