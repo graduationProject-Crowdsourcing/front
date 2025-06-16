@@ -30,7 +30,7 @@ fun MartListPriceResponse.toEntity() = MartListPriceEntity(
     region = stringToRegion(this.region),
     category = this.category,
     mart = this.mart,
-    categoryPrice = this.categoryPrice
+    categoryPrice = this.categoryPrice?: 0
 )
 
 fun ItemMinMaxPriceResponse.toEntity() = ItemMinMaxPriceEntity(

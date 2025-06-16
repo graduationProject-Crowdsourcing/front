@@ -6,12 +6,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.domain.repository.FcmRepository
+import project.graduation.crowd_sourcing.domain.repository.LocationRepository
 import project.graduation.crowd_sourcing.domain.repository.LoginRepository
 import project.graduation.crowd_sourcing.domain.repository.MyRepository
 import project.graduation.crowd_sourcing.domain.repository.RequesterRepository
 import project.graduation.crowd_sourcing.domain.repository.StatisticsRepository
 import project.graduation.crowd_sourcing.domain.repository.UserPointRepository
 import project.graduation.crowd_sourcing.domain.repository.WorkerRepository
+import project.graduation.crowd_sourcing.domain.usecase.AlarmUseCase
 import project.graduation.crowd_sourcing.domain.usecase.HistoryUseCase
 import project.graduation.crowd_sourcing.domain.usecase.MemberUseCase
 import project.graduation.crowd_sourcing.domain.usecase.MyUseCase
@@ -56,7 +58,12 @@ object PresentationModule {
     }
 
     @Provides
-    fun provideWorkerUseCase(repository: WorkerRepository): WorkerUseCase {
-        return WorkerUseCase(repository)
+    fun provideWorkerUseCase(repository: WorkerRepository, tokenManager: TokenManager): WorkerUseCase {
+        return WorkerUseCase(repository, tokenManager)
+    }
+
+    @Provides
+    fun providesAlarmUseCase(fcmRepository: FcmRepository, locationRepository: LocationRepository, tokenManager: TokenManager): AlarmUseCase{
+        return AlarmUseCase(fcmRepository, locationRepository, tokenManager)
     }
 }

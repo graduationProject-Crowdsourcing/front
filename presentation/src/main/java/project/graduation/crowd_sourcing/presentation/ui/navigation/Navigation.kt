@@ -43,12 +43,13 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.stats.StatsView
 @Composable
 fun Navigation(
     navController: NavHostController,
-    pd: PaddingValues
+    pd: PaddingValues,
+    isInitialized: Boolean
 ) {
     NavHost(
         navController = navController,
         // startDestination = Screen.BottomScreen.HomeScreen.bRoute,
-        startDestination = Screen.LoginScreen.route,
+        startDestination = if(isInitialized) Screen.BottomScreen.HomeScreen.bRoute else Screen.LoginScreen.route,
 
         modifier = Modifier
             .padding(pd)

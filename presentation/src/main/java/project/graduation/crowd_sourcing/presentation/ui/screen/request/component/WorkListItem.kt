@@ -38,7 +38,7 @@ fun WorkListItem(work: Work, onClick: () -> Unit) {
         }
         Column(modifier = Modifier.weight(1f).padding(start = 16.dp)) {
             Text(text = work.title, style = MaterialTheme.typography.titleSmall)
-            Text(text = work.place, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+            Text(text = work.place.koreanName, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
         }
         Text(
             text = "리워드 : ${work.reward}p",

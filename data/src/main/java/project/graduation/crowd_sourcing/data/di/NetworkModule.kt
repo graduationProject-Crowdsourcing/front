@@ -15,6 +15,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.data.network.AuthorizationInterceptor
 import project.graduation.crowd_sourcing.data.network.TokenAuthenticator
+import project.graduation.crowd_sourcing.data.service.LocationService
 import project.graduation.crowd_sourcing.data.service.LoginService
 import project.graduation.crowd_sourcing.data.service.MartSearchService
 import project.graduation.crowd_sourcing.data.service.RequesterService
@@ -147,6 +148,10 @@ class NetworkModule {
 
     @Provides fun provideFcmService(retrofit: Retrofit): FcmService =
         provideService(retrofit)
+
+    @Provides fun provideLocationService(retrofit: Retrofit): LocationService =
+        provideService(retrofit)
+
 
     @Provides
     @Named("no-auth")

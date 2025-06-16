@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -12,11 +11,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -25,7 +22,6 @@ import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.component.HistoryList
-import project.graduation.crowd_sourcing.presentation.ui.screen.history.component.HistorySearch
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.component.HistoryStats
 
 @Composable
@@ -41,7 +37,7 @@ fun HistoryView(
         listOf("현재 작업 목록", "작업 기록") to {p1, p2, p3 -> }
     } else {
         listOf("현재 의뢰 목록", "의뢰 목록") to { region, category, statsId ->
-            navController.navigate(Screen.DetailStatsScreen.createRoute(region = Region.from("도봉구"), category = Category.from("라면"), statsId = statsId))
+            navController.navigate(Screen.DetailStatsScreen.createRoute(region = Region.from(region), category = Category.from(category), statsId = statsId))
         }
     }
 

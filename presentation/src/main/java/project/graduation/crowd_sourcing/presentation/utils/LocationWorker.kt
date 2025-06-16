@@ -14,12 +14,18 @@ import androidx.work.WorkerParameters
 import com.google.android.gms.location.LocationServices
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
+import project.graduation.crowd_sourcing.domain.usecase.AlarmUseCase
 
 @HiltWorker
 class LocationWorker @AssistedInject constructor(
     @Assisted appContext: Context,
-    @Assisted workerParams: WorkerParameters
+    @Assisted workerParams: WorkerParameters,
+    private val alarmUseCase: AlarmUseCase
 ) : CoroutineWorker(appContext, workerParams) {
 
     private val fusedLocationClient by lazy {
@@ -28,32 +34,41 @@ class LocationWorker @AssistedInject constructor(
 
     private val context = appContext
 
-    override suspend fun doWork(): Result = suspendCancellableCoroutine { cont ->
+    override suspend fun doWork(): Result {
         if (ActivityCompat.checkSelfPermission(
                 applicationContext, Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             sendNotification("위치 권한 없음", "앱에 위치 권한을 허용해주세요.")
-            cont.resume(Result.failure(), null)
-            return@suspendCancellableCoroutine
+            return Result.failure()
         }
 
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+        return try {
+            val location = fusedLocationClient.lastLocation.await()
+
             if (location != null) {
                 val lat = location.latitude
                 val lng = location.longitude
-                val message = "현재 위치: 위도 $lat, 경도 $lng"
-                sendNotification("위치 정보", message)
-                cont.resume(Result.success(), null)
+
+                // suspend 함수 직접 호출
+                alarmUseCase.updateLocation(lat, lng).onFailure {
+                  sendNotification("updateLocation", it.toString())
+                }.onSuccess {
+                    sendNotification("updateLocation", "성공")
+                }
+
+                Result.success()
             } else {
                 sendNotification("위치 확인 실패", "위치 정보를 가져올 수 없습니다.")
-                cont.resume(Result.retry(), null)
+                Result.retry()
             }
-        }.addOnFailureListener {
+        } catch (e: Exception) {
             sendNotification("오류", "위치 정보를 가져오는 중 오류가 발생했습니다.")
-            cont.resume(Result.retry(), null)
+            Result.retry()
         }
     }
+
+
 
     private fun sendNotification(title: String, content: String) {
         val channelId = "location_notify_channel"

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.location.Location
 import android.os.Looper
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -12,14 +14,22 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.Priority
 import com.naver.maps.geometry.LatLng
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import project.graduation.crowd_sourcing.domain.usecase.MemberUseCase
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
+import javax.inject.Inject
 
-class BaseViewModel () : ViewModel() {
+@HiltViewModel
+class BaseViewModel @Inject constructor (
+    private val memberUseCase: MemberUseCase
+) : ViewModel() {
     private val _uiState = MutableStateFlow(BaseUiState.init())
     val uiState = _uiState.asStateFlow()
+
+    fun getIsInitialized() = memberUseCase.getIsLogined()
 
     fun updateCurrentScreen(navController: NavController) {
         val currentRoute = navController.currentBackStackEntry?.destination?.route

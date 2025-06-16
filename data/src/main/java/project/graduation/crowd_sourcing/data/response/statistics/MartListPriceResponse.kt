@@ -6,5 +6,5 @@ data class MartListPriceResponse(
     @SerializedName("region") val region: String,
     @SerializedName("category") val category: String,
     @SerializedName("mart") val mart: String,
-    @SerializedName("categoryPrice") val categoryPrice: Int
+    @SerializedName("categoryPrice") val categoryPrice: Int?
 )

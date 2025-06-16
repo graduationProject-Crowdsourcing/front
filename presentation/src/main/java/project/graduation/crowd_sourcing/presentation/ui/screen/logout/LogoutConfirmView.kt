@@ -63,7 +63,13 @@ fun LogoutConfirmView(
 
             ConfirmButton(
                 text = "로그아웃",
-                onConfirm = { viewModel.logout() },
+                onConfirm = {
+                    viewModel.logoutWithoutServer()
+                    navController.navigate(Screen.LoginScreen.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
             )

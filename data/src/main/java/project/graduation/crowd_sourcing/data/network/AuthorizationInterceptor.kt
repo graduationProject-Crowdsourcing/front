@@ -31,10 +31,6 @@ class AuthorizationInterceptor @Inject constructor(
             .addHeader("Authorization", "Bearer $accessToken")
             .build()
 
-        Log.d("InterceptorDebug", "🚨 Authorization 붙음: ${newRequest.headers}")
-
-
-
         return chain.proceed(newRequest)
     }
 }
