@@ -230,34 +230,6 @@ fun HomeView() {
 
                         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
 
-                        // 스크롤 테스트용 UI 요소
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(500.dp)
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(text = "스크롤 테스트용 요소입니다")
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Text(text = "여기까지 스크롤 되나요?")
-                                Spacer(modifier = Modifier.height(32.dp))
-                                Box(
-                                    modifier = Modifier
-                                        .size(200.dp)
-                                        .padding(16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(text = "테스트 박스")
-                                }
-                                Spacer(modifier = Modifier.height(32.dp))
-                                Text(text = "스크롤이 끝까지 내려갑니다")
-                            }
-                        }
                     }
                 }
 
