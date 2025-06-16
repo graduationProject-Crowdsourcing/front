@@ -39,7 +39,10 @@ sealed class HomeUiState {
         val isRadiusDialogVisible: Boolean = false,
         val nearbyMartEntities: List<MartEntity> = emptyList(),
         val searchedMarts: List<MartEntity> = emptyList(),
-        val isSearchResultDialogVisible: Boolean = false
+        val isSearchResultDialogVisible: Boolean = false,
+        val selectedMart: MartEntity? = null,
+        val selectedMartRequests: List<Request> = emptyList(),
+        val isMartRequestDialogVisible: Boolean = false
     ) : HomeUiState()
     
     /**

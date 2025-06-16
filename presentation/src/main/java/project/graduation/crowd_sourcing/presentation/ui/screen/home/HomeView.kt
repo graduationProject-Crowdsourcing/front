@@ -44,6 +44,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RequestsSection
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.SearchSection
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.MartSearchResultDialog
+import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.MartRequestDialog
 import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingTheme
 
 // TODO: Domain Layer 구현 필요
@@ -186,7 +187,8 @@ fun HomeView() {
                         // 맵 표시
                         MapSection(
                             isMapServiceAvailable = isMapServiceAvailable,
-                            state = state
+                            state = state,
+                            onMartClick = viewModel::onMartClicked
                         )
 
                         // 현재 위치정보가 있으면 반경 버튼 표시
@@ -252,6 +254,15 @@ fun HomeView() {
                         marts = state.searchedMarts,
                         onDismiss = viewModel::hideSearchResultDialog,
                         searchQuery = state.searchQuery
+                    )
+                }
+
+                // 마트 의뢰 다이얼로그
+                if (state.isMartRequestDialogVisible && state.selectedMart != null) {
+                    MartRequestDialog(
+                        mart = state.selectedMart,
+                        requests = state.selectedMartRequests,
+                        onDismiss = viewModel::hideMartRequestDialog
                     )
                 }
             } else {

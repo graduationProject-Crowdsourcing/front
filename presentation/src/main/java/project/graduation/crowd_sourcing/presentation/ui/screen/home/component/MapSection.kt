@@ -72,11 +72,13 @@ private object MapConstants {
  * 
  * @param isMapServiceAvailable 지도 서비스 사용 가능 여부
  * @param state 홈 화면 상태
+ * @param onMartClick 마트 클릭 이벤트 핸들러
  */
 @Composable
 fun MapSection(
     isMapServiceAvailable: Boolean,
-    state: HomeUiState.Success
+    state: HomeUiState.Success,
+    onMartClick: (MartEntity) -> Unit = {}
 ) {
     BoxWithConstraints(
         modifier = Modifier.fillMaxWidth()
@@ -90,7 +92,7 @@ fun MapSection(
             shape = RoundedCornerShape(8.dp)
         ) {
             if (isMapServiceAvailable) {
-                NaverMapView(state)
+                NaverMapView(state, onMartClick)
             } else {
                 MapFallbackContent(state)
             }
@@ -102,10 +104,14 @@ fun MapSection(
  * 네이버 맵 컴포넌트
  * 
  * @param state 홈 화면 상태
+ * @param onMartClick 마트 클릭 이벤트 핸들러
  */
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
-private fun NaverMapView(state: HomeUiState.Success) {
+private fun NaverMapView(
+    state: HomeUiState.Success,
+    onMartClick: (MartEntity) -> Unit
+) {
     val currentLocation = state.currentLocation
     val defaultLocation = MapConstants.DEFAULT_LOCATION
 
@@ -158,7 +164,10 @@ private fun NaverMapView(state: HomeUiState.Success) {
                 )
 
                 // 주변 마트 마커들
-                DrawMartMarkers(state.nearbyMartEntities)
+                DrawMartMarkers(
+                    martEntities = state.nearbyMartEntities,
+                    onMartClick = onMartClick
+                )
 
                 // 의뢰 위치 마커들 (현재 작업중인 의뢰 + 추천 의뢰)
                 // DrawRequestMarkers(state.currentRequests + state.recommendedRequests)
@@ -225,12 +234,19 @@ private fun DrawSearchRadiusCircle(center: LatLng, radiusInKm: Float) {
  */
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
-private fun DrawMartMarkers(martEntities: List<MartEntity>) {
+private fun DrawMartMarkers(
+    martEntities: List<MartEntity>,
+    onMartClick: (MartEntity) -> Unit
+) {
     martEntities.forEach { mart ->
         Marker(
             state = MarkerState(position = LatLng(mart.latitude, mart.longitude)),
             captionText = mart.martName,
-            zIndex = MapConstants.MARKER_ZINDEX
+            zIndex = MapConstants.MARKER_ZINDEX,
+            onClick = { 
+                onMartClick(mart)
+                true // 클릭 이벤트 소모
+            }
         )
     }
 }
