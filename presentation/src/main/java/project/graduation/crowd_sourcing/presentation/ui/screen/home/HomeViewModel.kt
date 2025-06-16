@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
 import project.graduation.crowd_sourcing.domain.usecase.MartSearchUseCase
+import project.graduation.crowd_sourcing.domain.usecase.HistoryUseCase
 import javax.inject.Inject
 import kotlin.math.*
 
@@ -52,7 +53,8 @@ import kotlin.math.*
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val martSearchUseCase: MartSearchUseCase
+    private val martSearchUseCase: MartSearchUseCase,
+    private val historyUseCase: HistoryUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -297,15 +299,37 @@ class HomeViewModel @Inject constructor(
 
     /**
      * 현재 작업중인 의뢰 목록을 가져오는 함수
-     * TODO: 향후 worker usecase의 getWorking을 사용하도록 변경
+     * HistoryUseCase의 getRequest를 사용하여 현재 의뢰 목록을 가져옴
      */
     fun loadCurrentRequests() {
-        // TODO: worker usecase의 getWorking을 사용하여 현재 작업중인 의뢰 목록을 가져오기
-        // 예: val workingRequests = workerUseCase.getWorking()
-        // updateCurrentRequests(workingRequests)
-        
-        // 임시로 빈 목록 설정 (usecase 연결 준비)
-        updateCurrentRequests(emptyList())
+        viewModelScope.launch {
+            try {
+                Log.d(TAG, "현재 의뢰 목록 로드 시작")
+                
+                val result = historyUseCase.getRequest()
+                result.onSuccess { historyStats ->
+                    // currentList를 Request 형태로 변환
+                    val currentRequests = historyStats.currentList.map { workHistory ->
+                        Request(
+                            id = workHistory.id.toString(),
+                            title = workHistory.commission,
+                            location = Location(0.0, 0.0), // 위치 정보가 없어서 기본값 사용
+                            place = workHistory.commissionRegion.koreanName,
+                            reward = workHistory.commissionPoint
+                        )
+                    }
+                    
+                    Log.d(TAG, "현재 의뢰 목록 로드 성공: ${currentRequests.size}개")
+                    updateCurrentRequests(currentRequests)
+                }.onFailure { exception ->
+                    Log.e(TAG, "현재 의뢰 목록 로드 실패: ${exception.message}", exception)
+                    updateCurrentRequests(emptyList())
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "현재 의뢰 목록 로드 중 오류 발생: ${e.message}", e)
+                updateCurrentRequests(emptyList())
+            }
+        }
     }
 
     /**
