@@ -21,31 +21,36 @@ import project.graduation.crowd_sourcing.presentation.utils.getTimeAgo
 fun HistoryList(
     listTitle: String,
     historyList: List<HistoryUiState.HistoryItem>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (String, String, Int) -> Unit
 ) {
-    Column(
-        modifier = modifier
-    ) {
-        Text(
-            text = listTitle,
-            style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp)
-        )
+    if(historyList.isNotEmpty()) {
+        Column(
+            modifier = modifier
+        ) {
+            Text(
+                text = listTitle,
+                style = TextStyle(fontSize = dimensionResource(id = R.dimen.sp_large).value.sp)
+            )
 
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_small)))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_small)))
 
-        historyList.forEach { historyItem ->
-            historyItem.run {
-                CommonListItem(
-                    CommonListItemData(
-                        icon = R.drawable.ic_list_box,
-                        mainText = product,
-                        subText = "${getTimeAgo(date)} / ${category}",
-                        leftText = "${point} points",
-                        onClick = {}
+            historyList.forEach { historyItem ->
+                historyItem.run {
+                    CommonListItem(
+                        CommonListItemData(
+                            icon = R.drawable.ic_list_box,
+                            mainText = product,
+                            subText = "${getTimeAgo(date)} / ${category}",
+                            leftText = "${point} points",
+                            onClick = {
+                                historyItem.run { onClick(product, category, id) }
+                            }
+                        )
                     )
-                )
+                }
+                GrayDivider()
             }
-            GrayDivider()
         }
     }
 }
@@ -53,5 +58,5 @@ fun HistoryList(
 @Preview
 @Composable
 fun HistoryListPrev() {
-    HistoryList("title", emptyList())
+//    HistoryList("title", emptyList())
 }

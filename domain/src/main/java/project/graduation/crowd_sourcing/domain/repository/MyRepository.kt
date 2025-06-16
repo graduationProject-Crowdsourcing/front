@@ -1,10 +1,20 @@
 package project.graduation.crowd_sourcing.domain.repository
 
+import android.net.Uri
+import project.graduation.crowd_sourcing.domain.model.entity.my.ProfileEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentCommissionEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentWorkEntity
 
 interface MyRepository {
-    suspend fun getRecentWork(userId: Int): Result<RecentWorkEntity>
+    suspend fun getRecentWork(): Result<RecentWorkEntity>
 
-    suspend fun getRecentCommission(userId: Int): Result<RecentCommissionEntity>
+    suspend fun getRecentCommission(): Result<RecentCommissionEntity>
+
+    suspend fun putNickname(nickname: String): Result<Unit>
+
+    suspend fun postProfileImage(imageUri: Uri): Result<String>
+
+    suspend fun getProfile(): Result<ProfileEntity>
+
+    suspend fun getProfileImg(): Result<String>
 }

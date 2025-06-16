@@ -1,9 +1,9 @@
 package project.graduation.crowd_sourcing.data.service
 
 import project.graduation.crowd_sourcing.data.response.statistics.DetailResponse
-import project.graduation.crowd_sourcing.data.response.statistics.ItemListPriceResponse
-import project.graduation.crowd_sourcing.data.response.statistics.ItemMinMaxPriceResponse
 import project.graduation.crowd_sourcing.data.response.statistics.MartListPriceResponse
+import project.graduation.crowd_sourcing.data.response.statistics.ItemMinMaxPriceResponse
+import project.graduation.crowd_sourcing.data.response.statistics.ItemListPriceResponse
 import project.graduation.crowd_sourcing.data.response.statistics.MartMinMaxPriceResponse
 import retrofit2.http.GET
 import retrofit2.http.Path

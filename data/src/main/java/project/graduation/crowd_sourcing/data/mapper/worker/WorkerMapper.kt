@@ -2,7 +2,6 @@ package project.graduation.crowd_sourcing.data.mapper.worker
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import project.graduation.crowd_sourcing.data.mapper.stringToDate
 import project.graduation.crowd_sourcing.data.mapper.stringToRegion
 import project.graduation.crowd_sourcing.data.mapper.stringToWorkStatus
 import project.graduation.crowd_sourcing.data.response.worker.WorkCountEntity
@@ -27,7 +26,7 @@ fun WorkHistoryResponse.toEntity() = WorkHistoryEntity(
     commissionCount = commissionCount,
     commissionPoint = commissionPoint,
     commissionRegion = stringToRegion(this.commissionRegion),
-    commissionDate = stringToDate(commissionDate),
+    commissionDate = commissionDate,
     commissionStatus = stringToWorkStatus(commissionStatus),
     memberId = memberId
 )

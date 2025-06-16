@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "321389475352",
+    "project_id": "test-31ff7",
+    "storage_bucket": "test-31ff7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321389475352:android:8becf529ef854a46ccb56d",
+        "android_client_info": {
+          "package_name": "com.example.fcm_push_test"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtmftH2sa_DbTjvB1NLtu2xLPoCoIDKwQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321389475352:android:1174db725d336a9accb56d",
+        "android_client_info": {
+          "package_name": "com.example.my_fcm_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtmftH2sa_DbTjvB1NLtu2xLPoCoIDKwQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321389475352:android:d835522591cdb301ccb56d",
+        "android_client_info": {
+          "package_name": "project.graduation.crowd_sourcing.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtmftH2sa_DbTjvB1NLtu2xLPoCoIDKwQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

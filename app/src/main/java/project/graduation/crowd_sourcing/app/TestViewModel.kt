@@ -6,9 +6,10 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import project.graduation.crowd_sourcing.data.local.TokenManager
+import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.data.response.worker.WorkCountEntity
 import project.graduation.crowd_sourcing.data.response.worker.WorkHistoryEntity
 import project.graduation.crowd_sourcing.data.response.worker.WorkHourEntity
@@ -38,9 +39,9 @@ class TestViewModel @Inject constructor(
         Log.d("token",tokenManager.getAccessToken().toString())
     }
 
-    fun testMy() = viewModelScope.launch { // 403 error
-        myRepository.getRecentWork(userId)
-        myRepository.getRecentCommission(userId)
+    fun testMy() = viewModelScope.launch { //
+        myRepository.getRecentWork()
+        myRepository.getRecentCommission()
     }
 
     fun testStatistics() = viewModelScope.launch { // region, category 입력 api 403 error
@@ -92,11 +93,11 @@ class TestViewModel @Inject constructor(
     }
 
     fun testUserPointHistory() = viewModelScope.launch { // ok
-//        userPointHistoryRepository.getUserPointHistory(userId)
+        userPointHistoryRepository.getUserPointHistory()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun testWorker() = viewModelScope.launch { // ok
+    fun testWorker() = viewModelScope.launch { //
         workerRepository.run {
 //            postWork(
 //                work = "test",
@@ -118,8 +119,27 @@ class TestViewModel @Inject constructor(
 //            getWorkerHour(username)
 //
 //            getWorkHistory(username, WorkStatus.COMPLETED)
-//
-//            getWorkMost(username)
+
+            getWorkMost(username) //
+                .onSuccess {
+                    Log.d("work", "$it")
+                }.onFailure {
+                    Log.e("ork", "$it")
+                }
         }
+    }
+
+    fun getFcmToken(){
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("FCM", "토큰 가져오기 실패", task.exception)
+                    return@addOnCompleteListener
+                }
+
+                val token = task.result
+                Log.d("FCM", "FCM 직접 가져온 토큰: $token")
+            }
+
     }
 }

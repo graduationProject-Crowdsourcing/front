@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt.android)
+    id("com.google.gms.google-services")
 }
 
 val localProperties = Properties()
@@ -63,7 +64,7 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.androidx.hilt.common)
     implementation(libs.androidx.work.runtime.ktx)
-    implementation(project(":data"))
+    implementation(libs.firebase.messaging.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -95,4 +96,11 @@ dependencies {
     // Permissions
     implementation(libs.accompanist.permissions)
 
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+    implementation("com.google.firebase:firebase-analytics")
+
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }

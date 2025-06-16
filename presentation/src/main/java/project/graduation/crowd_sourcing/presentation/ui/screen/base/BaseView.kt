@@ -72,7 +72,6 @@ fun BaseView() {
             )
         },
         bottomBar = {
-
             if (uiState.value.currentScreen is Screen.BottomScreen) {
                 BottomBar(
                     navController = navController,
@@ -83,7 +82,8 @@ fun BaseView() {
     ) { paddingValues ->
         Navigation(
             navController = navController,
-            pd = paddingValues
+            pd = paddingValues,
+            isInitialized = viewModel.getIsInitialized()
         )
     }
 }

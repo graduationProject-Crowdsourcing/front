@@ -1,4 +1,4 @@
-package project.graduation.crowd_sourcing.data.local
+package project.graduation.crowd_sourcing.domain.local
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -19,6 +19,9 @@ class TokenManager @Inject constructor(
             apply()
         }
     }
+    fun saveUsername(userName: String) {
+        prefs.edit().putString("USER_NAME", userName).apply()
+    }
 
     fun getAccessToken(): String? {
         // 임시로 하드코딩
@@ -31,6 +34,9 @@ class TokenManager @Inject constructor(
     fun getRefreshToken(): String? = prefs.getString("REFRESH_TOKEN", null)
 
     fun getUserId(): Int = prefs.getInt("USER_ID", -1)
+
+    fun getUserName(): String? = prefs.getString("USER_NAME", null)
+
 
     fun clear() {
         prefs.edit().clear().apply()

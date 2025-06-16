@@ -1,15 +1,23 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.login
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,10 +29,24 @@ fun SignUpView(
     viewModel: LoginViewModel,
     onSignUpSuccess: () -> Unit
 ) {
+    val isSignUpSuccess by viewModel.isSignUpSuccess.collectAsState()
+
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var nickname by remember { mutableStateOf("") }
+
+    // Focus 요청자들 선언
+    val passwordFocusRequester = remember { FocusRequester() }
+    val confirmPasswordFocusRequester = remember { FocusRequester() }
+    val nicknameFocusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(isSignUpSuccess) {
+        if (isSignUpSuccess) {
+            onSignUpSuccess()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -33,9 +55,9 @@ fun SignUpView(
             .widthIn(max = 400.dp)
     ) {
         Text("회원가입", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-
         Spacer(modifier = Modifier.height(16.dp))
 
+        // 아이디
         Text("아이디", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp))
         EditTextBox(
             value = username,
@@ -43,11 +65,16 @@ fun SignUpView(
             placeHolder = "아이디",
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp)
+                .padding(horizontal = 10.dp),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { passwordFocusRequester.requestFocus() }
+            )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // 비밀번호
         Text("비밀번호", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp))
         EditTextBox(
             value = password,
@@ -56,10 +83,16 @@ fun SignUpView(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp)
+                .focusRequester(passwordFocusRequester),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { confirmPasswordFocusRequester.requestFocus() }
+            )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // 비밀번호 확인
         Text("비밀번호 확인", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp))
         EditTextBox(
             value = confirmPassword,
@@ -68,10 +101,16 @@ fun SignUpView(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp)
+                .focusRequester(confirmPasswordFocusRequester),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { nicknameFocusRequester.requestFocus() }
+            )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // 닉네임
         Text("닉네임", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp))
         EditTextBox(
             value = nickname,
@@ -80,6 +119,11 @@ fun SignUpView(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp)
+                .focusRequester(nicknameFocusRequester),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = { focusManager.clearFocus() }
+            )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -89,9 +133,8 @@ fun SignUpView(
             onConfirm = {
                 if (password == confirmPassword) {
                     viewModel.signUp(username, password, nickname)
-                    onSignUpSuccess()
                 } else {
-                    // 비밀번호 불일치 알림 (선택사항)
+                    // 비밀번호 불일치 처리
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -99,39 +142,3 @@ fun SignUpView(
     }
 }
 
-//@Composable
-//fun InputWithButton(label: String) {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(horizontal = 10.dp)
-//    ) {
-//        Row(
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            EditTextBox(
-//                value = "",
-//                onValueChange = {},
-//                placeHolder = label,
-//                modifier = Modifier.weight(1f)
-//            )
-//
-//            Spacer(modifier = Modifier.width(8.dp))
-//
-//            ConfirmButton(
-//                text = "확인",
-//                onConfirm = { /* TODO */ },
-//                modifier = Modifier
-//                    .align(Alignment.CenterVertically)
-//            )
-//        }
-//
-//        Spacer(modifier = Modifier.height(12.dp))
-//    }
-//}
-
-//@Preview(showBackground = true, widthDp = 400, heightDp = 800)
-//@Composable
-//fun SignUpViewPreview() {
-//    SignUpView(onSignUpSuccess = {})
-//}

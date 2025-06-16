@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import project.graduation.crowd_sourcing.data.local.TokenManager
+import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.domain.usecase.MemberUseCase
 import javax.inject.Inject
 
@@ -29,6 +29,10 @@ class LoginViewModel @Inject constructor(
 
     var isLoginSuccess by mutableStateOf(false)
         private set
+
+    private val _isSignUpSuccess = MutableStateFlow(false)
+    val isSignUpSuccess: StateFlow<Boolean> = _isSignUpSuccess.asStateFlow()
+
 
     fun onEmailChanged(value: String) {
         _uiState.value = _uiState.value.copy(email = value)
@@ -67,10 +71,12 @@ class LoginViewModel @Inject constructor(
 
             memberUseCase.signUp(username, password, nickname)
                 .onSuccess {
-                    isSignUpCompleted = true
+                    Log.d("SignUp", "✅ 회원가입 성공! 서버 응답: $it")
+                    _isSignUpSuccess.value = true
                     _uiState.value = _uiState.value.copy(errorMessage = null)
                 }
                 .onFailure {
+                    Log.e("SignUp", "❌ 회원가입 실패: ${it.message}")
                     _uiState.value = _uiState.value.copy(
                         errorMessage = it.message ?: "회원가입에 실패했습니다."
                     )
@@ -79,7 +85,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onSignUpSuccess() {
-        isSignUpCompleted = true
+        _isSignUpSuccess.value = false // 바텀시트 닫힌 뒤 초기화
     }
 
     private fun validate() {

@@ -1,6 +1,8 @@
 package project.graduation.crowd_sourcing.data.repository
 
-import project.graduation.crowd_sourcing.data.mapper.dateToString
+import android.os.Build
+import androidx.annotation.RequiresApi
+import project.graduation.crowd_sourcing.data.mapper.formatToString
 import project.graduation.crowd_sourcing.data.mapper.worker.toEntity
 import project.graduation.crowd_sourcing.data.request.worker.PostWorkRequest
 import project.graduation.crowd_sourcing.data.response.worker.WorkCountEntity
@@ -18,6 +20,7 @@ import javax.inject.Inject
 class WorkerRepositoryImpl @Inject constructor(
     private val workerService: WorkerService
 ) : WorkerRepository {
+    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun postWork(
         work: String,
         workCount: Int,
@@ -34,10 +37,10 @@ class WorkerRepositoryImpl @Inject constructor(
                     work = work,
                     workCount = workCount,
                     workPoint = workPoint,
-                    region = region.name,
+                    region = region.koreanName,
                     item = item,
                     itemPrice = itemPrice,
-                    workDate = dateToString(workDate),
+                    workDate = workDate.formatToString(),
                     memberId = memberId
                 )
             )

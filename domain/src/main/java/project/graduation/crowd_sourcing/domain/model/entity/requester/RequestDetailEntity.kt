@@ -5,5 +5,5 @@ package project.graduation.crowd_sourcing.domain.model.entity.requester
  */
 data class RequestDetailEntity(
     val mostRequestedRegion: String,
-    val mostRequestedDayOfWeek: String
+    val mostRequestedCategory: String
 ) 

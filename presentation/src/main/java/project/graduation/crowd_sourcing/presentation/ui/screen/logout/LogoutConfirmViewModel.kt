@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import project.graduation.crowd_sourcing.data.local.TokenManager
+import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.domain.usecase.MemberUseCase
 import javax.inject.Inject
 
@@ -23,10 +23,7 @@ class LogoutConfirmViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            val accessToken = tokenManager.getAccessToken()
-            Log.d("Logout", "🔑 accessToken = $accessToken")
-
-            memberUseCase.logout(accessToken ?: "")
+            memberUseCase.logout()
                 .onSuccess {
                     tokenManager.clear()
                     logoutSuccess = true
@@ -35,5 +32,10 @@ class LogoutConfirmViewModel @Inject constructor(
                     Log.e("Logout", "❌ 로그아웃 실패: ${it.message}")
                 }
         }
+    }
+
+    fun logoutWithoutServer(){
+        tokenManager.clear()
+        logoutSuccess = true
     }
 }

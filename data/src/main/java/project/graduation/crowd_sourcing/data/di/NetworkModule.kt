@@ -1,15 +1,21 @@
 package project.graduation.crowd_sourcing.data.di
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import project.graduation.crowd_sourcing.data.local.TokenManager
+import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.data.network.AuthorizationInterceptor
+import project.graduation.crowd_sourcing.data.network.TokenAuthenticator
+import project.graduation.crowd_sourcing.data.service.LocationService
 import project.graduation.crowd_sourcing.data.service.LoginService
 import project.graduation.crowd_sourcing.data.service.MartSearchService
 import project.graduation.crowd_sourcing.data.service.RequesterService
@@ -19,9 +25,14 @@ import project.graduation.crowd_sourcing.data.service.StatisticsService
 import project.graduation.crowd_sourcing.data.service.UserPointService
 import project.graduation.crowd_sourcing.data.service.WorkService
 import project.graduation.crowd_sourcing.data.service.WorkerService
+import project.graduation.crowd_sourcing.data.service.alarm.FcmService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.reflect.Type
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
+import javax.inject.Named
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -48,27 +59,28 @@ class NetworkModule {
     @Provides
     fun provideGson(): Gson {
         return GsonBuilder()
-            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             .setLenient()
             .registerTypeAdapter(
-                java.time.LocalDateTime::class.java,
-                object : com.google.gson.JsonDeserializer<java.time.LocalDateTime> {
+                LocalDateTime::class.java,
+                object : JsonDeserializer<LocalDateTime> {
                     override fun deserialize(
-                        json: com.google.gson.JsonElement,
-                        typeOfT: java.lang.reflect.Type,
-                        context: com.google.gson.JsonDeserializationContext
-                    ): java.time.LocalDateTime {
-                        try {
-                            val dateString = json.asString
-                            android.util.Log.d("DateConverter", "JSON 날짜 문자열: $dateString")
-                            return java.time.LocalDateTime.parse(
-                                dateString.replace("+00:00", "Z"),
-                                java.time.format.DateTimeFormatter.ISO_DATE_TIME
-                            )
+                        json: JsonElement,
+                        typeOfT: Type,
+                        context: JsonDeserializationContext
+                    ): LocalDateTime {
+                        val raw = json.asString
+                        Log.d("DateConverter", "원본 날짜 문자열: $raw")
+
+                        // 소수점 이하(.SSS...)를 잘라냄 → 초까지만 남김
+                        val trimmed = raw.substringBefore(".")
+                        Log.d("DateConverter", "소수점 제거된 문자열: $trimmed")
+
+                        return try {
+                            LocalDateTime.parse(trimmed, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
                         } catch (e: Exception) {
-                            android.util.Log.e("DateConverter", "날짜 변환 오류: ${e.message}")
+                            Log.e("DateConverter", "날짜 파싱 실패: ${e.message}")
                             e.printStackTrace()
-                            return java.time.LocalDateTime.now()
+                            LocalDateTime.now()
                         }
                     }
                 }
@@ -76,14 +88,18 @@ class NetworkModule {
             .create()
     }
 
+
+
     @Provides
     fun provideOkHttpClient(
         authorizationInterceptor: AuthorizationInterceptor,
-        loggingInterceptor: HttpLoggingInterceptor
+        loggingInterceptor: HttpLoggingInterceptor,
+        tokenAuthenticator: TokenAuthenticator
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(authorizationInterceptor)
             .addInterceptor(loggingInterceptor)
+            .authenticator(tokenAuthenticator)
             .build()
     }
 
@@ -99,67 +115,70 @@ class NetworkModule {
             .build()
     }
 
+    private inline fun <reified T> provideService(retrofit: Retrofit): T =
+        retrofit.create(T::class.java)
+
+
+    @Provides fun provideLoginService(retrofit: Retrofit): LoginService =
+        provideService(retrofit)
+
+    @Provides fun provideSearchService(retrofit: Retrofit): SearchService =
+        provideService(retrofit)
+
+    @Provides fun provideMartSearchService(retrofit: Retrofit): MartSearchService =
+        provideService(retrofit)
+
+    @Provides fun provideRequesterService(retrofit: Retrofit): RequesterService =
+        provideService(retrofit)
+
+    @Provides fun provideMyService(retrofit: Retrofit): MyService =
+        provideService(retrofit)
+
+    @Provides fun provideUserPointService(retrofit: Retrofit): UserPointService =
+        provideService(retrofit)
+
+    @Provides fun provideStatisticsService(retrofit: Retrofit): StatisticsService =
+        provideService(retrofit)
+
+    @Provides fun provideWorkService(retrofit: Retrofit): WorkService =
+        provideService(retrofit)
+
+    @Provides fun provideWorkerService(retrofit: Retrofit): WorkerService =
+        provideService(retrofit)
+
+    @Provides fun provideFcmService(retrofit: Retrofit): FcmService =
+        provideService(retrofit)
+
+    @Provides fun provideLocationService(retrofit: Retrofit): LocationService =
+        provideService(retrofit)
+
+
     @Provides
-    fun provideLoginService(
-        retrofit: Retrofit
-    ): LoginService {
-        return retrofit.create(LoginService::class.java)
+    @Named("no-auth")
+    fun provideNoAuthOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
     }
 
     @Provides
-    fun provideSearchService(
-        retrofit: Retrofit
-    ): SearchService{
-        return retrofit.create(SearchService::class.java)
+    @Named("no-auth")
+    fun provideNoAuthRetrofit(
+        @Named("no-auth") okHttpClient: OkHttpClient,
+        gson: Gson
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("http://52.78.15.153:8112/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
     }
 
     @Provides
-    fun provideMartSearchService(
-        retrofit: Retrofit
-    ): MartSearchService {
-        return retrofit.create(MartSearchService::class.java)
-    }
-
-    @Provides
-    fun provideRequesterService(
-        retrofit: Retrofit
-    ): RequesterService {
-        return retrofit.create(RequesterService::class.java)
-    }
-
-    @Provides
-    fun provideMyService(
-        retrofit: Retrofit
-    ): MyService {
-        return retrofit.create(MyService::class.java)
-    }
-
-
-    @Provides
-    fun provideUserPointService(
-        retrofit: Retrofit
-    ): UserPointService {
-        return retrofit.create(UserPointService::class.java)
-    }
-
-    @Provides
-    fun provideStatisticsService(
-        retrofit: Retrofit
-    ): StatisticsService {
-        return retrofit.create(StatisticsService::class.java)
-    }
-
-    @Provides
-    fun provideWorkService(
-        retrofit: Retrofit
-    ): WorkService {
-        return retrofit.create(WorkService::class.java)
-    }
-
-    @Provides
-    fun provideWorkerService(
-        retrofit: Retrofit
-    ): WorkerService {
-        return retrofit.create(WorkerService::class.java)
-    }
+    @Named("no-auth")
+    fun provideNoAuthLoginService(
+        @Named("no-auth") retrofit: Retrofit
+    ): LoginService = provideService(retrofit)
 }

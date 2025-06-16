@@ -4,26 +4,29 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import project.graduation.crowd_sourcing.data.repository.FcmRepositoryImpl
+import project.graduation.crowd_sourcing.data.repository.LocationRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.LoginRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.MartSearchRepositoryImpl
+import project.graduation.crowd_sourcing.data.repository.MyRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.RequesterRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.SearchRepositoryImpl
-import project.graduation.crowd_sourcing.domain.repository.LoginRepository
-import project.graduation.crowd_sourcing.domain.repository.MartSearchRepository
-import project.graduation.crowd_sourcing.domain.repository.RequesterRepository
-import project.graduation.crowd_sourcing.domain.repository.SearchRepository
-import javax.inject.Singleton
-import project.graduation.crowd_sourcing.data.repository.MyRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.StatisticsRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.UserPointRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.WorkRepositoryImpl
-import project.graduation.crowd_sourcing.domain.model.entity.userpoint.UserPointHistoryEntity
 import project.graduation.crowd_sourcing.data.repository.WorkerRepositoryImpl
+import project.graduation.crowd_sourcing.domain.repository.FcmRepository
+import project.graduation.crowd_sourcing.domain.repository.LocationRepository
+import project.graduation.crowd_sourcing.domain.repository.LoginRepository
+import project.graduation.crowd_sourcing.domain.repository.MartSearchRepository
 import project.graduation.crowd_sourcing.domain.repository.MyRepository
+import project.graduation.crowd_sourcing.domain.repository.RequesterRepository
+import project.graduation.crowd_sourcing.domain.repository.SearchRepository
 import project.graduation.crowd_sourcing.domain.repository.StatisticsRepository
 import project.graduation.crowd_sourcing.domain.repository.UserPointRepository
 import project.graduation.crowd_sourcing.domain.repository.WorkRepository
 import project.graduation.crowd_sourcing.domain.repository.WorkerRepository
+import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -44,7 +47,7 @@ abstract class BindModule {
     abstract fun bindMartSearchRepository(
         martSearchRepositoryImpl: MartSearchRepositoryImpl
     ): MartSearchRepository
-    
+
     @Binds
     @Singleton
     abstract fun bindRequesterRepository(
@@ -75,4 +78,15 @@ abstract class BindModule {
     abstract fun bindWorkerRepository(
         repository: WorkerRepositoryImpl
     ): WorkerRepository
+
+    @Binds
+    abstract fun bindFcmRepository(
+        repository: FcmRepositoryImpl
+    ): FcmRepository
+
+    @Binds
+    abstract fun bindLocationRepository(
+        repository: LocationRepositoryImpl
+    ): LocationRepository
+
 }

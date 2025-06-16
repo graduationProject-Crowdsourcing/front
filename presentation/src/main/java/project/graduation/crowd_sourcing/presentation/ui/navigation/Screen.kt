@@ -1,6 +1,8 @@
 package project.graduation.crowd_sourcing.presentation.ui.navigation
 
 import androidx.annotation.DrawableRes
+import project.graduation.crowd_sourcing.domain.model.Category
+import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.presentation.R
 
 sealed class Screen(val title: String, val route: String) {
@@ -25,7 +27,7 @@ sealed class Screen(val title: String, val route: String) {
     data object SubmitWorkScreen : Screen(title = "작업 제출", route = "submit_work/{workId}") {
         const val routeWithArg = "submit_work/{workId}"
 
-        fun createRoute(workId: String): String = "submit_work/$workId"
+        fun createRoute(workId: Int): String = "submit_work/$workId"
     }
     data object WorkCompleteScreen : Screen(title = "작업 완료", route = "work_complete") {
         const val routeWithArgs = "work_complete/{place}/{title}/{reward}"
@@ -35,14 +37,18 @@ sealed class Screen(val title: String, val route: String) {
     }
 
 
-    data object HistoryWorkScreen: Screen(title = "의뢰 기록", route = "history/work")
-    data object HistoryRequestScreen: Screen(title = "작업 기록", route = "history/request")
+    data object HistoryWorkScreen: Screen(title = "작업 기록", route = "history/work")
+    data object HistoryRequestScreen: Screen(title = "의뢰 기록", route = "history/request")
     data object HistoryPointScreen: Screen(title = "포인트 내역", route = "history/point")
 
     data object AlarmSettingScreen: Screen(title = "알람 설정", route = "alarm")
 
-    data object DetailStatsScreen: Screen(title = "세부 통계", route = "detail_stats")
-    
+    data object DetailStatsScreen : Screen(title = "세부 통계", route = "detail_stats/{region}/{category}/{statsId}") {
+        fun createRoute(region: Region, category: Category, statsId: Int): String {
+            return "detail_stats/${region.koreanName}/${category.koreanName}/$statsId"
+        }
+    }
+
     // 검색 관련 화면
     data object FilterSelectionScreen: Screen(title = "필터 선택", route = "filter_selection")
     data object SearchResultScreen: Screen(title = "검색 결과", route = "search_result")

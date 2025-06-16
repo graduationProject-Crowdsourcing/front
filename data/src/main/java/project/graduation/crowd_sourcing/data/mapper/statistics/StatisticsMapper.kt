@@ -2,13 +2,13 @@ package project.graduation.crowd_sourcing.data.mapper.statistics
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import project.graduation.crowd_sourcing.data.mapper.stringToDate
 import project.graduation.crowd_sourcing.data.mapper.stringToRegion
 import project.graduation.crowd_sourcing.data.response.statistics.DetailResponse
 import project.graduation.crowd_sourcing.data.response.statistics.ItemListPriceResponse
 import project.graduation.crowd_sourcing.data.response.statistics.ItemMinMaxPriceResponse
 import project.graduation.crowd_sourcing.data.response.statistics.MartListPriceResponse
 import project.graduation.crowd_sourcing.data.response.statistics.MartMinMaxPriceResponse
+import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.domain.model.entity.statistics.DetailEntity
 import project.graduation.crowd_sourcing.domain.model.entity.statistics.ItemListPriceEntity
 import project.graduation.crowd_sourcing.domain.model.entity.statistics.ItemMinMaxPriceEntity
@@ -18,18 +18,19 @@ import project.graduation.crowd_sourcing.domain.model.entity.statistics.MartMinM
 @RequiresApi(Build.VERSION_CODES.O)
 fun DetailResponse.toEntity() = DetailEntity(
     commission = this.commission,
-    commissionregion = stringToRegion(this.commissionregion),
+    commissionregion = Region.from(this.commissionregion),
     category = this.category,
-    commissionDate = stringToDate(this.commissionDate),
+    commissionDate = this.commissionDate,
+    expirationDate = this.expirationDate,
     commisionCount = this.commisionCount,
     commisionpoint = this.commisionpoint
 )
 
-fun ItemListPriceResponse.toEntity() = ItemListPriceEntity(
+fun MartListPriceResponse.toEntity() = MartListPriceEntity(
     region = stringToRegion(this.region),
     category = this.category,
     mart = this.mart,
-    categoryPrice = this.categoryPrice
+    categoryPrice = this.categoryPrice?: 0
 )
 
 fun ItemMinMaxPriceResponse.toEntity() = ItemMinMaxPriceEntity(
@@ -42,7 +43,7 @@ fun ItemMinMaxPriceResponse.toEntity() = ItemMinMaxPriceEntity(
     difference = this.difference
 )
 
-fun MartListPriceResponse.toEntity() = MartListPriceEntity(
+fun ItemListPriceResponse.toEntity() = ItemListPriceEntity(
     region = stringToRegion(this.region),
     category = this.category,
     item = this.item,

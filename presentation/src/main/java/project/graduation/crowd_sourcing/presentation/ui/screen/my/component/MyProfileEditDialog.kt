@@ -1,7 +1,7 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.my.component
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -21,6 +21,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,16 +30,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.component.CancelButton
 import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
@@ -48,23 +48,20 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyUiState
 fun MyProfileEditDialog(
     uiState: MyUiState,
     onDismiss: () -> Unit,
-    onSave: (String, Bitmap?) -> Unit
+    onSave: (String) -> Unit,
+    onImgProfile: (Uri) -> Unit
 ) {
     var nickname by remember { mutableStateOf(uiState.nickname) }
-    var profileImage by remember { mutableStateOf(uiState.profileImage) }
-    val context = LocalContext.current
+
+    LaunchedEffect(uiState.nickname) {
+        nickname = uiState.nickname
+    }
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
             uri?.let {
-                try {
-                    val inputStream = context.contentResolver.openInputStream(uri)
-                    val bitmap = BitmapFactory.decodeStream(inputStream)
-                    profileImage = bitmap
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                    onImgProfile(uri)
             }
         }
     )
@@ -93,9 +90,9 @@ fun MyProfileEditDialog(
                             },
                         contentAlignment = Alignment.Center
                     ) {
-                        if (profileImage != null) {
-                            Image(
-                                bitmap = profileImage!!.asImageBitmap(),
+                        if (uiState.profileImage != null) {
+                            AsyncImage(
+                                model = uiState.profileImage,
                                 contentDescription = "profile image",
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
@@ -132,7 +129,7 @@ fun MyProfileEditDialog(
                     ConfirmButton(
                         modifier = Modifier.weight(1f),
                         text = "수정",
-                        onConfirm = { onSave(nickname, profileImage) }
+                        onConfirm = { onSave(nickname) }
                     )
                 }
             },

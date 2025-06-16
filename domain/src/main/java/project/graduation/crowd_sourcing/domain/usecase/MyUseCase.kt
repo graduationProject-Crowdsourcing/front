@@ -1,5 +1,7 @@
 package project.graduation.crowd_sourcing.domain.usecase
 
+import android.net.Uri
+import project.graduation.crowd_sourcing.domain.model.entity.my.ProfileEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentCommissionEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentWorkEntity
 import project.graduation.crowd_sourcing.domain.repository.MyRepository
@@ -8,17 +10,47 @@ import javax.inject.Inject
 class MyUseCase @Inject constructor(
     private val repository: MyRepository
 ) {
-    suspend fun getRecentHistory(userId: Int): Result<Pair<RecentWorkEntity, RecentCommissionEntity>> {
-        val recentWorkResult = repository.getRecentWork(userId)
-        val recentCommissionResult = repository.getRecentCommission(userId)
+    suspend fun getRecentHistory(): Result<Pair<RecentWorkEntity, RecentCommissionEntity>> {
+        val recentWorkResult = repository.getRecentWork()
+        val recentCommissionResult = repository.getRecentCommission()
 
         return if (recentWorkResult.isSuccess && recentCommissionResult.isSuccess) {
             val recentWork = recentWorkResult.getOrThrow()
             val recentCommission = recentCommissionResult.getOrThrow()
             Result.success(Pair(recentWork, recentCommission))
         } else {
-            val exception = recentWorkResult.exceptionOrNull() ?: recentCommissionResult.exceptionOrNull()
+            val exception =
+                recentWorkResult.exceptionOrNull() ?: recentCommissionResult.exceptionOrNull()
             Result.failure(exception ?: Exception("알 수 없는 오류"))
         }
     }
+
+    suspend fun putNickname(nickname: String): Result<Unit> {
+        return repository.putNickname(nickname)
+    }
+
+    suspend fun changeMyProfileImage(imgUri: Uri): Result<String> {
+        return try {
+            repository.postProfileImage(imgUri)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun loadProfile(): Result<Pair<ProfileEntity, String>> {
+        return try {
+            val profileResult = repository.getProfile()
+            val imageResult = repository.getProfileImg()
+
+            if (profileResult.isSuccess && imageResult.isSuccess) {
+                Result.success(Pair(profileResult.getOrThrow(), imageResult.getOrThrow()))
+            } else {
+                val error = profileResult.exceptionOrNull() ?: imageResult.exceptionOrNull()
+                Result.failure(error ?: Exception("Unknown error"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 }
