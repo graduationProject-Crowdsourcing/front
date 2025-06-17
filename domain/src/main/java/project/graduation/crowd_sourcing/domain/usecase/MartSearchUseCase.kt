@@ -7,7 +7,7 @@ import javax.inject.Inject
 class MartSearchUseCase @Inject constructor(
     private val martSearchRepository: MartSearchRepository
 ) {
-    suspend fun searchMartByLocation(lat: Double, lng: Double, radius: Int): List<MartEntity> {
+    suspend fun searchMartByLocation(lat: Double, lng: Double, radius: Double): List<MartEntity> {
         return martSearchRepository.searchMartByLocation(lat, lng, radius)
     }
 
@@ -15,7 +15,7 @@ class MartSearchUseCase @Inject constructor(
         return martSearchRepository.searchMartByZipcode(zipcode, radius)
     }
 
-    suspend fun searchMartByKeyword(keyword: String, radius: Int): List<MartEntity> {
+    suspend fun searchMartByKeyword(keyword: String, radius: Double): List<MartEntity> {
         return martSearchRepository.searchMartByKeyword(keyword, radius)
     }
 } 

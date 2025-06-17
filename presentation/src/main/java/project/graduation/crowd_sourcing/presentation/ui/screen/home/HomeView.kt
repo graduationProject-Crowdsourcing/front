@@ -43,6 +43,8 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RadiusSettingDialog
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.RequestsSection
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.SearchSection
+import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.MartSearchResultDialog
+import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.MartRequestDialog
 import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingTheme
 
 // TODO: Domain Layer 구현 필요
@@ -185,7 +187,8 @@ fun HomeView() {
                         // 맵 표시
                         MapSection(
                             isMapServiceAvailable = isMapServiceAvailable,
-                            state = state
+                            state = state,
+                            onMartClick = viewModel::onMartClicked
                         )
 
                         // 현재 위치정보가 있으면 반경 버튼 표시
@@ -219,7 +222,8 @@ fun HomeView() {
                         SearchSection(
                             searchQuery = state.searchQuery,
                             onSearchQueryChange = viewModel::updateSearchQuery,
-                            requests = state.requests
+                            requests = state.recommendedRequests,
+                            viewModel = viewModel
                         )
 
                         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
@@ -228,38 +232,8 @@ fun HomeView() {
 
                         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
 
-                        // 스크롤 테스트용 UI 요소
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(500.dp)
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(text = "스크롤 테스트용 요소입니다")
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Text(text = "여기까지 스크롤 되나요?")
-                                Spacer(modifier = Modifier.height(32.dp))
-                                Box(
-                                    modifier = Modifier
-                                        .size(200.dp)
-                                        .padding(16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(text = "테스트 박스")
-                                }
-                                Spacer(modifier = Modifier.height(32.dp))
-                                Text(text = "스크롤이 끝까지 내려갑니다")
-                            }
-                        }
                     }
                 }
-
-
 
                 if (state.isRadiusDialogVisible) {
                     var tempRadius by remember { mutableStateOf(state.searchRadius) }
@@ -271,6 +245,28 @@ fun HomeView() {
                             viewModel.updateSearchRadius(tempRadius)
                             viewModel.hideRadiusDialog()
                         }
+                    )
+                }
+
+                // 마트 검색 결과 다이얼로그
+                if (state.isSearchResultDialogVisible) {
+                    MartSearchResultDialog(
+                        marts = state.searchedMarts,
+                        onDismiss = viewModel::hideSearchResultDialog,
+                        searchQuery = state.searchQuery,
+                        onMartClick = { mart ->
+                            viewModel.hideSearchResultDialog()
+                            viewModel.onMartClicked(mart)
+                        }
+                    )
+                }
+
+                // 마트 의뢰 다이얼로그
+                if (state.isMartRequestDialogVisible && state.selectedMart != null) {
+                    MartRequestDialog(
+                        mart = state.selectedMart,
+                        requests = state.selectedMartRequests,
+                        onDismiss = viewModel::hideMartRequestDialog
                     )
                 }
             } else {

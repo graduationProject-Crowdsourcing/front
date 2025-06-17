@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -68,6 +69,11 @@ fun CurrentRequestsList(
     viewModel: HomeViewModel,
     state: HomeUiState.Success
 ) {
+    // 현재 작업중인 의뢰 목록을 로드하는 LaunchedEffect
+    LaunchedEffect(Unit) {
+        viewModel.loadCurrentRequests()
+    }
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -84,7 +90,7 @@ fun CurrentRequestsList(
 //        }
     }
     CommonList(
-        list = state.requests.map {
+        list = state.currentRequests.map {
             CommonListItemData(
                 mainText = it.title,
                 subText = it.place,
@@ -116,7 +122,7 @@ fun RecommendedRequestsList(
 //        }
     }
     CommonList(
-        list = state.requests.map {
+        list = state.recommendedRequests.map {
             CommonListItemData(
                 mainText = it.title,
                 subText = it.place,
