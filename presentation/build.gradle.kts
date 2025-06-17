@@ -21,8 +21,12 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        resValue( "string", "google_maps_api_key", localProperties.getProperty("google_maps_api_key"))
-        resValue( "string", "naver_client_id", localProperties.getProperty("naver_client_id"))
+        resValue(
+            "string",
+            "google_maps_api_key",
+            localProperties.getProperty("google_maps_api_key")
+        )
+        resValue("string", "naver_client_id", localProperties.getProperty("naver_client_id"))
     }
 
     buildTypes {
@@ -79,7 +83,13 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)
+    implementation("androidx.hilt:hilt-work:1.1.0")
     kapt(libs.hilt.compiler)
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+
+    // WorkManager
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
 
     // Google Maps
     implementation(libs.maps.compose)
@@ -103,4 +113,7 @@ dependencies {
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+
 }

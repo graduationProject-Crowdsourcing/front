@@ -14,15 +14,12 @@ import androidx.work.WorkerParameters
 import com.google.android.gms.location.LocationServices
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import project.graduation.crowd_sourcing.domain.usecase.AlarmUseCase
 
+
 @HiltWorker
-class LocationWorker @AssistedInject constructor(
+class LocationWorker @AssistedInject  constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val alarmUseCase: AlarmUseCase

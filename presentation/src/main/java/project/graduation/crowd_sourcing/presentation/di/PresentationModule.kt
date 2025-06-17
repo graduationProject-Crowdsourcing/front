@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.components.SingletonComponent
 import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.domain.repository.FcmRepository
 import project.graduation.crowd_sourcing.domain.repository.LocationRepository
@@ -20,11 +21,11 @@ import project.graduation.crowd_sourcing.domain.usecase.MyUseCase
 import project.graduation.crowd_sourcing.domain.usecase.RequesterUseCase
 import project.graduation.crowd_sourcing.domain.usecase.StatisticsUseCase
 import project.graduation.crowd_sourcing.domain.usecase.WorkerUseCase
+import javax.inject.Singleton
 
 @Module
 @InstallIn(ActivityComponent::class)
 object PresentationModule {
-
     @Provides
     fun provideMemberUseCase(
         loginRepository: LoginRepository,
@@ -61,7 +62,12 @@ object PresentationModule {
     fun provideWorkerUseCase(repository: WorkerRepository, tokenManager: TokenManager): WorkerUseCase {
         return WorkerUseCase(repository, tokenManager)
     }
+}
 
+@Module
+@InstallIn(SingletonComponent::class)
+object AlarmModule {
+    @Singleton
     @Provides
     fun providesAlarmUseCase(fcmRepository: FcmRepository, locationRepository: LocationRepository, tokenManager: TokenManager): AlarmUseCase{
         return AlarmUseCase(fcmRepository, locationRepository, tokenManager)

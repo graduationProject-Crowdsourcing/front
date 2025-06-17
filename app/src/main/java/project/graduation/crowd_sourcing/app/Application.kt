@@ -11,6 +11,10 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.presentation.utils.LocationWorker
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -26,13 +30,17 @@ class HiltApplication : Application(), Configuration.Provider {
             get() = instance.applicationContext
     }
 
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
+    @Inject lateinit var workerFactory: HiltWorkerFactory
+
+
 
     override fun onCreate() {
         super.onCreate()
         instance = this
-        registerPeriodicLocationWorker()
+        CoroutineScope(Dispatchers.Default).launch {
+            delay(100)
+            registerPeriodicLocationWorker()
+        }
     }
 
     override val workManagerConfiguration: Configuration
@@ -44,7 +52,7 @@ class HiltApplication : Application(), Configuration.Provider {
         val workerManager = WorkManager.getInstance(this)
         workerManager.cancelAllWork()
 
-        val request = PeriodicWorkRequestBuilder<LocationWorker>(30, TimeUnit.MINUTES)
+        val request = PeriodicWorkRequestBuilder<LocationWorker>(15, TimeUnit.MINUTES)
             .setConstraints(
                 Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -59,18 +67,18 @@ class HiltApplication : Application(), Configuration.Provider {
             request
         )
 
-//        val request2 = androidx.work.OneTimeWorkRequestBuilder<LocationWorker>()
-//            .setInitialDelay(5, TimeUnit.SECONDS)
-//            .setConstraints(
-//                Constraints.Builder()
-//                    .setRequiredNetworkType(NetworkType.CONNECTED)
-//                    .build()
-//            )
-//            .build()
-//        WorkManager.getInstance(this).enqueueUniqueWork(
-//            "LocationNotifyWorkTest",
-//            ExistingWorkPolicy.REPLACE,
-//            request2
-//        )
+        val request2 = androidx.work.OneTimeWorkRequestBuilder<LocationWorker>()
+            .setInitialDelay(5, TimeUnit.SECONDS)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+            )
+            .build()
+        WorkManager.getInstance(this).enqueueUniqueWork(
+            "LocationNotifyWorkTest",
+            ExistingWorkPolicy.REPLACE,
+            request2
+        )
     }
 }
