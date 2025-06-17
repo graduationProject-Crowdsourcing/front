@@ -12,32 +12,44 @@ class MartSearchRepositoryImpl @Inject constructor(
     override suspend fun searchMartByZipcode(zipcode: String, radius: Int): List<MartEntity> {
         return martSearchService.getSearchMartByZipcode(zipcode, radius).data.map { martDto ->
             MartEntity(
-                sigungu = martDto.sigungu,
+                martId = martDto.martId,
                 martName = martDto.martName,
-                lat = martDto.lat,
-                lng = martDto.lng
+                latitude = martDto.latitude,
+                longitude = martDto.longitude,
+                sido = martDto.sido,
+                sigungu = martDto.sigungu,
+                dong = martDto.dong,
+                existCommission = martDto.existCommission
             )
         }
     }
 
-    override suspend fun searchMartByLocation(lat: Double, lng: Double, radius: Int): List<MartEntity> {
+    override suspend fun searchMartByLocation(lat: Double, lng: Double, radius: Double): List<MartEntity> {
         return martSearchService.getSearchMartByLocation(lat, lng, radius).data.map { martDto ->
             MartEntity(
-                sigungu = martDto.sigungu,
+                martId = martDto.martId,
                 martName = martDto.martName,
-                lat = martDto.lat,
-                lng = martDto.lng
+                latitude = martDto.latitude,
+                longitude = martDto.longitude,
+                sido = martDto.sido,
+                sigungu = martDto.sigungu,
+                dong = martDto.dong,
+                existCommission = martDto.existCommission
             )
         }
     }
 
-    override suspend fun searchMartByKeyword(keyword: String, radius: Int): List<MartEntity> {
+    override suspend fun searchMartByKeyword(keyword: String, radius: Double): List<MartEntity> {
         return martSearchService.getSearchMartByKeyword(keyword, radius).data.map { martDto ->
             MartEntity(
-                sigungu = martDto.sigungu,
+                martId = martDto.martId,
                 martName = martDto.martName,
-                lat = martDto.lat,
-                lng = martDto.lng
+                latitude = martDto.latitude,
+                longitude = martDto.longitude,
+                sido = martDto.sido,
+                sigungu = martDto.sigungu,
+                dong = martDto.dong,
+                existCommission = martDto.existCommission
             )
         }
     }
