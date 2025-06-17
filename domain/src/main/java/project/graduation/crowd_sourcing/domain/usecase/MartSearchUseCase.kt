@@ -1,6 +1,7 @@
 package project.graduation.crowd_sourcing.domain.usecase
 
 import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartWorkEntity
 import project.graduation.crowd_sourcing.domain.repository.MartSearchRepository
 import javax.inject.Inject
 
@@ -17,5 +18,9 @@ class MartSearchUseCase @Inject constructor(
 
     suspend fun searchMartByKeyword(keyword: String, radius: Double): List<MartEntity> {
         return martSearchRepository.searchMartByKeyword(keyword, radius)
+    }
+
+    suspend fun searchWorkByMartName(martName: String): List<MartWorkEntity> {
+        return martSearchRepository.searchWorkByMartName(martName)
     }
 } 
