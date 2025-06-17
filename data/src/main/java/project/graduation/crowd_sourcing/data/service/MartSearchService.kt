@@ -1,6 +1,7 @@
 package project.graduation.crowd_sourcing.data.service
 
 import project.graduation.crowd_sourcing.data.response.martsearch.ApiResponseDtoListMartDto
+import project.graduation.crowd_sourcing.data.response.martsearch.ApiResponseDtoListMartWorkDto
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -24,4 +25,9 @@ interface MartSearchService {
         @Query("keyword") keyword : String,
         @Query("radiusKm") radius: Double,
     ) : ApiResponseDtoListMartDto
+
+    @GET("/api/v1/marts/search/martlist")
+    suspend fun getSearchWorkByMartName(
+        @Query("martName") martName : String
+    ) : ApiResponseDtoListMartWorkDto
 }

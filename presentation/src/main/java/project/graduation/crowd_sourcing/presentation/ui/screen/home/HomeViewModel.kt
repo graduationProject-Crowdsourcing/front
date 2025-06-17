@@ -511,17 +511,45 @@ class HomeViewModel @Inject constructor(
      * @param mart 클릭된 마트 정보
      */
     fun onMartClicked(mart: MartEntity) {
-        // 더미 데이터로 해당 마트의 의뢰 목록 생성
-        val martRequests = generateMartRequestsForDemo(mart)
-        
-        _uiState.update { currentState ->
-            when (currentState) {
-                is HomeUiState.Success -> currentState.copy(
-                    selectedMart = mart,
-                    selectedMartRequests = martRequests,
-                    isMartRequestDialogVisible = true
-                )
-                else -> currentState
+        viewModelScope.launch {
+            try {
+                // 실제 usecase를 사용하여 마트 의뢰 정보 조회
+                val martWorkEntities = martSearchUseCase.searchWorkByMartName(mart.martName)
+                
+                // MartWorkEntity를 Request로 변환
+                val martRequests = martWorkEntities.map { workEntity ->
+                    Request(
+                        id = workEntity.id.toString(),
+                        title = "${mart.martName} - ${workEntity.work}",
+                        location = Location(mart.latitude, mart.longitude),
+                        place = mart.martName,
+                        reward = workEntity.workpoint
+                    )
+                }
+                
+                _uiState.update { currentState ->
+                    when (currentState) {
+                        is HomeUiState.Success -> currentState.copy(
+                            selectedMart = mart,
+                            selectedMartRequests = martRequests,
+                            isMartRequestDialogVisible = true
+                        )
+                        else -> currentState
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "마트 의뢰 조회 실패: ${e.message}", e)
+                // 에러 발생 시 빈 목록으로 처리
+                _uiState.update { currentState ->
+                    when (currentState) {
+                        is HomeUiState.Success -> currentState.copy(
+                            selectedMart = mart,
+                            selectedMartRequests = emptyList(),
+                            isMartRequestDialogVisible = true
+                        )
+                        else -> currentState
+                    }
+                }
             }
         }
     }
@@ -542,95 +570,5 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /**
-     * 데모용 마트 의뢰 데이터 생성
-     * TODO: 실제 API 연결 시 제거하고 실제 UseCase로 교체
-     */
-    private fun generateMartRequestsForDemo(mart: MartEntity): List<Request> {
-        // 마트 이름에 따라 다른 더미 데이터 생성
-        return when {
-            mart.martName.contains("이마트") || mart.martName.contains("E-MART") -> {
-                listOf(
-                    Request(
-                        id = "mart_${mart.martId}_1",
-                        title = "${mart.martName} - 바나나 가격 확인",
-                        location = Location(mart.latitude, mart.longitude),
-                        place = mart.martName,
-                        reward = 3000
-                    ),
-                    Request(
-                        id = "mart_${mart.martId}_2",
-                        title = "${mart.martName} - 딸기 재고 확인",
-                        location = Location(mart.latitude, mart.longitude),
-                        place = mart.martName,
-                        reward = 5000
-                    )
-                )
-            }
-            mart.martName.contains("롯데마트") || mart.martName.contains("LOTTE") -> {
-                listOf(
-                    Request(
-                        id = "mart_${mart.martId}_1",
-                        title = "${mart.martName} - 사과 가격 조사",
-                        location = Location(mart.latitude, mart.longitude),
-                        place = mart.martName,
-                        reward = 4000
-                    )
-                )
-            }
-            mart.martName.contains("홈플러스") -> {
-                listOf(
-                    Request(
-                        id = "mart_${mart.martId}_1",
-                        title = "${mart.martName} - 오렌지 할인 여부 확인",
-                        location = Location(mart.latitude, mart.longitude),
-                        place = mart.martName,
-                        reward = 2500
-                    ),
-                    Request(
-                        id = "mart_${mart.martId}_2",
-                        title = "${mart.martName} - 포도 품질 체크",
-                        location = Location(mart.latitude, mart.longitude),
-                        place = mart.martName,
-                        reward = 3500
-                    ),
-                    Request(
-                        id = "mart_${mart.martId}_3",
-                        title = "${mart.martName} - 신선식품 진열 상태 확인",
-                        location = Location(mart.latitude, mart.longitude),
-                        place = mart.martName,
-                        reward = 6000
-                    )
-                )
-            }
-            mart.martName.contains("GS25") || mart.martName.contains("CU") || mart.martName.contains("세븐일레븐") -> {
-                listOf(
-                    Request(
-                        id = "mart_${mart.martId}_1",
-                        title = "${mart.martName} - 음료수 가격 확인",
-                        location = Location(mart.latitude, mart.longitude),
-                        place = mart.martName,
-                        reward = 1500
-                    )
-                )
-            }
-            else -> {
-                // 일반 마트나 기타 상점의 경우
-                if ((0..10).random() > 3) { // 70% 확률로 의뢰 있음
-                    val requestCount = (1..2).random()
-                    (1..requestCount).map { index ->
-                        Request(
-                            id = "mart_${mart.martId}_$index",
-                            title = "${mart.martName} - ${listOf("가격 조사", "재고 확인", "품질 체크", "할인 여부 확인").random()}",
-                            location = Location(mart.latitude, mart.longitude),
-                            place = mart.martName,
-                            reward = (1500..6000).random()
-                        )
-                    }
-                } else {
-                    emptyList() // 30% 확률로 의뢰 없음
-                }
-            }
-        }
-    }
+
 } 
