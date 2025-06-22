@@ -24,5 +24,5 @@ interface SearchService {
     @GET("/api/v1/search/detail/{commissionId}")
     suspend fun getCommissionDetail(
         @Path("commissionId") commissionId: Int
-    ): SearchCommissionResponse<CommissionDetailDto>
+    ): CommissionDetailDto
 }

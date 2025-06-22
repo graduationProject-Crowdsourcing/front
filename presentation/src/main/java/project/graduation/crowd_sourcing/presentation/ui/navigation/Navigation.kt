@@ -103,8 +103,15 @@ fun Navigation(
             RequestCompleteView(navController)
         }
         // 의뢰 수락 화면
-        composable(route = Screen.AcceptRequestScreen.route) {
-            AcceptRequestView(navController = navController)
+        composable(
+            route = Screen.AcceptRequestScreen.routeWithArg,
+            arguments = listOf(navArgument("commissionId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val commissionId = backStackEntry.arguments?.getInt("commissionId") ?: 0
+            AcceptRequestView(
+                navController = navController,
+                commissionId = commissionId
+            )
         }
 
         // 의뢰 수락 완료 화면

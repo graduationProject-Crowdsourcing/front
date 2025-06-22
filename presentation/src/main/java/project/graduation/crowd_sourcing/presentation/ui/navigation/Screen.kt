@@ -16,7 +16,10 @@ sealed class Screen(val title: String, val route: String) {
     data object RequestCompleteScreen : Screen(title = "의뢰 완료", route = "request_complete")
 
     // 의뢰 수락 관련 화면
-    data object AcceptRequestScreen : Screen(title = "의뢰 수락", route = "accept_request")
+    data object AcceptRequestScreen : Screen(title = "의뢰 수락", route = "accept_request/{commissionId}") {
+        const val routeWithArg = "accept_request/{commissionId}"
+        fun createRoute(commissionId: Int): String = "accept_request/$commissionId"
+    }
     data object AcceptCompleteScreen : Screen(title = "의뢰 수락 완료", route = "acceptComplete/{place}/{title}/{reward}") {
         fun createRoute(place: String, title: String): String =
             "acceptComplete/$place/$title"
@@ -92,7 +95,7 @@ sealed class Screen(val title: String, val route: String) {
                 RequestFormScreen.route -> RequestFormScreen
                 RequestCompleteScreen.route -> RequestCompleteScreen
 
-                AcceptRequestScreen.route -> AcceptRequestScreen
+                AcceptRequestScreen.routeWithArg -> AcceptRequestScreen
                 AcceptCompleteScreen.route -> AcceptCompleteScreen
 
                 WorkListScreen.route -> WorkListScreen

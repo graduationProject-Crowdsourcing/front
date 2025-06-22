@@ -1,5 +1,7 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.request.accept
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -7,11 +9,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -21,91 +25,129 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
-import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.WorkInfo
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.*
 
 // 의뢰 수락 페이지
+@OptIn(ExperimentalNaverMapApi::class)
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AcceptRequestView(
     navController: NavController,
-    requestId: String? = null, // 의뢰 ID 파라미터 추가
-    viewModel: AcceptRequestViewModel = viewModel()
+    commissionId: Int,
+    viewModel: AcceptRequestViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
-    val scrollState = rememberScrollState()
-    
-    // 화면 높이에 따라 지도 높이를 동적으로 조절 (화면의 35~40% 정도)
-    val mapHeight = (screenHeight * 0.38f).coerceAtMost(320.dp).coerceAtLeast(200.dp)
+
+    // commissionId가 변경될 때마다 데이터를 로드
+    LaunchedEffect(commissionId) {
+        viewModel.loadCommissionDetail(commissionId)
+    }
+
+    // 로딩 상태 처리
+    if (uiState.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    // 에러 상태 처리
+    uiState.errorMessage?.let { errorMessage ->
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                modifier = Modifier.padding(24.dp)
+            )
+        }
+        return
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollState) // 스크롤 가능하게 설정
-            .padding(20.dp) // 전체 패딩 증가
+            .padding(horizontal = 24.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 네이버 지도 (청량리 롯데마트 위치) - 지도 경계와 그림자 추가
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // 카카오맵을 사용한 지도 섹션
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(mapHeight) // 동적 높이 적용
-                .padding(bottom = 24.dp), // 간격 증가
-            shape = RoundedCornerShape(12.dp), // 모서리 둥글게
-            shadowElevation = 4.dp, // 그림자 추가
+                .height(screenHeight * 0.25f)
+                .shadow(2.dp, RoundedCornerShape(8.dp)),
+            shape = RoundedCornerShape(8.dp),
             color = MaterialTheme.colorScheme.surface
         ) {
-            AcceptRequestMapView(
-                latitude = uiState.latitude,
-                longitude = uiState.longitude,
-                title = uiState.place
-            )
+            val position = LatLng(uiState.latitude, uiState.longitude)
+            val cameraPositionState = rememberCameraPositionState {
+                this.position = CameraPosition(position, 15.0)
+            }
+
+            NaverMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState
+            ) {
+                Marker(
+                    state = MarkerState(position = position),
+                    captionText = uiState.martName
+                )
+            }
         }
 
-        // 의뢰 정보 제목 - 글자 크기와 굵기 증가
+        // 의뢰 정보 제목
         Text(
             text = "의뢰 정보",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
-            modifier = Modifier.padding(bottom = 16.dp) // 간격 증가
+            modifier = Modifier.padding(bottom = 8.dp)
         )
 
         // 의뢰 정보 목록
         Column {
-            AcceptRequestWorkInfo(Icons.Default.Place, "위치", uiState.place)
+            AcceptRequestWorkInfo(Icons.Default.Place, "위치", "${uiState.region} ${uiState.martName}")
             GrayDivider()
-            AcceptRequestWorkInfo(Icons.Default.Groups, "참여인원", uiState.participant)
+            AcceptRequestWorkInfo(Icons.Default.Category, "카테고리", uiState.category)
             GrayDivider()
-            AcceptRequestWorkInfo(Icons.Default.Diamond, "리워드", "${uiState.reward}")
+            AcceptRequestWorkInfo(Icons.Default.ShoppingCart, "상품", uiState.item)
             GrayDivider()
-            AcceptRequestWorkInfo(Icons.Default.Edit, "의뢰 내역", uiState.title)
+            AcceptRequestWorkInfo(Icons.Default.Groups, "참여인원", "${uiState.commissionCount}명")
             GrayDivider()
-            AcceptRequestWorkInfo(Icons.Default.AccessTime, "의뢰 마감", uiState.deadline)
+            AcceptRequestWorkInfo(Icons.Default.Diamond, "리워드", "${uiState.commissionPoint}P")
+            GrayDivider()
+            AcceptRequestWorkInfo(Icons.Default.Edit, "의뢰 내역", uiState.commission)
+            GrayDivider()
+            AcceptRequestWorkInfo(Icons.Default.AccessTime, "의뢰 마감", uiState.expirationDate)
         }
 
-        Spacer(modifier = Modifier.height(24.dp)) // 간격 증가
+        Spacer(modifier = Modifier.height(24.dp))
 
         ConfirmButton(
             text = "수락",
             onConfirm = {
                 navController.navigate(
-                    "acceptComplete/${uiState.place}/${uiState.title}/${uiState.reward}"
+                    "acceptComplete/${uiState.martName}/${uiState.commission}/${uiState.commissionPoint}"
                 )
             },
             modifier = Modifier.fillMaxWidth()
         )
-        
-        // 하단 여백 추가하여 버튼이 화면 끝에 붙지 않도록 함
-//        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -150,65 +192,4 @@ private fun AcceptRequestWorkInfo(
             )
         }
     }
-}
-
-// 의뢰 수락 페이지용 네이버 맵 컴포넌트
-@OptIn(ExperimentalNaverMapApi::class)
-@Composable
-fun AcceptRequestMapView(
-    latitude: Double,
-    longitude: Double,
-    title: String
-) {
-    val martLatLng = LatLng(latitude, longitude)
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition(martLatLng, 16.0) // 줌 레벨 16
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        NaverMap(
-            modifier = Modifier
-                .fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            properties = MapProperties(isBuildingLayerGroupEnabled = true),
-            uiSettings = MapUiSettings(
-                isZoomControlEnabled = false,
-                isLocationButtonEnabled = false,
-                isCompassEnabled = false,
-                isScaleBarEnabled = false
-            )
-        ) {
-            Marker(
-                state = MarkerState(position = martLatLng),
-                captionText = title
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AcceptRequestViewPreview() {
-    val acceptViewModel = object : AcceptRequestViewModel() {
-        init {
-            uiState = AcceptRequestUiState(
-                id = "1",
-                place = "청량리 롯데마트",
-                title = "딸기 한 박스",
-                reward = 100,
-                participant = "2/5",
-                deadline = "2025/04/18 (금) 00:00",
-                latitude = 37.5818, // 청량리 롯데마트 위도
-                longitude = 127.0368 // 청량리 롯데마트 경도
-            )
-        }
-    }
-
-    AcceptRequestView(
-        navController = rememberNavController(),
-        viewModel = acceptViewModel
-    )
 }

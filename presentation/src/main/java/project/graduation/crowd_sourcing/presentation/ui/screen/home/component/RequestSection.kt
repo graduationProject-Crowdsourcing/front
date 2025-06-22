@@ -98,7 +98,9 @@ fun CurrentRequestsList(
                 subText = it.place,
                 leftText = "리워드 : ${it.reward}p",
                 onClick = {
-                    navController?.navigate("accept_request")
+                    // 임시로 고정된 commissionId 사용 (추후 실제 it.id를 commissionId로 변환 필요)
+                    val commissionId = 7 // API 예시에서 사용한 commissionId
+                    navController?.navigate(project.graduation.crowd_sourcing.presentation.ui.navigation.Screen.AcceptRequestScreen.createRoute(commissionId))
                 }
             )
         }
@@ -133,7 +135,9 @@ fun RecommendedRequestsList(
                 subText = it.place,
                 leftText = "리워드 : ${it.reward}p",
                 onClick = {
-                    navController?.navigate("accept_request")
+                    // 임시로 고정된 commissionId 사용 (추후 실제 it.id를 commissionId로 변환 필요)
+                    val commissionId = 7 // API 예시에서 사용한 commissionId
+                    navController?.navigate(project.graduation.crowd_sourcing.presentation.ui.navigation.Screen.AcceptRequestScreen.createRoute(commissionId))
                 }
             )
         }

@@ -109,19 +109,14 @@ class SearchRepositoryImpl @Inject constructor(
             
             val response = searchService.getCommissionDetail(commissionId)
             
-            println("DEBUG_REPO: 의뢰 상세 정보 응답 수신 - 상태 코드: ${response.status}, 메시지: ${response.message}")
+            println("DEBUG_REPO: 의뢰 상세 정보 응답 수신 성공")
             
-            if (response.status == 200) {
-                val commissionDetail = response.data.toDomain()
-                
-                println("DEBUG_REPO: 의뢰 상세 정보 변환 완료 - ID: ${commissionDetail.commissionId}, 제목: ${commissionDetail.commission}")
-                
-                return commissionDetail
-            } else {
-                // 에러 처리
-                println("DEBUG_REPO: 의뢰 상세 정보 API 오류 - 상태 코드: ${response.status}, 메시지: ${response.message}")
-                throw Exception("API Error: ${response.message}")
-            }
+            val commissionDetail = response.toDomain()
+            
+            println("DEBUG_REPO: 의뢰 상세 정보 변환 완료 - ID: ${commissionDetail.commissionId}, 제목: ${commissionDetail.commission}")
+            
+            return commissionDetail
+            
         } catch (e: Exception) {
             // 네트워크 오류 등의 예외 처리
             println("DEBUG_REPO: 의뢰 상세 정보 예외 발생 - ${e.javaClass.simpleName}: ${e.message}")
