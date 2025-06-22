@@ -3,6 +3,7 @@ package project.graduation.crowd_sourcing.data.repository
 import android.os.Build
 import androidx.annotation.RequiresApi
 import project.graduation.crowd_sourcing.data.service.SearchService
+import project.graduation.crowd_sourcing.domain.model.entity.search.CommissionDetailEntity
 import project.graduation.crowd_sourcing.domain.model.entity.search.CommissionEntity
 import project.graduation.crowd_sourcing.domain.model.entity.search.SearchHomeEntity
 import project.graduation.crowd_sourcing.domain.repository.SearchRepository
@@ -98,6 +99,34 @@ class SearchRepositoryImpl @Inject constructor(
                 recentKeywords = emptyList(),
                 recommendedKeywords = emptyList()
             )
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override suspend fun getCommissionDetail(commissionId: Int): CommissionDetailEntity {
+        try {
+            println("DEBUG_REPO: 의뢰 상세 정보 요청 - commissionId: $commissionId")
+            
+            val response = searchService.getCommissionDetail(commissionId)
+            
+            println("DEBUG_REPO: 의뢰 상세 정보 응답 수신 - 상태 코드: ${response.status}, 메시지: ${response.message}")
+            
+            if (response.status == 200) {
+                val commissionDetail = response.data.toDomain()
+                
+                println("DEBUG_REPO: 의뢰 상세 정보 변환 완료 - ID: ${commissionDetail.commissionId}, 제목: ${commissionDetail.commission}")
+                
+                return commissionDetail
+            } else {
+                // 에러 처리
+                println("DEBUG_REPO: 의뢰 상세 정보 API 오류 - 상태 코드: ${response.status}, 메시지: ${response.message}")
+                throw Exception("API Error: ${response.message}")
+            }
+        } catch (e: Exception) {
+            // 네트워크 오류 등의 예외 처리
+            println("DEBUG_REPO: 의뢰 상세 정보 예외 발생 - ${e.javaClass.simpleName}: ${e.message}")
+            e.printStackTrace()
+            throw e
         }
     }
 }
