@@ -73,7 +73,7 @@ fun Navigation(
 
 
         composable(route = Screen.BottomScreen.HomeScreen.bRoute) {
-            HomeView()
+            HomeView(navController = navController)
         }
 
         composable(route = Screen.BottomScreen.SearchScreen.bRoute) {

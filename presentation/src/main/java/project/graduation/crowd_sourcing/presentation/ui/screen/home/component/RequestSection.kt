@@ -35,7 +35,8 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeViewMod
 @Composable
 fun RequestsSection(
     viewModel: HomeViewModel,
-    state: HomeUiState.Success
+    state: HomeUiState.Success,
+    navController: androidx.navigation.NavController? = null
 ) {
     // 현재 의뢰 목록
     Surface(
@@ -45,7 +46,7 @@ fun RequestsSection(
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(modifier = Modifier.wrapContentSize()) {
-            CurrentRequestsList(viewModel = viewModel, state = state)
+            CurrentRequestsList(viewModel = viewModel, state = state, navController = navController)
         }
     }
 
@@ -59,7 +60,7 @@ fun RequestsSection(
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(modifier = Modifier.wrapContentSize()) {
-            RecommendedRequestsList(viewModel = viewModel, state = state)
+            RecommendedRequestsList(viewModel = viewModel, state = state, navController = navController)
         }
     }
 }
@@ -67,7 +68,8 @@ fun RequestsSection(
 @Composable
 fun CurrentRequestsList(
     viewModel: HomeViewModel,
-    state: HomeUiState.Success
+    state: HomeUiState.Success,
+    navController: androidx.navigation.NavController? = null
 ) {
     // 현재 작업중인 의뢰 목록을 로드하는 LaunchedEffect
     LaunchedEffect(Unit) {
@@ -95,7 +97,9 @@ fun CurrentRequestsList(
                 mainText = it.title,
                 subText = it.place,
                 leftText = "리워드 : ${it.reward}p",
-                onClick = {}
+                onClick = {
+                    navController?.navigate("accept_request")
+                }
             )
         }
     )
@@ -104,7 +108,8 @@ fun CurrentRequestsList(
 @Composable
 fun RecommendedRequestsList(
     viewModel: HomeViewModel,
-    state: HomeUiState.Success
+    state: HomeUiState.Success,
+    navController: androidx.navigation.NavController? = null
 ) {
     Row(
         modifier = Modifier
@@ -127,7 +132,9 @@ fun RecommendedRequestsList(
                 mainText = it.title,
                 subText = it.place,
                 leftText = "리워드 : ${it.reward}p",
-                onClick = {}
+                onClick = {
+                    navController?.navigate("accept_request")
+                }
             )
         }
     )

@@ -152,7 +152,12 @@ fun SearchResultView(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(sortedResults) { result ->
-                    SearchResultItem(result = result)
+                    SearchResultItem(
+                        result = result,
+                        onItemClick = {
+                            navController.navigate("accept_request")
+                        }
+                    )
                     Divider()
                 }
             }
@@ -300,12 +305,13 @@ fun SearchResultFilterBar(
  */
 @Composable
 fun SearchResultItem(
-    result: SearchResult
+    result: SearchResult,
+    onItemClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* 아이템 클릭 처리 */ }
+            .clickable { onItemClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
