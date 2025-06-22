@@ -2,7 +2,9 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.request.accept
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Icon
@@ -15,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,17 +40,24 @@ fun AcceptRequestView(
     viewModel: AcceptRequestViewModel = viewModel()
 ) {
     val uiState = viewModel.uiState
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    val scrollState = rememberScrollState()
+    
+    // 화면 높이에 따라 지도 높이를 동적으로 조절 (화면의 35~40% 정도)
+    val mapHeight = (screenHeight * 0.38f).coerceAtMost(320.dp).coerceAtLeast(200.dp)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState) // 스크롤 가능하게 설정
             .padding(20.dp) // 전체 패딩 증가
     ) {
         // 네이버 지도 (청량리 롯데마트 위치) - 지도 경계와 그림자 추가
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(320.dp) // 지도 높이 증가
+                .height(mapHeight) // 동적 높이 적용
                 .padding(bottom = 24.dp), // 간격 증가
             shape = RoundedCornerShape(12.dp), // 모서리 둥글게
             shadowElevation = 4.dp, // 그림자 추가
@@ -82,7 +92,7 @@ fun AcceptRequestView(
             AcceptRequestWorkInfo(Icons.Default.AccessTime, "의뢰 마감", uiState.deadline)
         }
 
-        Spacer(modifier = Modifier.height(8.dp)) // 간격 증가
+        Spacer(modifier = Modifier.height(24.dp)) // 간격 증가
 
         ConfirmButton(
             text = "수락",
@@ -93,6 +103,9 @@ fun AcceptRequestView(
             },
             modifier = Modifier.fillMaxWidth()
         )
+        
+        // 하단 여백 추가하여 버튼이 화면 끝에 붙지 않도록 함
+//        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
