@@ -28,6 +28,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.LaunchedEffect
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.component.SearchInputSection
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.component.SelectedFiltersSection
@@ -57,6 +58,12 @@ fun SearchView(
     
     // 화면 콘텐츠 표시 여부를 제어하는 상태
     val showContent = remember { mutableStateOf(true) }
+    
+    // 초기 데이터 로딩 (검색 화면에서만 실행)
+    LaunchedEffect(Unit) {
+        println("DEBUG_SEARCHVIEW: SearchView 초기 데이터 로딩 시작")
+        viewModel.loadInitialData()
+    }
     
     // 화면 생명주기에 따라 콘텐츠 관리
     DisposableEffect(lifecycleOwner) {

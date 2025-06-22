@@ -38,17 +38,26 @@ class SearchViewModel @Inject constructor(
 
     // 현재 진행 중인 검색 작업을 취소하기 위한 Job
     private var searchJob: Job? = null
+    
 
-    init {
-        loadInitialData()
-    }
+
+    // init 블록 제거 - SearchResultView에서는 초기 로딩이 필요하지 않음
 
     /**
      * 초기 데이터를 로드하여 상태를 설정
+     * 검색 화면에서만 호출되어야 함
      */
-    private fun loadInitialData() {
+    fun loadInitialData() {
+        // 이미 Success 상태이고 데이터가 있으면 로드를 건너뜀
+        val currentState = _uiState.value
+        if (currentState is SearchUiState.Success) {
+            println("DEBUG_INIT: 이미 Success 상태로 초기 로드를 건너뜀")
+            return
+        }
+        
         viewModelScope.launch {
             try {
+                println("DEBUG_REPO: 초기 검색 데이터 로드 시작")
                 val searchHome = getSearchHomeInitDataUseCase()
                 
                 // 지역과 카테고리 목록에 "전체" 옵션 추가
@@ -69,6 +78,9 @@ class SearchViewModel @Inject constructor(
                     recommendedSearches = searchHome.recommendedKeywords
                 )
             } catch (e: Exception) {
+                println("DEBUG_REPO: 초기 검색 데이터 예외 발생 - ${e::class.simpleName}: ${e.message}")
+                e.printStackTrace()
+                
                 // 오류 발생 시 기본 데이터로 초기화
                 val defaultCategories = listOf("전체", "과자/스낵", "라면/면류", "통조림/캔", "유제품", 
                                       "냉동식품", "즉석식품", "소스/양념", "음료/커피", "쌀/잡곡")
@@ -132,23 +144,47 @@ class SearchViewModel @Inject constructor(
             }
             
             // Domain Commission 객체를 UI SearchResult 객체로 변환
-            val searchResults = commissions.map { commission -> 
+            val allSearchResults = commissions.map { commission -> 
                 convertCommissionToSearchResult(commission)
             }
             
+            // 마감된 의뢰 필터링 적용
+            val currentState = _uiState.value as? SearchUiState.Success
+            val includeExpired = currentState?.includeExpired ?: false
+            
+            println("DEBUG_FILTER: includeExpired 값: $includeExpired")
+            
+            val filteredSearchResults = if (includeExpired) {
+                println("DEBUG_FILTER: 마감된 의뢰 포함 모드 - 모든 결과 표시")
+                allSearchResults
+            } else {
+                println("DEBUG_FILTER: 마감된 의뢰 제외 모드 - remainingDays != 0 필터링 적용")
+                val filtered = allSearchResults.filter { it.remainingDays != 0 }
+                println("DEBUG_FILTER: 필터링 전 ${allSearchResults.size}개 -> 필터링 후 ${filtered.size}개")
+                // 마감된 의뢰들 로그
+                val expiredItems = allSearchResults.filter { it.remainingDays == 0 }
+                println("DEBUG_FILTER: 제외된 마감 의뢰 ${expiredItems.size}개:")
+                expiredItems.forEachIndexed { index, item ->
+                    println("DEBUG_FILTER: 제외[${index}] - id: ${item.id}, title: ${item.title}, remainingDays: ${item.remainingDays}")
+                }
+                filtered
+            }
+            
+            println("DEBUG_SEARCH: 전체 검색 결과: ${allSearchResults.size}개, 필터링 후: ${filteredSearchResults.size}개 (마감된 의뢰 포함: $includeExpired)")
+            
             // 변환된 SearchResult 로그 출력
-            searchResults.forEachIndexed { index, result ->
+            filteredSearchResults.forEachIndexed { index, result ->
                 println("DEBUG_SEARCH: SearchResult[$index] - id: '${result.id}', title: '${result.title}', reward: ${result.reward}, remainingDays: ${result.remainingDays}")
             }
             
             // UI 상태 업데이트
             updateUiState { state ->
-                state.copy(searchResults = searchResults)
+                state.copy(searchResults = filteredSearchResults)
             }
             
-            println("DEBUG_SEARCH: 검색 결과 UI 상태 업데이트 완료 - 결과 개수: ${searchResults.size}")
+            println("DEBUG_SEARCH: 검색 결과 UI 상태 업데이트 완료 - 결과 개수: ${filteredSearchResults.size}")
             
-            return searchResults
+            return filteredSearchResults
         } catch (e: Exception) {
             println("DEBUG_SEARCH: 검색 API 호출 중 오류 발생 - ${e.message}")
             e.printStackTrace()
@@ -272,6 +308,24 @@ class SearchViewModel @Inject constructor(
     }
 
     /**
+     * 마감된 의뢰 포함 여부 토글
+     */
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun toggleIncludeExpired() {
+        val currentState = _uiState.value as? SearchUiState.Success ?: return
+        val newIncludeExpired = !currentState.includeExpired
+        
+        updateUiState { it.copy(includeExpired = newIncludeExpired) }
+        
+        // 즉시 현재 검색 결과에 필터링 적용
+        viewModelScope.launch {
+            performSearch()
+        }
+        
+        println("DEBUG_SEARCH: 마감된 의뢰 포함 설정 변경: $newIncludeExpired")
+    }
+
+    /**
      * 최근 검색어 목록에 검색어 추가
      */
     private fun addToRecentSearches(query: String) {
@@ -318,14 +372,35 @@ class SearchViewModel @Inject constructor(
         selectedCategory: String?,
         selectedRegion: String?
     ) {
-        updateUiState {
-            it.copy(
-                searchResults = searchResults,
-                searchQuery = searchQuery,
-                selectedCategory = selectedCategory,
-                selectedRegion = selectedRegion
-            )
+        
+        // 기본 카테고리와 지역 목록 설정
+        val defaultCategories = listOf("전체", "과자/스낵", "라면/면류", "통조림/캔", "유제품", 
+                                      "냉동식품", "즉석식품", "소스/양념", "음료/커피", "쌀/잡곡")
+        val defaultRegions = listOf("전체", "동대문구", "강남구", "서초구", "종로구", "용산구")
+        
+        // 기본적으로 마감된 의뢰는 포함하지 않으므로 필터링 적용
+        val includeExpired = false
+        val filteredSearchResults = if (includeExpired) {
+            searchResults
+        } else {
+            searchResults.filter { it.remainingDays != 0 } // remainingDays가 0이면 마감된 것
         }
+        
+        println("DEBUG_UPDATE_STATE: 받은 검색 결과: ${searchResults.size}개, 필터링 후: ${filteredSearchResults.size}개 (includeExpired: $includeExpired)")
+        
+        _uiState.value = SearchUiState.Success(
+            searchQuery = searchQuery,
+            categories = defaultCategories,
+            selectedCategory = selectedCategory,
+            regions = defaultRegions,
+            selectedRegion = selectedRegion,
+            searchResults = filteredSearchResults,
+            recentSearches = emptyList(),
+            recommendedSearches = emptyList(),
+            includeExpired = includeExpired
+        )
+        
+        println("DEBUG_UPDATE_STATE: 상태 업데이트 완료 - 검색어: '$searchQuery', 카테고리: ${selectedCategory ?: "전체"}, 지역: ${selectedRegion ?: "전체"}, 결과 개수: ${filteredSearchResults.size}, includeExpired: $includeExpired")
     }
 
     /**
