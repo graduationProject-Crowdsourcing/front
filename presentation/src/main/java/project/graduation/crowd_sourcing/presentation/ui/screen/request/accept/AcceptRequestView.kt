@@ -9,11 +9,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -75,6 +77,31 @@ fun AcceptRequestView(
             )
         }
         return
+    }
+
+    // 수락 성공 시 자동으로 완료 페이지로 이동
+    LaunchedEffect(uiState.isAcceptSuccess) {
+        if (uiState.isAcceptSuccess) {
+            navController.navigate(
+                "acceptComplete/${uiState.martName}/${uiState.commission}/${uiState.commissionPoint}"
+            )
+        }
+    }
+
+    // 수락 실패 다이얼로그
+    uiState.acceptErrorMessage?.let { errorMessage ->
+        AlertDialog(
+            onDismissRequest = { viewModel.clearAcceptError() },
+            title = { Text("수락 실패") },
+            text = { Text(errorMessage) },
+            confirmButton = {
+                TextButton(
+                    onClick = { viewModel.clearAcceptError() }
+                ) {
+                    Text("확인")
+                }
+            }
+        )
     }
 
     Column(
@@ -140,11 +167,11 @@ fun AcceptRequestView(
         Spacer(modifier = Modifier.height(24.dp))
 
         ConfirmButton(
-            text = "수락",
+            text = if (uiState.isAcceptLoading) "처리 중..." else "수락",
             onConfirm = {
-                navController.navigate(
-                    "acceptComplete/${uiState.martName}/${uiState.commission}/${uiState.commissionPoint}"
-                )
+                if (!uiState.isAcceptLoading) {
+                    viewModel.acceptRequest()
+                }
             },
             modifier = Modifier.fillMaxWidth()
         )

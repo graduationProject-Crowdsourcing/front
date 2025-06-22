@@ -15,5 +15,8 @@ data class AcceptRequestUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val latitude: Double = 37.5818, // 청량리 롯데마트 위도 (기본값)
-    val longitude: Double = 127.0368 // 청량리 롯데마트 경도 (기본값)
+    val longitude: Double = 127.0368, // 청량리 롯데마트 경도 (기본값)
+    val isAcceptLoading: Boolean = false,
+    val isAcceptSuccess: Boolean = false,
+    val acceptErrorMessage: String? = null
 )
