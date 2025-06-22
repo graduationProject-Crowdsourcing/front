@@ -34,6 +34,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.common.GoogleApiAvailability
@@ -88,7 +89,7 @@ import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingThem
 @SuppressLint("RememberReturnType")
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun HomeView(navController: androidx.navigation.NavController) {
+fun HomeView(navController: NavController) {
     val viewModel: HomeViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
     val context = LocalContext.current

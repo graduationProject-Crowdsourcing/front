@@ -38,6 +38,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.search.FilterSel
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchResultView
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchView
 import project.graduation.crowd_sourcing.presentation.ui.screen.stats.StatsView
+import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.CurrentRequestsFullView
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -88,6 +89,11 @@ fun Navigation(
         // 검색 결과 화면
         composable(route = Screen.SearchResultScreen.route) {
             SearchResultView(navController = navController)
+        }
+        
+        // 전체 현재 의뢰 화면
+        composable(route = Screen.CurrentRequestsFullScreen.route) {
+            CurrentRequestsFullView(navController = navController)
         }
 
         // 의뢰 탭 최초 화면

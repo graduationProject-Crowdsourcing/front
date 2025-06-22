@@ -55,6 +55,9 @@ sealed class Screen(val title: String, val route: String) {
     // 검색 관련 화면
     data object FilterSelectionScreen: Screen(title = "필터 선택", route = "filter_selection")
     data object SearchResultScreen: Screen(title = "검색 결과", route = "search_result")
+    
+    // 현재 의뢰 관련 화면
+    data object CurrentRequestsFullScreen: Screen(title = "전체 현재 의뢰", route = "current_requests_full")
 
     sealed class BottomScreen(
         val bTitle: String, val bRoute: String, @DrawableRes val icon: Int
@@ -111,6 +114,7 @@ sealed class Screen(val title: String, val route: String) {
                 
                 FilterSelectionScreen.route -> FilterSelectionScreen
                 SearchResultScreen.route -> SearchResultScreen
+                CurrentRequestsFullScreen.route -> CurrentRequestsFullScreen
 
                 BottomScreen.HomeScreen.bRoute -> BottomScreen.HomeScreen
                 BottomScreen.SearchScreen.bRoute -> BottomScreen.SearchScreen
