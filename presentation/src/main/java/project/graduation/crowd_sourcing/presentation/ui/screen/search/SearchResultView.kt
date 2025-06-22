@@ -155,9 +155,14 @@ fun SearchResultView(
                     SearchResultItem(
                         result = result,
                         onItemClick = {
-                            // 임시로 고정된 commissionId 사용 (추후 실제 result.id를 commissionId로 변환 필요)
-                            val commissionId = 7 // API 예시에서 사용한 commissionId
-                            navController.navigate(project.graduation.crowd_sourcing.presentation.ui.navigation.Screen.AcceptRequestScreen.createRoute(commissionId))
+                            try {
+                                val commissionId = result.id.toInt()
+                                navController.navigate(project.graduation.crowd_sourcing.presentation.ui.navigation.Screen.AcceptRequestScreen.createRoute(commissionId))
+                            } catch (e: NumberFormatException) {
+                                // 임시로 고정된 commissionId 사용 (result.id가 숫자가 아닌 경우)
+                                val commissionId = 7 
+                                navController.navigate(project.graduation.crowd_sourcing.presentation.ui.navigation.Screen.AcceptRequestScreen.createRoute(commissionId))
+                            }
                         }
                     )
                     Divider()

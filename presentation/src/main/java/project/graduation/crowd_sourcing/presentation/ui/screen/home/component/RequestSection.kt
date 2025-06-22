@@ -92,14 +92,13 @@ fun CurrentRequestsList(
 //        }
     }
     CommonList(
-        list = state.currentRequests.map {
+        list = state.currentRequests.map { request ->
             CommonListItemData(
-                mainText = it.title,
-                subText = it.place,
-                leftText = "리워드 : ${it.reward}p",
+                mainText = request.title,
+                subText = request.place,
+                leftText = "리워드 : ${request.reward}p",
                 onClick = {
-                    // 임시로 고정된 commissionId 사용 (추후 실제 it.id를 commissionId로 변환 필요)
-                    val commissionId = 7 // API 예시에서 사용한 commissionId
+                    val commissionId = request.id.toInt()
                     navController?.navigate(project.graduation.crowd_sourcing.presentation.ui.navigation.Screen.AcceptRequestScreen.createRoute(commissionId))
                 }
             )

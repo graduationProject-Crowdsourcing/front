@@ -179,13 +179,13 @@ class SearchViewModel @Inject constructor(
         // 마감 시간이 이미 지난 경우
         if (now.isAfter(deadline)) {
             println("DEBUG_TIME: 마감 시간이 이미 지났습니다.")
-            return SearchResult(
-                id = commissionEntity.commission,
-                title = commissionEntity.commission,
-                place = "",
-                remainingDays = 0, // 시간이 지났음을 표시하는 특별 값 (0)
-                reward = commissionEntity.commissionpoint
-            )
+                    return SearchResult(
+            id = commissionEntity.commissionId.toString(),
+            title = commissionEntity.commission,
+            place = "",
+            remainingDays = 0, // 시간이 지났음을 표시하는 특별 값 (0)
+            reward = commissionEntity.commissionpoint
+        )
         }
         
         // 남은 시간에 따른 표시 방식 결정
@@ -210,7 +210,7 @@ class SearchViewModel @Inject constructor(
         println("DEBUG_TIME: 최종 표시 값: $remainingTime (${if (isHourFormat) "시간" else "일"} 단위)")
         
         return SearchResult(
-            id = commissionEntity.commission,
+            id = commissionEntity.commissionId.toString(),
             title = commissionEntity.commission,
             place = "",
             remainingDays = remainingTime, // 음수면 시간 단위, 양수면 일 단위

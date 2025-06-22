@@ -269,8 +269,7 @@ fun HomeView(navController: androidx.navigation.NavController) {
                         onDismiss = viewModel::hideMartRequestDialog,
                         onRequestClick = { request ->
                             // 의뢰 클릭 시 AcceptRequestView로 이동
-                            // 임시로 고정된 commissionId 사용 (추후 실제 request.id를 commissionId로 변환 필요)
-                            val commissionId = 7 // API 예시에서 사용한 commissionId
+                            val commissionId = 7;
                             navController.navigate(project.graduation.crowd_sourcing.presentation.ui.navigation.Screen.AcceptRequestScreen.createRoute(commissionId))
                         }
                     )
