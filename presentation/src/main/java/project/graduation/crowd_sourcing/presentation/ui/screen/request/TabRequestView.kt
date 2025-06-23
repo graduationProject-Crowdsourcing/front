@@ -41,7 +41,7 @@ fun TabRequestView(
         TabRequestButton(
             title = "작업 제출",
             iconResId = R.drawable.ic_star,
-            onClick = { navController.navigate(Screen.WorkListScreen.route) }
+            onClick = { navController.navigate(Screen.SubmitWorkScreen.createRoute(97)) }
         )
     }
 }

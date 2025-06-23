@@ -3,7 +3,7 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.request.work
 import android.net.Uri
 
 data class SubmitWorkUiState(
-    val workId: String = "",
+    val id: Int? = null,
     val title: String = "",
     val place: String = "",
     val price: String = "",
