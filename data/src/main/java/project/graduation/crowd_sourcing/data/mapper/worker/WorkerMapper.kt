@@ -12,11 +12,23 @@ import project.graduation.crowd_sourcing.data.response.worker.WorkHourEntity
 import project.graduation.crowd_sourcing.data.response.worker.WorkHourResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkMostEntity
 import project.graduation.crowd_sourcing.data.response.worker.WorkMostResponse
+import project.graduation.crowd_sourcing.data.response.worker.WorkOngoingResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkPointEntity
 import project.graduation.crowd_sourcing.data.response.worker.WorkPointResponse
 
 fun WorkCountResponse.toEntity() = WorkCountEntity(
     workCount = workCount
+)
+
+fun WorkOngoingResponse.toEntity() = WorkHistoryEntity(
+    id = workAssignmentId,
+    commission = commission,
+    commissionCount = commissionCount,
+    commissionPoint = commissionPoint,
+    commissionRegion = stringToRegion(this.commissionRegion),
+    commissionDate = commissionDate,
+    commissionStatus = stringToWorkStatus(commissionStatus),
+    memberId = memberId
 )
 
 @RequiresApi(Build.VERSION_CODES.O)

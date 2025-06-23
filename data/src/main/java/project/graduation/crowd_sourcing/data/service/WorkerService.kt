@@ -6,6 +6,7 @@ import project.graduation.crowd_sourcing.data.response.worker.WorkCountResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkHistoryResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkHourResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkMostResponse
+import project.graduation.crowd_sourcing.data.response.worker.WorkOngoingResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkPointResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -42,7 +43,7 @@ interface WorkerService {
     @GET("/api/v1/worker/workongoing")
     suspend fun getWorking(
         @Query("username") username: String
-    ): List<WorkHistoryResponse>
+    ): List<WorkOngoingResponse>
 
     @GET("/api/v1/worker/workhour")
     suspend fun getWorkerHour(
