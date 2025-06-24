@@ -16,7 +16,7 @@ interface WorkService {
         @Query("username") username: String,
         @Query("directoryPath") directoryPath: String,
         @Part image: MultipartBody.Part
-    ): Response<String>
+    ): Response<Unit>
 
     @GET("/api/v1/request/naverOcr")
     suspend fun requestOcr(

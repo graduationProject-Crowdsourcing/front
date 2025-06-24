@@ -17,7 +17,16 @@ data class Work(
     val title: String,
     val place: Region,
     val reward: Int
-)
+){
+    companion object{
+        fun test(): List<Work> = listOf(
+            Work(97, "a", Region.DONGDAEMUN, 7),
+            Work(97, "a", Region.DONGDAEMUN, 7),
+            Work(97, "a", Region.DONGDAEMUN, 7),
+            Work(97, "a", Region.DONGDAEMUN, 7),
+        )
+    }
+}
 
 @HiltViewModel
 class WorkListViewModel @Inject constructor(

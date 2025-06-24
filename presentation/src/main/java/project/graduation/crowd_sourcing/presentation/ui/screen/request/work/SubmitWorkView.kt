@@ -1,30 +1,61 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.request.work
 
+import android.location.Location
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import com.google.android.gms.location.LocationServices
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
@@ -35,24 +66,24 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.request.componen
 @Composable
 fun SubmitWorkView(
     navController: NavController,
-    workId: String? = null,
-    viewModel: SubmitWorkViewModel = viewModel()
+    workId: Int,
+    viewModel: SubmitWorkViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+
+
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
     // 이미지 업로드 런처
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            viewModel.updateImage(it)
-
             // 선택 즉시 업로드 실행
             viewModel.uploadImage(
                 context = context,
-                username = "worker123",          // TODO: 실제 ID
-                commissionId = uiState.workId    // 작업 ID
+                uri = uri
             )
         }
     }
@@ -82,10 +113,13 @@ fun SubmitWorkView(
             contentAlignment = Alignment.Center
         ) {
             if (uiState.imageUri != null) {
-                Text(
-                    text = "이미지 업로드 완료",
-                    color = Color.Black,
-                    style = MaterialTheme.typography.bodyMedium
+                AsyncImage(
+                    model = uiState.imageUri,
+                    contentDescription = "선택된 이미지",
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
                 )
             } else {
                 Text(
@@ -216,7 +250,19 @@ fun SubmitWorkView(
                     Color.Gray,
                 modifier = Modifier
                     .weight(1f)
-                    .clickable { viewModel.verifyLocation() },
+                    .clickable {
+                        try {
+                            fusedLocationClient.lastLocation
+                                .addOnSuccessListener { location: Location? ->
+                                    if (location != null) {
+                                        val lat = location.latitude
+                                        val lng = location.longitude
+                                        viewModel.locationVerified(lat = lat, lng = lng)
+                                    }
+                                }
+                        } catch (e: SecurityException) {
+                        }
+                      },
                 style = MaterialTheme.typography.bodyMedium
             )
         }
@@ -250,4 +296,12 @@ fun SubmitWorkView(
             )
         }
     }
+}
+
+
+
+@Preview
+@Composable
+fun prevSubmitWorkView(){
+    SubmitWorkView(navController = rememberNavController(), workId = 10)
 }

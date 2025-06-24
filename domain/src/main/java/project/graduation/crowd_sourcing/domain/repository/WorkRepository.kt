@@ -1,13 +1,13 @@
 package project.graduation.crowd_sourcing.domain.repository
 
-import java.io.File
+import android.net.Uri
 
 interface WorkRepository {
     suspend fun uploadImage(
         username: String,
         directoryPath: String,
-        imageFile: File
-    ): Result<String>
+        uri: Uri
+    ): Result<Unit>
 
     suspend fun requestOcr(
         fileName: String,

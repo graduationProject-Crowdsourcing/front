@@ -50,7 +50,7 @@ fun Navigation(
     NavHost(
         navController = navController,
         // startDestination = Screen.BottomScreen.HomeScreen.bRoute,
-        startDestination = if(isInitialized) Screen.BottomScreen.HomeScreen.bRoute else Screen.LoginScreen.route,
+        startDestination = if (isInitialized) Screen.BottomScreen.HomeScreen.bRoute else Screen.LoginScreen.route,
 
         modifier = Modifier
             .padding(pd)
@@ -137,8 +137,11 @@ fun Navigation(
             WorkListView(navController)
         }
         // 작업 제출 화면
-        composable(route = Screen.SubmitWorkScreen.routeWithArg) { backStackEntry ->
-            val workId = backStackEntry.arguments?.getString("workId")
+        composable(
+            route = Screen.SubmitWorkScreen.routeWithArg,
+            arguments = listOf(navArgument("workId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val workId = backStackEntry.arguments?.getInt("workId") ?: 0
             SubmitWorkView(navController = navController, workId = workId)
         }
         // 작업 완료 화면
@@ -186,7 +189,7 @@ fun Navigation(
             arguments = listOf(
                 navArgument("region") { type = NavType.StringType },
                 navArgument("category") { type = NavType.StringType },
-                navArgument("statsId"){ type = NavType.IntType}
+                navArgument("statsId") { type = NavType.IntType }
             )
         ) { backStackEntry ->
             val region = Region.from(backStackEntry.arguments?.getString("region") ?: "")
