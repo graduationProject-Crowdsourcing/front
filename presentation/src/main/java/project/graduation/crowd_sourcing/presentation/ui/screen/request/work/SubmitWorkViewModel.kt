@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import project.graduation.crowd_sourcing.domain.usecase.MartSearchUseCase
 import project.graduation.crowd_sourcing.domain.usecase.OcrRequestUseCase
 import project.graduation.crowd_sourcing.domain.usecase.WorkerUseCase
 import javax.inject.Inject
@@ -16,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SubmitWorkViewModel @Inject constructor(
     private val ocrRequestUseCase: OcrRequestUseCase,
-    private val workerUseCase: WorkerUseCase
+    private val workerUseCase: WorkerUseCase,
+    private val martSearchUseCase: MartSearchUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SubmitWorkUiState())
@@ -30,6 +33,7 @@ class SubmitWorkViewModel @Inject constructor(
     fun updatePrice(price: String) {
         _uiState.value = _uiState.value.copy(price = price)
     }
+
 
     fun updateExecuteTime(time: String) {
         _uiState.value = _uiState.value.copy(executeTime = time)
@@ -61,4 +65,22 @@ class SubmitWorkViewModel @Inject constructor(
                 }
         }
     }
+
+    fun locationVerified(lat: Double, lng: Double) {
+        viewModelScope.launch {
+            try {
+                val radius = 0.1 // 100미터 이내
+
+                val marts = martSearchUseCase.searchMartByLocation(lat, lng, radius)
+                if(marts.map { it.martName }.contains(uiState.value.place)){
+                    _uiState.update{prev->
+                        prev.copy(locationVerified = true)
+                    }
+                }
+            } catch (e: Exception) {
+
+            }
+        }
+    }
+
 }

@@ -1,8 +1,10 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.request.work
 
+import android.location.Location
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -53,6 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.google.android.gms.location.LocationServices
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
@@ -68,6 +71,9 @@ fun SubmitWorkView(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+
+
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
     // 이미지 업로드 런처
     val launcher = rememberLauncherForActivityResult(
@@ -244,7 +250,19 @@ fun SubmitWorkView(
                     Color.Gray,
                 modifier = Modifier
                     .weight(1f)
-                    .clickable { viewModel.verifyLocation() },
+                    .clickable {
+                        try {
+                            fusedLocationClient.lastLocation
+                                .addOnSuccessListener { location: Location? ->
+                                    if (location != null) {
+                                        val lat = location.latitude
+                                        val lng = location.longitude
+                                        viewModel.locationVerified(lat = lat, lng = lng)
+                                    }
+                                }
+                        } catch (e: SecurityException) {
+                        }
+                      },
                 style = MaterialTheme.typography.bodyMedium
             )
         }
@@ -279,6 +297,7 @@ fun SubmitWorkView(
         }
     }
 }
+
 
 
 @Preview
