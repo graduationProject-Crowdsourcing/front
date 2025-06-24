@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.domain.repository
 
+import project.graduation.crowd_sourcing.domain.model.entity.search.CommissionDetailEntity
 import project.graduation.crowd_sourcing.domain.model.entity.search.CommissionEntity
 import project.graduation.crowd_sourcing.domain.model.entity.search.SearchHomeEntity
 
@@ -13,4 +14,6 @@ interface SearchRepository {
     ): List<CommissionEntity>
     
     suspend fun getSearchHomeInitData(): SearchHomeEntity
+    
+    suspend fun getCommissionDetail(commissionId: Int): CommissionDetailEntity
 }

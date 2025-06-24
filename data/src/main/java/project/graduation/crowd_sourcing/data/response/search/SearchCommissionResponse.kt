@@ -14,6 +14,7 @@ data class SearchCommissionResponse<T> (
 )
 
 data class CommissionDto(
+    val commissionId: Int,
     val commission: String,
     val commissionpoint: Int,
     val deadline: String
@@ -24,6 +25,7 @@ data class CommissionDto(
         val deadlineDateTime = LocalDateTime.parse(deadline, formatter)
         
         return CommissionEntity(
+            commissionId = commissionId,
             commission = commission,
             commissionpoint = commissionpoint,
             deadline = deadlineDateTime

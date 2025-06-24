@@ -1,5 +1,8 @@
 package project.graduation.crowd_sourcing.data.response.martsearch
 
+import project.graduation.crowd_sourcing.domain.model.WorkStatus
+import java.time.LocalDateTime
+
 data class ApiResponseDtoListMartDto (
     val status: Int,
     val message: String,
@@ -17,9 +20,22 @@ data class MartDto(
     val existCommission: Int
 )
 
-data class MartDto1(
-    val sigungu: String,
-    val martName: String,
-    val lat: Double,
-    val lng: Double
+data class ApiResponseDtoListMartWorkDto(
+    val status: Int,
+    val message: String,
+    val data: List<MartWorkDto>
 )
+
+data class MartWorkDto(
+    val id : Int,
+    val work : String,
+    val workCount : Int,
+    val workpoint : Int,
+    val workhour : Int,
+    val category: String,
+    val item : String,
+    val workDate : LocalDateTime,
+    val itemPrice : Int,
+    val workStatus: WorkStatus
+)
+

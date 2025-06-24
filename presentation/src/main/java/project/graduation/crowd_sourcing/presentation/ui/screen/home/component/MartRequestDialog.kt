@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.home.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -23,12 +25,14 @@ import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEnti
  * @param mart 선택된 마트 정보
  * @param requests 해당 마트의 의뢰 목록
  * @param onDismiss 다이어로그 닫기 콜백
+ * @param onRequestClick 의뢰 클릭 콜백
  */
 @Composable
 fun MartRequestDialog(
     mart: MartEntity,
     requests: List<Request>,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onRequestClick: (Request) -> Unit = {}
 ) {
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -125,7 +129,13 @@ fun MartRequestDialog(
                             .heightIn(max = 300.dp)
                     ) {
                         items(requests) { request ->
-                            MartRequestItem(request = request)
+                            MartRequestItem(
+                                request = request,
+                                onClick = { 
+                                    onRequestClick(request)
+                                    onDismiss() // 다이얼로그 닫기
+                                }
+                            )
                             if (requests.indexOf(request) < requests.lastIndex) {
                                 Divider(
                                     modifier = Modifier.padding(vertical = 8.dp),
@@ -167,11 +177,17 @@ fun MartRequestDialog(
  * 마트 의뢰 아이템 컴포넌트
  * 
  * @param request 의뢰 정보
+ * @param onClick 클릭 콜백
  */
 @Composable
-private fun MartRequestItem(request: Request) {
+private fun MartRequestItem(
+    request: Request,
+    onClick: () -> Unit = {}
+) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(8.dp),
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.1f)
     ) {
@@ -209,12 +225,16 @@ private fun MartRequestItem(request: Request) {
                     Text(
                         text = request.title,
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = request.place,
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
+                        color = Color.Gray,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }

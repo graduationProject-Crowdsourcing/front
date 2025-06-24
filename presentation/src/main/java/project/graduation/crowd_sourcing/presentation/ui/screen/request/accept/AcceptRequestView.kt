@@ -1,93 +1,222 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.request.accept
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
-import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.WorkInfo
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraPosition
+import com.naver.maps.map.compose.*
 
 // 의뢰 수락 페이지
+@OptIn(ExperimentalNaverMapApi::class)
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AcceptRequestView(
     navController: NavController,
-    viewModel: AcceptRequestViewModel = viewModel()
+    commissionId: Int,
+    viewModel: AcceptRequestViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        // 지도 (대체 이미지 or 네이버 지도)
+    // commissionId가 변경될 때마다 데이터를 로드
+    LaunchedEffect(commissionId) {
+        viewModel.loadCommissionDetail(commissionId)
+    }
+
+    // 로딩 상태 처리
+    if (uiState.isLoading) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp)
-                .background(Color.LightGray),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text("${uiState.place}", style = MaterialTheme.typography.bodyLarge)
+            CircularProgressIndicator()
         }
+        return
+    }
 
-        Spacer(modifier = Modifier.height(16.dp))
+    // 에러 상태 처리
+    uiState.errorMessage?.let { errorMessage ->
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                modifier = Modifier.padding(24.dp)
+            )
+        }
+        return
+    }
 
-        Text("의뢰 정보", style = MaterialTheme.typography.titleMedium)
+    // 수락 성공 시 자동으로 완료 페이지로 이동
+    LaunchedEffect(uiState.isAcceptSuccess) {
+        if (uiState.isAcceptSuccess) {
+            navController.navigate(
+                "acceptComplete/${uiState.martName}/${uiState.commission}/${uiState.commissionPoint}"
+            )
+        }
+    }
+
+    // 수락 실패 다이얼로그
+    uiState.acceptErrorMessage?.let { errorMessage ->
+        AlertDialog(
+            onDismissRequest = { viewModel.clearAcceptError() },
+            title = { Text("수락 실패") },
+            text = { Text(errorMessage) },
+            confirmButton = {
+                TextButton(
+                    onClick = { viewModel.clearAcceptError() }
+                ) {
+                    Text("확인")
+                }
+            }
+        )
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 24.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         Spacer(modifier = Modifier.height(8.dp))
 
+        // 카카오맵을 사용한 지도 섹션
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(screenHeight * 0.25f)
+                .shadow(2.dp, RoundedCornerShape(8.dp)),
+            shape = RoundedCornerShape(8.dp),
+            color = MaterialTheme.colorScheme.surface
+        ) {
+            val position = LatLng(uiState.latitude, uiState.longitude)
+            val cameraPositionState = rememberCameraPositionState {
+                this.position = CameraPosition(position, 15.0)
+            }
+
+            NaverMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState
+            ) {
+                Marker(
+                    state = MarkerState(position = position),
+                    captionText = uiState.martName
+                )
+            }
+        }
+
+        // 의뢰 정보 제목
+        Text(
+            text = "의뢰 정보",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        // 의뢰 정보 목록
         Column {
-            WorkInfo(Icons.Default.Place, "위치", uiState.place)
+            AcceptRequestWorkInfo(Icons.Default.Place, "위치", "${uiState.region} ${uiState.martName}")
             GrayDivider()
-            WorkInfo(Icons.Default.Groups, "참여인원", uiState.participant)
+            AcceptRequestWorkInfo(Icons.Default.Category, "카테고리", uiState.category)
             GrayDivider()
-            WorkInfo(Icons.Default.Diamond, "리워드", "${uiState.reward}")
+            AcceptRequestWorkInfo(Icons.Default.ShoppingCart, "상품", uiState.item)
             GrayDivider()
-            WorkInfo(Icons.Default.Edit, "의뢰 내역", uiState.title)
+            AcceptRequestWorkInfo(Icons.Default.Groups, "참여인원", "${uiState.commissionCount}명")
             GrayDivider()
-            WorkInfo(Icons.Default.AccessTime, "의뢰 마감", uiState.deadline)
+            AcceptRequestWorkInfo(Icons.Default.Diamond, "리워드", "${uiState.commissionPoint}P")
+            GrayDivider()
+            AcceptRequestWorkInfo(Icons.Default.Edit, "의뢰 내역", uiState.commission)
+            GrayDivider()
+            AcceptRequestWorkInfo(Icons.Default.AccessTime, "의뢰 마감", uiState.expirationDate)
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         ConfirmButton(
-            text = "수락",
+            text = if (uiState.isAcceptLoading) "처리 중..." else "수락",
             onConfirm = {
-                navController.navigate(
-                    "acceptComplete/${uiState.place}/${uiState.title}/${uiState.reward}"
-                )
+                if (!uiState.isAcceptLoading) {
+                    viewModel.acceptRequest()
+                }
             },
             modifier = Modifier.fillMaxWidth()
         )
     }
 }
 
-@Preview(showBackground = true)
+// AcceptRequestView 전용 WorkInfo 컴포넌트 (SpaceBetween 레이아웃 적용)
 @Composable
-fun AcceptRequestViewPreview() {
-    val acceptViewModel = object : AcceptRequestViewModel() {
-        init {
-            uiState = AcceptRequestUiState(
-                id = "1",
-                place = "상암 홈플러스",
-                title = "딸기 한 박스",
-                reward = 100,
-                participant = "2/5",
-                deadline = "2025/04/18 (금) 00:00"
+private fun AcceptRequestWorkInfo(
+    icon: ImageVector,
+    label: String,
+    value: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 18.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        
+        // label과 value를 SpaceBetween으로 배치
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                fontSize = 16.sp
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
             )
         }
     }
-
-    AcceptRequestView(
-        navController = rememberNavController(), // 더미 네비게이터
-        viewModel = acceptViewModel
-    )
 }
