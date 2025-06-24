@@ -4,6 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import project.graduation.crowd_sourcing.data.repository.AlarmRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.FcmRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.LocationRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.LoginRepositoryImpl
@@ -15,6 +16,7 @@ import project.graduation.crowd_sourcing.data.repository.StatisticsRepositoryImp
 import project.graduation.crowd_sourcing.data.repository.UserPointRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.WorkRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.WorkerRepositoryImpl
+import project.graduation.crowd_sourcing.domain.repository.AlarmRepository
 import project.graduation.crowd_sourcing.domain.repository.FcmRepository
 import project.graduation.crowd_sourcing.domain.repository.LocationRepository
 import project.graduation.crowd_sourcing.domain.repository.LoginRepository
@@ -88,5 +90,10 @@ abstract class BindModule {
     abstract fun bindLocationRepository(
         repository: LocationRepositoryImpl
     ): LocationRepository
+
+    @Binds
+    abstract fun bindAlarmRepository(
+        repository: AlarmRepositoryImpl
+    ): AlarmRepository
 
 }

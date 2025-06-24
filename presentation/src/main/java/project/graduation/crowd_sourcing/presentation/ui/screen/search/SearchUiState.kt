@@ -30,7 +30,8 @@ sealed class SearchUiState {
         val searchResults: List<SearchResult>,
         val recentSearches: List<String> = emptyList(),
         val recommendedSearches: List<String> = emptyList(),
-        val sortType: SortType = SortType.LATEST
+        val sortType: SortType = SortType.LATEST,
+        val includeExpired: Boolean = false // 마감된 의뢰 포함 여부
     ) : SearchUiState()
     
     /**

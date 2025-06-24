@@ -71,4 +71,4 @@ class MartSearchRepositoryImpl @Inject constructor(
             )
         }
     }
-} 
+}
