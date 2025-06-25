@@ -1,4 +1,4 @@
-package project.graduation.crowd_sourcing.presentation.ui.screen.logout
+package project.graduation.crowd_sourcing.presentation.ui.screen.withdraw
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,13 +21,13 @@ import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 
 @Composable
-fun LogoutConfirmView(
-    viewModel: LogoutConfirmViewModel = hiltViewModel(),
+fun WithdrawConfirmView(
+    viewModel: WithdrawConfirmViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val logoutSuccess = viewModel.logoutSuccess
+    val withdrawSuccess = viewModel.withdrawSuccess
 
-    if (logoutSuccess) {
+    if (withdrawSuccess) {
         LaunchedEffect(Unit) {
             navController.navigate(Screen.LoginScreen.route) {
                 popUpTo(0) { inclusive = true }
@@ -42,15 +41,14 @@ fun LogoutConfirmView(
             .padding(32.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                "로그아웃 하시겠습니까?",
+                "정말 탈퇴하시겠습니까?",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -58,51 +56,12 @@ fun LogoutConfirmView(
             Spacer(modifier = Modifier.weight(1f))
 
             ConfirmButton(
-                text = "로그아웃",
+                text = "탈퇴하기",
                 onConfirm = {
-                    viewModel.logoutWithoutServer()
-                    navController.navigate(Screen.LoginScreen.route) {
-                        popUpTo(0) { inclusive = true }
-                        launchSingleTop = true
-                    }
+                    viewModel.withdraw()
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
-}
-
-
-@Composable
-fun LogoutConfirmPreviewContent(onLogoutClick: () -> Unit = {}) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp)
-    ) {
-        // 상단 또는 중앙 메시지
-        Column(
-            modifier = Modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("로그아웃 하시겠습니까?", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        }
-
-        // 하단 고정 버튼
-        ConfirmButton(
-            text = "로그아웃",
-            onConfirm = onLogoutClick,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-        )
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun LogoutConfirmPreview() {
-    LogoutConfirmPreviewContent()
 }

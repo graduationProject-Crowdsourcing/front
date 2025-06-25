@@ -39,6 +39,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchRes
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchView
 import project.graduation.crowd_sourcing.presentation.ui.screen.stats.StatsView
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.CurrentRequestsFullView
+import project.graduation.crowd_sourcing.presentation.ui.screen.withdraw.WithdrawConfirmView
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -70,6 +71,10 @@ fun Navigation(
 
         composable(route = Screen.LogoutConfirmScreen.route) {
             LogoutConfirmView(navController = navController)
+        }
+
+        composable(route = Screen.WithdrawConfirmScreen.route) {
+            WithdrawConfirmView(navController = navController)
         }
 
 

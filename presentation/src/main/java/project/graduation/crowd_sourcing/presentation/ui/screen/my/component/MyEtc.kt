@@ -39,7 +39,10 @@ fun MyEtc(navController: NavController) {
         (R.drawable.ic_out to "로그아웃") to {
              navController.navigate(Screen.LogoutConfirmScreen.route)
         },
-        (R.drawable.img_withdraw to "탈퇴하기") to {}
+        (R.drawable.img_withdraw to "탈퇴하기") to {
+            navController.navigate(Screen.WithdrawConfirmScreen.route)
+        }
+
     )
 
     Column(

@@ -98,6 +98,21 @@ class LoginRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun withdraw(accessToken: String): Result<Unit> {
+        return try {
+            val response = loginService.withdraw("Bearer $accessToken")
+            if (response.isSuccessful) {
+                tokenManager.clear() // 토큰 초기화
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("회원 탈퇴 실패: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+
 
     override suspend fun refreshToken(refreshToken: String): Result<Pair<String, String>> {
         return try {

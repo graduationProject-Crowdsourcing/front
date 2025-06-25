@@ -36,6 +36,15 @@ class MemberUseCase @Inject constructor(
         } ?: Result.failure(IllegalStateException("로그인된 사용자 정보가 없습니다."))
     }
 
+    // 회원 탈퇴
+    suspend fun withdraw(): Result<Unit> {
+        return tokenManager.getAccessToken()?.let {
+            repository.withdraw(it).onSuccess {
+                tokenManager.clear() // 토큰 초기화
+            }
+        } ?: Result.failure(IllegalStateException("로그인된 사용자 정보가 없습니다."))
+    }
+
     // 회원가입
     suspend fun signUp(username: String, password: String, nickname: String): Result<String> {
         return repository.signUp(username, password, nickname)

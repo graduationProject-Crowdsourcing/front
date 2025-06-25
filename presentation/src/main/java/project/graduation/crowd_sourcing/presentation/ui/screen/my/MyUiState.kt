@@ -1,6 +1,8 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.my
 
 import android.graphics.Bitmap
+import android.os.Build
+import androidx.annotation.RequiresApi
 import project.graduation.crowd_sourcing.presentation.utils.twoDaysAgo
 import java.time.LocalDateTime
 import java.util.Calendar
@@ -21,6 +23,7 @@ data class MyUiState(
     )
 
     companion object {
+        @RequiresApi(Build.VERSION_CODES.O)
         fun init() = MyUiState(
             profileImage = null,
             nickname = "",

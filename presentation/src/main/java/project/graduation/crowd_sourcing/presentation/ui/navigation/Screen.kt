@@ -8,6 +8,7 @@ import project.graduation.crowd_sourcing.presentation.R
 sealed class Screen(val title: String, val route: String) {
     data object LoginScreen : Screen(title = "Login", route = "login")
     data object LogoutConfirmScreen : Screen(title = "로그아웃 확인", route = "logout_confirm")
+    data object WithdrawConfirmScreen : Screen(title = "탈퇴 확인", route = "withdraw_confirm")
 
     data object NotificationScreen : Screen(title = "알림", route = "notification")
 
@@ -92,6 +93,7 @@ sealed class Screen(val title: String, val route: String) {
             return when (route) {
                 LoginScreen.route -> LoginScreen
                 LogoutConfirmScreen.route -> LogoutConfirmScreen
+                WithdrawConfirmScreen.route -> WithdrawConfirmScreen
 
                 NotificationScreen.route -> NotificationScreen
 

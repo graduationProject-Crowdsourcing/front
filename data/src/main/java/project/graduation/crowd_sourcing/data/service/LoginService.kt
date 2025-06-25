@@ -31,4 +31,9 @@ interface LoginService {
         @Header("Authorization") accessToken: String
     ): Response<Void>
 
+    @DELETE("/api/v1/accounts/withdraw")
+    suspend fun withdraw(
+        @Header("Authorization") accessToken: String
+    ): Response<Void>
+
 }
