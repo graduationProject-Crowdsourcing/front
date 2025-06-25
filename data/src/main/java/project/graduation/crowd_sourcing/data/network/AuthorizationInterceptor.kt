@@ -16,6 +16,7 @@ class AuthorizationInterceptor @Inject constructor(
 
         val path = originalRequest.url.encodedPath
         Log.d("InterceptorDebug", "요청 path = $path")
+        Log.d("InterceptorDebug", "accessToken = $accessToken")
 
         if (
             accessToken.isNullOrBlank() ||
@@ -23,6 +24,7 @@ class AuthorizationInterceptor @Inject constructor(
             path.startsWith("/api/v1/accounts/login") ||
             path.startsWith("/api/v1/accounts/refresh")
         ) {
+            Log.d("InterceptorDebug", "인증 제외 경로 또는 토큰 없음 → 원본 요청 진행")
             return chain.proceed(originalRequest)
         }
 
@@ -31,6 +33,7 @@ class AuthorizationInterceptor @Inject constructor(
             .addHeader("Authorization", "Bearer $accessToken")
             .build()
 
+        Log.d("InterceptorDebug", "Authorization 헤더 추가: Bearer $accessToken")
         return chain.proceed(newRequest)
     }
 }

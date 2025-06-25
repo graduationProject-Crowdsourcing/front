@@ -1,12 +1,9 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.request.request
 
 data class RequestFormUiState(
-    val martName: String = "",
-    val maxPeople: String = "",
-    val pointPerPerson: String = "",
-    val item: String = "",
-    val dateTime: String = "",
-    val martLat: Double? = null,
-    val martLng: Double? = null
+    val sigungu: String = "",         // 지역구 (사용자 입력)
+    val maxPeople: String = "",       // 최대 인원
+    val pointPerPerson: String = "",  // 1인당 포인트
+    val item: String = "",            // 품목
+    val expirationDate: String = ""   // 의뢰 마감일 (yyyy-MM-dd HH:mm 형식)
 )
-

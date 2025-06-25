@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import project.graduation.crowd_sourcing.domain.repository.RequesterRepository
 import project.graduation.crowd_sourcing.domain.repository.SearchRepository
+import project.graduation.crowd_sourcing.domain.repository.WorkerRepository
 import project.graduation.crowd_sourcing.domain.usecase.GetSearchHomeInitDataUseCase
 import project.graduation.crowd_sourcing.domain.usecase.RequesterUseCase
 import project.graduation.crowd_sourcing.domain.usecase.SearchCommissionUseCase
@@ -26,10 +27,16 @@ object DomainModule {
     fun provideGetSearchHomeInitDataUseCase(repository: SearchRepository): GetSearchHomeInitDataUseCase {
         return GetSearchHomeInitDataUseCase(repository)
     }
-    
+
     @Provides
     @Singleton
-    fun provideRequesterUseCase(repository: RequesterRepository): RequesterUseCase {
-        return RequesterUseCase(repository)
+    fun provideRequesterUseCase(
+        requesterRepository: RequesterRepository,
+        workerRepository: WorkerRepository
+    ): RequesterUseCase {
+        return RequesterUseCase(
+            requesterRepository = requesterRepository,
+            workerRepository = workerRepository
+        )
     }
 } 

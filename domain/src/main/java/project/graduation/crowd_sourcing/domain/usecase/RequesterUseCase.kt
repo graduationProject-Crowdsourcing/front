@@ -7,17 +7,19 @@ import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestSt
 import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestStatusEntity
 import project.graduation.crowd_sourcing.domain.model.entity.requester.RequestSuccessEntity
 import project.graduation.crowd_sourcing.domain.repository.RequesterRepository
+import project.graduation.crowd_sourcing.domain.repository.WorkerRepository
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 /**
  * 의뢰자 관련 유스케이스
  */
 class RequesterUseCase @Inject constructor(
-    private val requesterRepository: RequesterRepository
+    private val requesterRepository: RequesterRepository,
+    private val workerRepository: WorkerRepository
 ) {
-    /**
-     * 의뢰 등록
-     */
+
+    //의뢰 등록 TODO : 확인 후 삭제 예정
     suspend fun postRequest(
         commission: String,
         commissionCount: Int,
@@ -33,6 +35,35 @@ class RequesterUseCase @Inject constructor(
             commissionRegion = commissionRegion,
             commissionDate = commissionDate,
             memberId = memberId
+        )
+    }
+
+    // 의뢰 생성 (Swagger 기반 포맷)
+    suspend fun postWork(
+        work: String,
+        workCount: Int,
+        workpoint: Int,
+        martName: String,
+        sigungu: String,
+        item: String,
+        workDate: String,
+        memberId: Int,
+        category: String,
+        workhour: Int,
+        expirationDate: String
+    ): Result<Int> {
+        return workerRepository.postWork(
+            work = work,
+            workCount = workCount,
+            workpoint = workpoint,
+            martName = martName,
+            sigungu = sigungu,
+            item = item,
+            workDate = workDate,
+            memberId = memberId,
+            category = category,
+            workhour = workhour,
+            expirationDate = expirationDate
         )
     }
     

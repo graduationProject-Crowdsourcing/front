@@ -13,12 +13,15 @@ interface WorkerRepository {
     suspend fun postWork(
         work: String,
         workCount: Int,
-        workPoint: Int,
-        region: Region,
+        workpoint: Int,
+        martName: String,
+        sigungu: String,
         item: String,
-        itemPrice: Int,
-        workDate: LocalDateTime,
-        memberId: Int
+        workDate: String,
+        memberId: Int,
+        category: String,
+        workhour: Int,
+        expirationDate: String
     ): Result<Int>
 
     suspend fun getWorkerCounts(username: String): Result<WorkCountEntity>

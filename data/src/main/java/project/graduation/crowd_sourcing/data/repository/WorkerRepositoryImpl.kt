@@ -24,32 +24,38 @@ class WorkerRepositoryImpl @Inject constructor(
     override suspend fun postWork(
         work: String,
         workCount: Int,
-        workPoint: Int,
-        region: Region,
+        workpoint: Int,
+        martName: String,
+        sigungu: String,
         item: String,
-        itemPrice: Int,
-        workDate: LocalDateTime,
-        memberId: Int
+        workDate: String,
+        memberId: Int,
+        category: String,
+        workhour: Int,
+        expirationDate: String
     ): Result<Int> {
         return try {
-            val response = workerService.postWorker(
-                request = PostWorkRequest(
-                    work = work,
-                    workCount = workCount,
-                    workPoint = workPoint,
-                    region = region.koreanName,
-                    item = item,
-                    itemPrice = itemPrice,
-                    workDate = workDate.formatToString(),
-                    memberId = memberId
-                )
+            val request = PostWorkRequest(
+                work = work,
+                workCount = workCount,
+                workpoint = workpoint,
+                martName = martName,
+                sigungu = sigungu,
+                item = item,
+                workDate = workDate,
+                memberId = memberId,
+                category = category,
+                workhour = workhour,
+                expirationDate = expirationDate
             )
+            val response = workerService.postWorker(request)
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
         }
-
     }
+
+
 
     override suspend fun getWorkerCounts(username: String): Result<WorkCountEntity> {
         return try {
@@ -69,6 +75,7 @@ class WorkerRepositoryImpl @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getWorking(username: String): Result<List<WorkHistoryEntity>> {
         return try {
             val response = workerService.getWorking(username).map { it.toEntity() }
@@ -87,6 +94,7 @@ class WorkerRepositoryImpl @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getWorkHistory(
         username: String,
         status: WorkStatus
