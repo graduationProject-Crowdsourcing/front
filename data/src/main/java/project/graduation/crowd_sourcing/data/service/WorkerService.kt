@@ -11,12 +11,14 @@ import project.graduation.crowd_sourcing.data.response.worker.WorkPointResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 
 interface WorkerService {
+    @Headers("Content-Type: application/json")
     @POST("/api/v1/worker/postwork")
     suspend fun postWorker(
         @Body request: PostWorkRequest

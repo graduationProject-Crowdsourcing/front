@@ -54,7 +54,7 @@ fun MartSearchField(
             // 라벨과 검색 필드
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "마트 검색",
+                    text = "지역 검색",
                     fontSize = 14.sp,
                     color = Color.Black,
                     modifier = Modifier.padding(bottom = 4.dp)

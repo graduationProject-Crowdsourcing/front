@@ -18,7 +18,6 @@ import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.*
-import java.util.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -31,10 +30,8 @@ fun RequestFormView(
 ) {
     val state by viewModel.uiState.collectAsState()
     val requestState by viewModel.requestState.collectAsState()
-    val searchKeyword by viewModel.searchKeyword.collectAsState()
-    val isSearching by viewModel.isSearching.collectAsState()
-    val searchResults by viewModel.searchResults.collectAsState()
-    
+    val districtSuggestions by viewModel.districtSuggestions.collectAsState()
+
     // 요청 상태 처리
     LaunchedEffect(requestState) {
         when (requestState) {
@@ -55,16 +52,13 @@ fun RequestFormView(
     RequestFormContent(
         state = state,
         requestState = requestState,
-        searchKeyword = searchKeyword,
-        isSearching = isSearching,
-        searchResults = searchResults,
-        viewModel = viewModel,
-        onMartChange = viewModel::onMartChange,
+        districtSuggestions = districtSuggestions,
+        onSigunguChange = viewModel::onSigunguChange,
+        onDistrictSelected = viewModel::onDistrictSelected,
         onMaxPeopleChange = viewModel::onMaxPeopleChange,
         onPointPerPersonChange = viewModel::onPointPerPersonChange,
         onItemChange = viewModel::onItemChange,
-        onDateTimeChange = viewModel::onDateTimeChange,
-        onMartSelected = viewModel::setSelectedMart,
+        onExpirationDateChange = viewModel::onExpirationDateChange,
         onSubmit = viewModel::submitRequest
     )
 }
@@ -74,16 +68,13 @@ fun RequestFormView(
 fun RequestFormContent(
     state: RequestFormUiState,
     requestState: RequestState,
-    searchKeyword: String,
-    isSearching: Boolean,
-    searchResults: List<MartInfo>,
-    viewModel: RequestFormViewModel,
-    onMartChange: (String) -> Unit,
+    districtSuggestions: List<String>,
+    onSigunguChange: (String) -> Unit,
+    onDistrictSelected: (String) -> Unit,
     onMaxPeopleChange: (String) -> Unit,
     onPointPerPersonChange: (String) -> Unit,
     onItemChange: (String) -> Unit,
-    onDateTimeChange: (String) -> Unit,
-    onMartSelected: (MartInfo) -> Unit,
+    onExpirationDateChange: (String) -> Unit,
     onSubmit: () -> Unit
 ) {
     val context = LocalContext.current
@@ -124,45 +115,14 @@ fun RequestFormContent(
             else -> {}
         }
 
-        // 마트 검색 필드 (새로운 컴포넌트)
-        MartSearchField(
-            query = if (searchResults.isNotEmpty() || searchKeyword.isNotEmpty()) searchKeyword else state.martName,
-            onQueryChange = onMartChange,
-            isSearching = isSearching,
-            searchResults = searchResults,
-            onMartSelected = onMartSelected,
+        // 지역 검색 및 선택
+        DistrictSearchField(
+            query = state.sigungu,
+            suggestions = districtSuggestions,
+            onQueryChange = onSigunguChange,
+            onSuggestionClick = onDistrictSelected,
             iconResId = R.drawable.ic_mart
         )
-
-        // 선택된 마트 표시
-        if (state.martName.isNotEmpty() && state.martLat != null && searchResults.isEmpty()) {
-            Text(
-                text = "선택된 마트: ${state.martName}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .padding(start = 40.dp, top = 4.dp, bottom = 8.dp)
-            )
-            
-            // 마트 선택 시 지도 표시 - 마트 검색창 바로 아래로 이동
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(bottom = 16.dp)
-            ) {
-                // null 체크를 추가하여 non-null 값만 전달
-                val lat = state.martLat
-                val lng = state.martLng
-                if (lat != null && lng != null) {
-                    MartLocationMapView(
-                        latitude = lat,
-                        longitude = lng,
-                        title = state.martName
-                    )
-                }
-            }
-        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -213,7 +173,7 @@ fun RequestFormContent(
         ) {
             DateTimeSelectorField(
                 label = "기간 설정",
-                dateTimeText = state.dateTime,
+                dateTimeText = state.expirationDate,
                 iconResId = calendarIconResId,
                 onClick = {
                     Log.d("RequestFormView", "기간 설정 필드 클릭됨, 현재 상태: showDatePicker=$showDatePicker")
@@ -230,7 +190,7 @@ fun RequestFormContent(
             DateTimePickerDialog(
                 onDateTimeSelected = { dateTime ->
                     Log.d("RequestFormView", "날짜/시간 선택됨: $dateTime")
-                    onDateTimeChange(dateTime)
+                    onExpirationDateChange(dateTime)
                     showDatePicker = false
                     Log.d("RequestFormView", "showDatePicker 상태 false로 변경됨")
                 },
@@ -255,32 +215,3 @@ fun RequestFormContent(
         )
     }
 }
-
-/* 
-@Preview 주석 처리
-@Preview(showBackground = true)
-@Composable
-fun RequestFormPreview() {
-    // 프리뷰용 뷰모델
-    val viewModel = RequestFormViewModel()
-    
-    // 더미 데이터 세팅
-    viewModel.setSelectedMart(dummyMartList[0])
-    viewModel.onMaxPeopleChange("3")
-    viewModel.onPointPerPersonChange("1000")
-    viewModel.onItemChange("바나나 가격")
-    viewModel.onDateTimeChange("2023-06-01 14:00")
-    
-    RequestFormContent(
-        state = viewModel.uiState.value,
-        requestState = RequestState.Initial,
-        viewModel = viewModel,
-        onMartChange = viewModel::onMartChange,
-        onMaxPeopleChange = viewModel::onMaxPeopleChange,
-        onPointPerPersonChange = viewModel::onPointPerPersonChange,
-        onItemChange = viewModel::onItemChange,
-        onDateTimeChange = viewModel::onDateTimeChange,
-        onSubmit = {}
-    )
-}
-*/

@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.request.request
 
+import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,130 +17,52 @@ import java.util.Locale
 import java.util.TimeZone
 import javax.inject.Inject
 import android.util.Log
+import androidx.annotation.RequiresApi
+import project.graduation.crowd_sourcing.domain.local.TokenManager
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @HiltViewModel
 class RequestFormViewModel @Inject constructor(
     private val requesterUseCase: RequesterUseCase,
-    private val martSearchUseCase: MartSearchUseCase
+    private val tokenManager: TokenManager
 ) : ViewModel() {
+
+    // 서울시 지역구 목록
+    private val seoulDistricts = listOf(
+        "강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구",
+        "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구",
+        "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구",
+        "종로구", "중구", "중랑구"
+    )
 
     private val _uiState = MutableStateFlow(RequestFormUiState())
     val uiState: StateFlow<RequestFormUiState> = _uiState
-    
+
     // 의뢰 등록 상태
     private val _requestState = MutableStateFlow<RequestState>(RequestState.Initial)
     val requestState: StateFlow<RequestState> = _requestState
-    
-    // 마트 검색 결과
-    private val _searchResults = MutableStateFlow<List<MartInfo>>(emptyList())
-    val searchResults: StateFlow<List<MartInfo>> = _searchResults.asStateFlow()
-    
-    // 마트 검색 중 상태
-    private val _isSearching = MutableStateFlow(false)
-    val isSearching: StateFlow<Boolean> = _isSearching.asStateFlow()
-    
-    // 마트 검색 키워드
-    private val _searchKeyword = MutableStateFlow("")
-    val searchKeyword: StateFlow<String> = _searchKeyword.asStateFlow()
 
-    /** 마트 이름만 업데이트 (UI 전용) */
-    fun onMartChange(value: String) {
-        _uiState.update { it.copy(martName = value) }
-        _searchKeyword.value = value
-        
-        // 검색어가 2자 이상일 때 검색 실행
-        if (value.length >= 2) {
-            searchMarts(value)
+    // 지역 선택 - 자동완성 추천 리스트 상태
+    private val _districtSuggestions = MutableStateFlow<List<String>>(emptyList())
+    val districtSuggestions: StateFlow<List<String>> = _districtSuggestions.asStateFlow()
+
+    // 지역구 입력 시 호출
+    fun onSigunguChange(input: String) {
+        _uiState.update { it.copy(sigungu = input) }
+
+        // 필터링 로직: 입력한 글자가 포함된 지역구만 추림
+        if (input.isNotBlank()) {
+            _districtSuggestions.value = seoulDistricts.filter { it.contains(input) }
         } else {
-            _searchResults.value = emptyList()
+            _districtSuggestions.value = emptyList()
         }
     }
 
-    /** 마트 전체 정보(MartInfo)를 전달받아 상태 갱신 */
-    fun setSelectedMart(mart: MartInfo) {
-        _uiState.update {
-            it.copy(
-                martName = mart.name,
-                martLat = mart.latitude,
-                martLng = mart.longitude
-            )
-        }
-        // 검색 결과 초기화
-        _searchResults.value = emptyList()
-    }
-    
-    /** 키워드로 마트 검색 */
-    fun searchMarts(keyword: String) {
-        viewModelScope.launch {
-            try {
-                _isSearching.value = true
-                
-                // 검색 API 호출 - radius는 서버가 처리하도록 기본값(600) 사용
-                val searchResults = martSearchUseCase.searchMartByKeyword(keyword, 600.0)
-                
-                // 검색 키워드와의 유사도 순으로 정렬
-                val sortedResults = searchResults.sortedByDescending { mart ->
-                    calculateRelevanceScore(mart.martName, keyword)
-                }
-                
-                // 결과를 MartInfo 타입으로 변환
-                val martInfoList = sortedResults.map { mart ->
-                    MartInfo(
-                        name = mart.martName,
-                        latitude = mart.latitude,
-                        longitude = mart.longitude
-                    )
-                }
-                
-                _searchResults.value = martInfoList
-            } catch (e: Exception) {
-                // 오류 시 빈 결과
-                _searchResults.value = emptyList()
-            } finally {
-                _isSearching.value = false
-            }
-        }
-    }
-
-    /**
-     * 검색 키워드와 마트 이름의 유사도 점수 계산
-     * 점수가 높을수록 더 관련성이 높음
-     */
-    private fun calculateRelevanceScore(martName: String, keyword: String): Int {
-        val lowerMartName = martName.lowercase()
-        val lowerKeyword = keyword.lowercase()
-        
-        var score = 0
-        
-        // 1. 완전 일치 (가장 높은 점수)
-        if (lowerMartName == lowerKeyword) {
-            score += 100
-        }
-        
-        // 2. 시작 부분 일치
-        if (lowerMartName.startsWith(lowerKeyword)) {
-            score += 50
-        }
-        
-        // 3. 포함 여부
-        if (lowerMartName.contains(lowerKeyword)) {
-            score += 30
-        }
-        
-        // 4. 키워드가 마트 이름에 포함된 비율
-        val containsRatio = lowerKeyword.length.toFloat() / lowerMartName.length.toFloat()
-        score += (containsRatio * 20).toInt()
-        
-        // 5. 각 글자별 일치도 (부분 일치)
-        var charMatches = 0
-        for (char in lowerKeyword) {
-            if (lowerMartName.contains(char)) {
-                charMatches++
-            }
-        }
-        score += (charMatches.toFloat() / lowerKeyword.length * 10).toInt()
-        
-        return score
+    // 추천 리스트에서 항목 클릭 시 호출
+    fun onDistrictSelected(name: String) {
+        _uiState.update { it.copy(sigungu = name) }
+        _districtSuggestions.value = emptyList()
     }
 
     fun onMaxPeopleChange(value: String) {
@@ -154,13 +77,12 @@ class RequestFormViewModel @Inject constructor(
         _uiState.update { it.copy(item = value) }
     }
 
-    fun onDateTimeChange(value: String) {
-        _uiState.update { it.copy(dateTime = value) }
+    fun onExpirationDateChange(value: String) {
+        _uiState.update { it.copy(expirationDate = value) }
     }
     
-    /**
-     * 의뢰 등록
-     */
+    // 의뢰 생성
+    @RequiresApi(Build.VERSION_CODES.O)
     fun submitRequest() {
         val state = _uiState.value
         
@@ -181,16 +103,16 @@ class RequestFormViewModel @Inject constructor(
                 // 날짜 파싱 - 사용자가 입력한 형식 (yyyy-MM-dd HH:mm)
                 val userDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
                 userDateFormat.timeZone = TimeZone.getDefault() // 로컬 시간대 설정
-                
+
                 // 디버그 로그 추가
                 Log.d("RequestFormViewModel", "현재 시스템 시간: ${Date()}")
-                Log.d("RequestFormViewModel", "파싱 시도할 사용자 입력 날짜 문자열: ${state.dateTime}")
+                Log.d("RequestFormViewModel", "파싱 시도할 사용자 입력 날짜 문자열: ${state.expirationDate}")
                 
                 try {
                     // 사용자 입력 날짜 문자열을 Date 객체로 파싱
-                    val userDate = userDateFormat.parse(state.dateTime)
+                    val userDate = userDateFormat.parse(state.expirationDate)
                     if (userDate != null) {
-                        Log.d("RequestFormViewModel", "사용자 입력 날짜: ${state.dateTime}, 파싱된 날짜: ${userDate}")
+                        Log.d("RequestFormViewModel", "사용자 입력 날짜: ${state.expirationDate}, 파싱된 날짜: ${userDate}")
                         Log.d("RequestFormViewModel", "현재 시간과의 차이(밀리초): ${userDate.time - Date().time}")
                         
                         // 날짜가 이미 지난 경우
@@ -205,18 +127,35 @@ class RequestFormViewModel @Inject constructor(
                         isoFormat.timeZone = TimeZone.getTimeZone("UTC")
                         val isoDateString = isoFormat.format(userDate)
                         Log.d("RequestFormViewModel", "ISO 8601 형식으로 변환한 날짜: $isoDateString")
-                        
+
+                        val userId = tokenManager.getUserId()
+                        if (userId == -1) {
+                            _requestState.value = RequestState.Error("로그인이 필요합니다. 다시 로그인해 주세요.")
+                            return@launch
+                        }
+
+                        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+
+                        val workDate = LocalDateTime.now().format(formatter)
+                        val expirationDate = LocalDateTime.parse(isoDateString, formatter).format(formatter)
+
                         // API 호출
-                        val result = requesterUseCase.postRequest(
-                            commission = state.item,
-                            commissionCount = maxPeople,
-                            commissionPoint = pointPerPerson,
-                            commissionRegion = state.martName,
-                            commissionDate = isoDateString, // Date 객체 대신 포맷팅된 문자열 사용
-                            memberId = 3 // 테스트용 하드코딩 멤버 ID
+                        val result = requesterUseCase.postWork(
+                            work = "가격조사",
+                            workCount = maxPeople,
+                            workpoint = pointPerPerson,
+                            martName = "", // 백엔드에서 처리 예정, 현재는 placeholder로 빈 문자열 사용
+                            sigungu = state.sigungu,
+                            item = state.item,
+                            workDate = workDate,
+                            memberId = userId,
+                            category = "라면",  // TODO: 추후에 하드코딩 없애기
+                            workhour = 2,       // TODO: 추후에 하드코딩 없애기
+                            expirationDate = expirationDate
                         )
-                        
+                        Log.d("RequestFormViewModel", "postWork 결과: $result")
                         _requestState.value = RequestState.Success(result)
+
                     } else {
                         _requestState.value = RequestState.Error("날짜 형식이 올바르지 않습니다.")
                     }
@@ -244,40 +183,25 @@ class RequestFormViewModel @Inject constructor(
         }
     }
     
-    /**
-     * 입력값 유효성 검사
-     */
+    // 입력값 유효 검사
     private fun validateInputs(state: RequestFormUiState): Boolean {
-        return state.martName.isNotBlank() && 
-               state.maxPeople.isNotBlank() && 
-               state.pointPerPerson.isNotBlank() && 
-               state.item.isNotBlank() && 
-               state.dateTime.isNotBlank() &&
-               state.martLat != null &&
-               state.martLng != null
+        return state.sigungu.isNotBlank() &&
+                state.maxPeople.isNotBlank() &&
+                state.pointPerPerson.isNotBlank() &&
+                state.item.isNotBlank() &&
+                state.expirationDate.isNotBlank()
     }
     
-    /**
-     * 요청 상태 초기화
-     */
+    // 요청 상태 초기화
     fun resetRequestState() {
         _requestState.value = RequestState.Initial
     }
-    
-    /**
-     * 검색 결과 초기화
-     */
-    fun clearSearchResults() {
-        _searchResults.value = emptyList()
-    }
 }
 
-/**
- * 의뢰 등록 요청 상태
- */
+// 의뢰 등록 요청 상태
 sealed class RequestState {
     object Initial : RequestState()
     object Loading : RequestState()
-    data class Success(val requestId: Int) : RequestState()
+    data class Success(val requestId: Result<Int>) : RequestState()
     data class Error(val message: String) : RequestState()
 }
