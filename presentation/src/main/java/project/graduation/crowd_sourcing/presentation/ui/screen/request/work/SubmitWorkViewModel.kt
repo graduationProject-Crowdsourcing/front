@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.domain.usecase.MartSearchUseCase
 import project.graduation.crowd_sourcing.domain.usecase.OcrRequestUseCase
 import project.graduation.crowd_sourcing.domain.usecase.WorkerUseCase
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,6 +36,10 @@ class SubmitWorkViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(price = price)
     }
 
+    fun updateItem(item: String) {
+        _uiState.value = _uiState.value.copy(item = item)
+    }
+
 
     fun updateExecuteTime(time: String) {
         _uiState.value = _uiState.value.copy(executeTime = time)
@@ -48,7 +54,9 @@ class SubmitWorkViewModel @Inject constructor(
         val state = uiState.value
         return state.price.isNotBlank() &&
                 state.executeTime.isNotBlank() &&
-                state.locationVerified
+                state.locationVerified &&
+                state.item.isNotBlank() &&
+                state.id != null
     }
 
     // 이미지 업로드 로직
@@ -63,6 +71,20 @@ class SubmitWorkViewModel @Inject constructor(
                 }.onFailure {
                     it.printStackTrace()
                 }
+        }
+    }
+
+    fun submitWork(complete: () -> Unit) = viewModelScope.launch {
+        uiState.value.let {
+            workerUseCase.postAssignment(
+                item = it.item,
+                itemPrice = it.price.toInt(),
+                workDate = parseToLocalDateTime(it.executeTime),
+                martName = it.place,
+                assignmentId = it.id!!.toInt()
+            ).onSuccess {
+                complete()
+            }
         }
     }
 
@@ -83,4 +105,9 @@ class SubmitWorkViewModel @Inject constructor(
         }
     }
 
+
+    private fun parseToLocalDateTime(dateTimeStr: String): LocalDateTime {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        return LocalDateTime.parse(dateTimeStr, formatter)
+    }
 }

@@ -35,7 +35,6 @@ class WorkerUseCase @Inject constructor(
         return tokenManager.getUserName()?.let{username->
             val isoString = workDate.format(DateTimeFormatter.ISO_DATE_TIME)
 
-
             workerRepository.postAssignment(
                 item = item,
                 itemPrice = itemPrice,
