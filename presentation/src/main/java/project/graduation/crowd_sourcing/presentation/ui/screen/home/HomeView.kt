@@ -34,6 +34,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.common.GoogleApiAvailability
@@ -88,7 +89,7 @@ import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingThem
 @SuppressLint("RememberReturnType")
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun HomeView() {
+fun HomeView(navController: NavController) {
     val viewModel: HomeViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -228,7 +229,7 @@ fun HomeView() {
 
                         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
 
-                        RequestsSection(viewModel = viewModel, state = state)
+                        RequestsSection(viewModel = viewModel, state = state, navController = navController)
 
                         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.space_medium)))
 
@@ -266,7 +267,12 @@ fun HomeView() {
                     MartRequestDialog(
                         mart = state.selectedMart,
                         requests = state.selectedMartRequests,
-                        onDismiss = viewModel::hideMartRequestDialog
+                        onDismiss = viewModel::hideMartRequestDialog,
+                        onRequestClick = { request ->
+                            // 의뢰 클릭 시 AcceptRequestView로 이동
+                            val commissionId = 7;
+                            navController.navigate(project.graduation.crowd_sourcing.presentation.ui.navigation.Screen.AcceptRequestScreen.createRoute(commissionId))
+                        }
                     )
                 }
             } else {
@@ -281,6 +287,6 @@ fun HomeView() {
 @Composable
 fun HomeViewPreview(){
     CrowdSourcingTheme{
-        HomeView()
+        HomeView(navController = androidx.navigation.compose.rememberNavController())
     }
 }

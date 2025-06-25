@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -50,12 +51,15 @@ import androidx.navigation.NavController
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.component.FilterChip
 import androidx.lifecycle.SavedStateHandle
 import androidx.compose.runtime.LaunchedEffect
+import android.os.Build
+import androidx.annotation.RequiresApi
 
 /**
  * 검색 결과 화면
  * 
  * @param navController 네비게이션 컨트롤러
  */
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchResultView(
@@ -63,9 +67,6 @@ fun SearchResultView(
 ) {
     val viewModel: SearchViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
-    
-    // 검색 결과를 저장할 상태
-    var searchResults by remember { mutableStateOf<List<SearchResult>>(emptyList()) }
     
     // 화면이 표시될 때 savedStateHandle에서 검색 결과 및 필터 정보 가져오기
     LaunchedEffect(Unit) {
@@ -78,15 +79,16 @@ fun SearchResultView(
             val resultsArray = handle.get<Array<SearchResult>>("searchResults")
             println("DEBUG_RESULT: savedStateHandle에서 searchResults 배열 확인 - ${if (resultsArray != null) "존재 (${resultsArray.size}개)" else "없음"}")
             
-            resultsArray?.let {
-                searchResults = it.toList()
+            val searchResults = resultsArray?.toList() ?: emptyList()
+            
+            if (searchResults.isNotEmpty()) {
                 println("DEBUG_RESULT: 검색 결과를 리스트로 변환 완료 - 크기: ${searchResults.size}")
                 // 디버그를 위해 첫 번째 아이템 출력
-                if (searchResults.isNotEmpty()) {
-                    val first = searchResults.first()
-                    println("DEBUG_RESULT: 첫 번째 결과 - id: ${first.id}, title: ${first.title}, place: '${first.place}', reward: ${first.reward}, remainingDays: ${first.remainingDays}")
-                }
-            } ?: println("DEBUG_RESULT: searchResults 배열이 null")
+                val first = searchResults.first()
+                println("DEBUG_RESULT: 첫 번째 결과 - id: ${first.id}, title: ${first.title}, place: '${first.place}', reward: ${first.reward}, remainingDays: ${first.remainingDays}")
+            } else {
+                println("DEBUG_RESULT: searchResults 배열이 null 또는 비어있음")
+            }
             
             // 검색어, 카테고리, 지역 정보 가져오기
             val searchQuery = handle.get<String>("searchQuery") ?: ""
@@ -95,20 +97,19 @@ fun SearchResultView(
             
             println("DEBUG_RESULT: 필터 정보 확인 - 검색어: '$searchQuery', 카테고리: ${selectedCategory ?: "전체"}, 지역: ${selectedRegion ?: "전체"}")
             
-            // ViewModel 상태 전체 업데이트
-            println("DEBUG_RESULT: viewModel.updateStateWithFilterInfo 호출 전")
-            viewModel.updateStateWithFilterInfo(
-                searchResults = searchResults,
-                searchQuery = searchQuery,
-                selectedCategory = selectedCategory,
-                selectedRegion = selectedRegion
-            )
-            println("DEBUG_RESULT: viewModel.updateStateWithFilterInfo 호출 완료")
-            
-            // 서버에서 데이터를 다시 로드하지 않음 (이미 검색 화면에서 로드했음)
-            // 주석 처리: 디버깅을 위해 나중에 필요할 경우 주석 해제할 수 있음
-            // println("DEBUG_RESULT: 설정된 필터로 새로운 검색 실행")
-            // viewModel.refreshSearch()
+            // ViewModel 상태 전체 업데이트 (검색 결과가 있을 때만)
+            if (searchResults.isNotEmpty()) {
+                println("DEBUG_RESULT: viewModel.updateStateWithFilterInfo 호출 전")
+                viewModel.updateStateWithFilterInfo(
+                    searchResults = searchResults,
+                    searchQuery = searchQuery,
+                    selectedCategory = selectedCategory,
+                    selectedRegion = selectedRegion
+                )
+                println("DEBUG_RESULT: viewModel.updateStateWithFilterInfo 호출 완료")
+            } else {
+                println("DEBUG_RESULT: 검색 결과가 없으므로 상태 업데이트 건너뜀")
+            }
         } ?: println("DEBUG_RESULT: previousBackStackEntry 또는 savedStateHandle이 null")
     }
     
@@ -119,14 +120,26 @@ fun SearchResultView(
     // 현재 선택된 정렬 방식
     var sortType by remember { mutableStateOf(SortType.LATEST) }
     
+    // ViewModel에서 현재 검색 결과 가져오기
+    val currentSearchResults = when (val state = uiState.value) {
+        is SearchUiState.Success -> {
+            // println("DEBUG_UI: 현재 UI 상태에서 검색 결과 개수: ${state.searchResults.size}, 마감된 의뢰 포함: ${state.includeExpired}")
+            state.searchResults
+        }
+        else -> {
+            // println("DEBUG_UI: UI 상태가 Success가 아님: ${uiState.value::class.simpleName}")
+            emptyList()
+        }
+    }
+    
     // 정렬된 검색 결과
-    val sortedResults = remember(searchResults, sortType) {
+    val sortedResults = remember(currentSearchResults, sortType) {
         when (sortType) {
-            SortType.LOWEST_PRICE_FIRST -> searchResults.sortedBy { it.reward }
-            SortType.HIGHEST_PRICE_FIRST -> searchResults.sortedByDescending { it.reward }
-            SortType.LATEST -> searchResults // 최신순은 이미 정렬되어 있다고 가정
-            SortType.MOST_POPULAR -> searchResults.sortedByDescending { it.reward } // 인기순은 일단 높은 가격순으로 대체
-            // 또는 else -> searchResults 로 처리 가능
+            SortType.LOWEST_PRICE_FIRST -> currentSearchResults.sortedBy { it.reward }
+            SortType.HIGHEST_PRICE_FIRST -> currentSearchResults.sortedByDescending { it.reward }
+            SortType.LATEST -> currentSearchResults // 최신순은 이미 정렬되어 있다고 가정
+            SortType.MOST_POPULAR -> currentSearchResults.sortedByDescending { it.reward } // 인기순은 일단 높은 가격순으로 대체
+            // 또는 else -> currentSearchResults 로 처리 가능
         }
     }
     
@@ -136,11 +149,12 @@ fun SearchResultView(
         // 검색 필터 영역
         SearchResultFilterBar(
             state = uiState.value,
-            onFilterClick = { showBottomSheet = true }
+            onFilterClick = { showBottomSheet = true },
+            viewModel = viewModel
         )
         
         // 검색 결과 목록
-        if (searchResults.isEmpty()) {
+        if (currentSearchResults.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -152,7 +166,19 @@ fun SearchResultView(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(sortedResults) { result ->
-                    SearchResultItem(result = result)
+                    SearchResultItem(
+                        result = result,
+                        onItemClick = {
+                            try {
+                                val commissionId = result.id.toInt()
+                                navController.navigate(project.graduation.crowd_sourcing.presentation.ui.navigation.Screen.AcceptRequestScreen.createRoute(commissionId))
+                            } catch (e: NumberFormatException) {
+                                // 임시로 고정된 commissionId 사용 (result.id가 숫자가 아닌 경우)
+                                val commissionId = 7 
+                                navController.navigate(project.graduation.crowd_sourcing.presentation.ui.navigation.Screen.AcceptRequestScreen.createRoute(commissionId))
+                            }
+                        }
+                    )
                     Divider()
                 }
             }
@@ -233,64 +259,91 @@ fun SearchResultView(
 /**
  * 검색 결과 필터 바
  */
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SearchResultFilterBar(
     state: SearchUiState,
-    onFilterClick: () -> Unit
+    onFilterClick: () -> Unit,
+    viewModel: SearchViewModel
 ) {
-    // UI 상태 로그 추가
-    println("SearchResultFilterBar: 상태 타입 = ${state::class.simpleName}")
+    // UI 상태 로그 (필요시에만 활성화)
+    // println("SearchResultFilterBar: 상태 타입 = ${state::class.simpleName}")
     
-    if (state is SearchUiState.Success) {
-        println("SearchResultFilterBar: Success 상태 - 검색어: '${state.searchQuery}', 카테고리: ${state.selectedCategory ?: "전체"}, 지역: ${state.selectedRegion ?: "전체"}")
-    }
+    // if (state is SearchUiState.Success) {
+    //     println("SearchResultFilterBar: Success 상태 - 검색어: '${state.searchQuery}', 카테고리: ${state.selectedCategory ?: "전체"}, 지역: ${state.selectedRegion ?: "전체"}, 마감된 의뢰 포함: ${state.includeExpired}")
+    // }
     
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        // 왼쪽에 필터 칩들을 묶는 Row
+    Column(modifier = Modifier.fillMaxWidth()) {
+        // 기존 필터 칩들과 정렬 필터
         Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            if (state is SearchUiState.Success) {
-                // 검색어 표시 (없으면 "모든 검색어"로 표시)
-                FilterChip(
-                    label = if (state.searchQuery.isNotEmpty()) state.searchQuery else "모든 검색어",
-                    onClick = { }
-                )
+            // 왼쪽에 필터 칩들을 묶는 Row
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
+                if (state is SearchUiState.Success) {
+                    // 검색어 표시 (없으면 "모든 검색어"로 표시)
+                    FilterChip(
+                        label = if (state.searchQuery.isNotEmpty()) state.searchQuery else "모든 검색어",
+                        onClick = { }
+                    )
+                    
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
+                    // 선택된 카테고리 표시 (null이면 "전체 카테고리"로 표시)
+                    FilterChip(
+                        label = state.selectedCategory ?: "전체 카테고리",
+                        onClick = { }
+                    )
+                    
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
+                    // 선택된 지역 표시 (null이면 "전체 지역"으로 표시)
+                    FilterChip(
+                        label = state.selectedRegion ?: "전체 지역",
+                        onClick = { }
+                    )
+                }
+            }
                 
-                Spacer(modifier = Modifier.width(8.dp))
-                
-                // 선택된 카테고리 표시 (null이면 "전체 카테고리"로 표시)
-                FilterChip(
-                    label = state.selectedCategory ?: "전체 카테고리",
-                    onClick = { }
-                )
-                
-                Spacer(modifier = Modifier.width(8.dp))
-                
-                // 선택된 지역 표시 (null이면 "전체 지역"으로 표시)
-                FilterChip(
-                    label = state.selectedRegion ?: "전체 지역",
-                    onClick = { }
+            // 정렬 방식 필터 아이콘 (오른쪽 끝에 배치)
+            IconButton(
+                onClick = onFilterClick
+            ) {
+                Icon(
+                    imageVector = Icons.Default.FilterList,
+                    contentDescription = "정렬 필터",
+                    tint = Color.Gray
                 )
             }
         }
-            
-        // 정렬 방식 필터 아이콘 (오른쪽 끝에 배치)
-        IconButton(
-            onClick = onFilterClick
-        ) {
-            Icon(
-                imageVector = Icons.Default.FilterList,
-                contentDescription = "정렬 필터",
-                tint = Color.Gray
-            )
+        
+        // 마감된 의뢰 포함 토글
+        if (state is SearchUiState.Success) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
+                    .clickable { viewModel.toggleIncludeExpired() },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = state.includeExpired,
+                    onCheckedChange = { viewModel.toggleIncludeExpired() }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "마감된 의뢰 포함",
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
+            }
         }
     }
 }
@@ -300,12 +353,13 @@ fun SearchResultFilterBar(
  */
 @Composable
 fun SearchResultItem(
-    result: SearchResult
+    result: SearchResult,
+    onItemClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* 아이템 클릭 처리 */ }
+            .clickable { onItemClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

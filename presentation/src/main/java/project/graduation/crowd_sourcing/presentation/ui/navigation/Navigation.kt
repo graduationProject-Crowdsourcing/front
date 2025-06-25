@@ -38,6 +38,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.search.FilterSel
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchResultView
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchView
 import project.graduation.crowd_sourcing.presentation.ui.screen.stats.StatsView
+import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.CurrentRequestsFullView
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -49,7 +50,7 @@ fun Navigation(
     NavHost(
         navController = navController,
         // startDestination = Screen.BottomScreen.HomeScreen.bRoute,
-        startDestination = if(isInitialized) Screen.BottomScreen.HomeScreen.bRoute else Screen.LoginScreen.route,
+        startDestination = if (isInitialized) Screen.BottomScreen.HomeScreen.bRoute else Screen.LoginScreen.route,
 
         modifier = Modifier
             .padding(pd)
@@ -73,7 +74,7 @@ fun Navigation(
 
 
         composable(route = Screen.BottomScreen.HomeScreen.bRoute) {
-            HomeView()
+            HomeView(navController = navController)
         }
 
         composable(route = Screen.BottomScreen.SearchScreen.bRoute) {
@@ -89,6 +90,11 @@ fun Navigation(
         composable(route = Screen.SearchResultScreen.route) {
             SearchResultView(navController = navController)
         }
+        
+        // 전체 현재 의뢰 화면
+        composable(route = Screen.CurrentRequestsFullScreen.route) {
+            CurrentRequestsFullView(navController = navController)
+        }
 
         // 의뢰 탭 최초 화면
         composable(route = Screen.BottomScreen.RequestScreen.bRoute) {
@@ -103,8 +109,15 @@ fun Navigation(
             RequestCompleteView(navController)
         }
         // 의뢰 수락 화면
-        composable(route = Screen.AcceptRequestScreen.route) {
-            AcceptRequestView(navController = navController)
+        composable(
+            route = Screen.AcceptRequestScreen.routeWithArg,
+            arguments = listOf(navArgument("commissionId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val commissionId = backStackEntry.arguments?.getInt("commissionId") ?: 0
+            AcceptRequestView(
+                navController = navController,
+                commissionId = commissionId
+            )
         }
 
         // 의뢰 수락 완료 화면
@@ -124,8 +137,11 @@ fun Navigation(
             WorkListView(navController)
         }
         // 작업 제출 화면
-        composable(route = Screen.SubmitWorkScreen.routeWithArg) { backStackEntry ->
-            val workId = backStackEntry.arguments?.getString("workId")
+        composable(
+            route = Screen.SubmitWorkScreen.routeWithArg,
+            arguments = listOf(navArgument("workId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val workId = backStackEntry.arguments?.getInt("workId") ?: 0
             SubmitWorkView(navController = navController, workId = workId)
         }
         // 작업 완료 화면
@@ -173,7 +189,7 @@ fun Navigation(
             arguments = listOf(
                 navArgument("region") { type = NavType.StringType },
                 navArgument("category") { type = NavType.StringType },
-                navArgument("statsId"){ type = NavType.IntType}
+                navArgument("statsId") { type = NavType.IntType }
             )
         ) { backStackEntry ->
             val region = Region.from(backStackEntry.arguments?.getString("region") ?: "")

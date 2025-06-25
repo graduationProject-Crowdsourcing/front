@@ -114,36 +114,3 @@ class MyRepositoryImpl @Inject constructor(
 
 
 }
-
-
-internal fun compressAndResizeImage(context: Context, uri: Uri): MultipartBody.Part {
-    val maxWidth = 1024
-    val maxHeight = 1024
-
-    val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        val source = ImageDecoder.createSource(context.contentResolver, uri)
-        ImageDecoder.decodeBitmap(source)
-    } else {
-        MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
-    }
-
-    val ratio = minOf(
-        maxWidth / bitmap.width.toFloat(),
-        maxHeight / bitmap.height.toFloat(),
-        1f
-    )
-    val resized = Bitmap.createScaledBitmap(
-        bitmap,
-        (bitmap.width * ratio).toInt(),
-        (bitmap.height * ratio).toInt(),
-        true
-    )
-
-    val outputStream = ByteArrayOutputStream()
-    resized.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
-    val byteArray = outputStream.toByteArray()
-
-    val requestBody = byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull())
-    return MultipartBody.Part.createFormData("file", "compressed.jpg", requestBody)
-}
-

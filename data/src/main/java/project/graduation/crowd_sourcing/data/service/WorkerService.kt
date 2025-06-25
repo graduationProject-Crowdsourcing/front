@@ -1,15 +1,19 @@
 package project.graduation.crowd_sourcing.data.service
 
+import project.graduation.crowd_sourcing.data.request.worker.PostAssignmentRequest
 import project.graduation.crowd_sourcing.data.request.worker.PostWorkRequest
 import project.graduation.crowd_sourcing.data.response.worker.WorkCountResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkHistoryResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkHourResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkMostResponse
+import project.graduation.crowd_sourcing.data.response.worker.WorkOngoingResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkPointResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -19,6 +23,14 @@ interface WorkerService {
     suspend fun postWorker(
         @Body request: PostWorkRequest
     ): Int
+
+    @POST("/api/v1/worker/assignment/{assignmentId}/submit")
+    suspend fun postAssignment(
+        @Body request: PostAssignmentRequest,
+        @Path("assignmentId") assignmentId: Int,
+        @Query("username") username: String
+    ): Response<Unit>
+
 
     @GET("/api/v1/worker/workstats")
     suspend fun getWorkerCounts(
@@ -33,7 +45,7 @@ interface WorkerService {
     @GET("/api/v1/worker/workongoing")
     suspend fun getWorking(
         @Query("username") username: String
-    ): List<WorkHistoryResponse>
+    ): List<WorkOngoingResponse>
 
     @GET("/api/v1/worker/workhour")
     suspend fun getWorkerHour(

@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import project.graduation.crowd_sourcing.data.mapper.formatToString
 import project.graduation.crowd_sourcing.data.mapper.worker.toEntity
+import project.graduation.crowd_sourcing.data.request.worker.PostAssignmentRequest
 import project.graduation.crowd_sourcing.data.request.worker.PostWorkRequest
 import project.graduation.crowd_sourcing.data.response.worker.WorkCountEntity
 import project.graduation.crowd_sourcing.data.response.worker.WorkHistoryEntity
@@ -14,6 +15,7 @@ import project.graduation.crowd_sourcing.data.service.WorkerService
 import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.domain.model.WorkStatus
 import project.graduation.crowd_sourcing.domain.repository.WorkerRepository
+import retrofit2.Response
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -55,6 +57,32 @@ class WorkerRepositoryImpl @Inject constructor(
         }
     }
 
+
+    override suspend fun postAssignment(
+        item: String,
+        itemPrice: Int,
+        workDate: String,
+        martName: String,
+        assignmentId: Int,
+        username: String
+    ): Result<Unit> {
+        return try{
+            workerService.postAssignment(
+                request = PostAssignmentRequest(
+                    item = item,
+                    itemPrice = itemPrice,
+                    workDate = workDate,
+                    martName = martName
+                ),
+                assignmentId = assignmentId,
+                username = username
+            )
+
+            Result.success(Unit)
+        }catch (e:Exception){
+            Result.failure(e)
+        }
+    }
 
 
     override suspend fun getWorkerCounts(username: String): Result<WorkCountEntity> {

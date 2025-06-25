@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -13,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "project.graduation.crowd_sourcing.app"
-        minSdk = 25
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -39,6 +40,11 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    packaging  {
+        resources {
+            excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+        }
     }
 }
 
@@ -83,7 +89,7 @@ dependencies {
 
     // 네이버 지도 SDK
     implementation("com.naver.maps:map-sdk:3.16.2")
-    implementation("io.github.fornewid:naver-map-compose:1.7.3")
+    implementation("io.github.fornewid:naver-map-compose:1.8.2")
     implementation("io.github.fornewid:naver-map-location:21.0.2")
     // Google Maps
     implementation("com.google.maps.android:maps-compose:2.11.4")

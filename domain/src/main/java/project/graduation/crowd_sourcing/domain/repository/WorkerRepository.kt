@@ -7,6 +7,10 @@ import project.graduation.crowd_sourcing.data.response.worker.WorkMostEntity
 import project.graduation.crowd_sourcing.data.response.worker.WorkPointEntity
 import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.domain.model.WorkStatus
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.Path
+import retrofit2.http.Query
 import java.time.LocalDateTime
 
 interface WorkerRepository {
@@ -23,6 +27,15 @@ interface WorkerRepository {
         workhour: Int,
         expirationDate: String
     ): Result<Int>
+
+    suspend fun postAssignment(
+        item: String,
+        itemPrice: Int,
+        workDate: String,
+        martName: String,
+        assignmentId: Int,
+        username: String
+    ): Result<Unit>
 
     suspend fun getWorkerCounts(username: String): Result<WorkCountEntity>
 
