@@ -2,6 +2,7 @@ package project.graduation.crowd_sourcing.data.service
 
 import project.graduation.crowd_sourcing.data.response.martsearch.ApiResponseDtoListMartDto
 import project.graduation.crowd_sourcing.data.response.martsearch.ApiResponseDtoListMartWorkDto
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -30,4 +31,9 @@ interface MartSearchService {
     suspend fun getSearchWorkByMartName(
         @Query("martName") martName : String
     ) : ApiResponseDtoListMartWorkDto
+
+    @GET("/api/v1/marts/search")
+    suspend fun getMartList(
+        @Query("sigungu") sigungu: String
+    ): Response<ApiResponseDtoListMartDto>
 }

@@ -1,5 +1,7 @@
 package project.graduation.crowd_sourcing.data.repository
 
+import android.util.Log
+import project.graduation.crowd_sourcing.data.mapper.mart.toEntity
 import project.graduation.crowd_sourcing.data.service.MartSearchService
 import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
 import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartWorkEntity
@@ -71,4 +73,27 @@ class MartSearchRepositoryImpl @Inject constructor(
             )
         }
     }
+
+    override suspend fun getMartList(sigungu: String): Result<List<MartEntity>> {
+        return try {
+            Log.d("MartRepo", "요청 sigungu = $sigungu")
+            val response = martSearchService.getMartList(sigungu)
+
+            // body가 존재하면 처리되도록
+            val body = response.body()
+            if (body != null && body.status == 200) {
+                Log.d("MartRepo", "응답 수신 성공, 마트 수: ${body.data.size}")
+                Result.success(body.data.map { it.toEntity() })
+            } else {
+                Log.e("MartRepo", "응답 실패: code=${response.code()}, status=${body?.status}, message=${body?.message}")
+                Result.failure(Exception("마트 리스트 조회 실패: ${body?.message ?: "HTTP ${response.code()}" }"))
+            }
+        } catch (e: Exception) {
+            Log.e("MartRepo", "예외 발생: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
+
+
 }

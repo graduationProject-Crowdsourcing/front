@@ -21,6 +21,8 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.request.componen
 import androidx.compose.runtime.saveable.rememberSaveable
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 
 // ──────────────────────────── 진입 함수 ────────────────────────────
 @Composable
@@ -125,6 +127,45 @@ fun RequestFormContent(
         )
 
         Spacer(modifier = Modifier.height(8.dp))
+
+        val viewModel: RequestFormViewModel = hiltViewModel()
+        val martList by viewModel.martList.collectAsState()
+
+        // 마트 리스트가 있을 때만 표시
+        if (martList.isNotEmpty()) {
+            Text(
+                text = "선택하신 지역의 마트 목록입니다:",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            // 스크롤 가능한 고정 높이 박스
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp) // 높이 조정 가능
+                    .padding(bottom = 8.dp)
+            ) {
+                // 이 영역 내부만 스크롤
+                LazyColumn {
+                    items(martList) { mart ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(text = mart.martName, style = MaterialTheme.typography.bodyLarge)
+                                mart.sigungu?.let {
+                                    Text(text = it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         // 인원 수 입력
         InputTextField(
