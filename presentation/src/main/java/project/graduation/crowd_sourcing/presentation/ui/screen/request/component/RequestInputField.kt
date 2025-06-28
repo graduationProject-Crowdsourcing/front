@@ -21,11 +21,13 @@ fun InputTextField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     @DrawableRes iconResId: Int,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    modifier: Modifier = Modifier,
+    customContent: (@Composable () -> Unit)? = null
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
     ) {
@@ -45,7 +47,7 @@ fun InputTextField(
                 modifier = Modifier.padding(bottom = 4.dp)
             )
 
-            EditTextBox(
+            customContent?.invoke() ?: EditTextBox(
                 value = value,
                 onValueChange = onValueChange,
                 placeHolder = placeholder,

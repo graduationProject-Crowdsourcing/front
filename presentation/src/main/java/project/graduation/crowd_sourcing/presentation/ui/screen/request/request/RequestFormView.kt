@@ -20,9 +20,15 @@ import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.sp
 
 // ──────────────────────────── 진입 함수 ────────────────────────────
 @Composable
@@ -33,6 +39,8 @@ fun RequestFormView(
     val state by viewModel.uiState.collectAsState()
     val requestState by viewModel.requestState.collectAsState()
     val districtSuggestions by viewModel.districtSuggestions.collectAsState()
+    val categoryList by viewModel.categoryList.collectAsState()
+
 
     // 요청 상태 처리
     LaunchedEffect(requestState) {
@@ -55,32 +63,41 @@ fun RequestFormView(
         state = state,
         requestState = requestState,
         districtSuggestions = districtSuggestions,
+        categoryList = categoryList,
         onSigunguChange = viewModel::onSigunguChange,
         onDistrictSelected = viewModel::onDistrictSelected,
         onMaxPeopleChange = viewModel::onMaxPeopleChange,
         onPointPerPersonChange = viewModel::onPointPerPersonChange,
         onItemChange = viewModel::onItemChange,
         onExpirationDateChange = viewModel::onExpirationDateChange,
-        onSubmit = viewModel::submitRequest
+        onSubmit = viewModel::submitRequest,
+        onCategorySelected = viewModel::onCategorySelected
     )
 }
 
 // ──────────────────────────── 본문 UI 구성 ────────────────────────────
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RequestFormContent(
     state: RequestFormUiState,
     requestState: RequestState,
     districtSuggestions: List<String>,
+    categoryList: List<String>,
     onSigunguChange: (String) -> Unit,
     onDistrictSelected: (String) -> Unit,
     onMaxPeopleChange: (String) -> Unit,
     onPointPerPersonChange: (String) -> Unit,
     onItemChange: (String) -> Unit,
     onExpirationDateChange: (String) -> Unit,
-    onSubmit: () -> Unit
+    onSubmit: () -> Unit,
+    onCategorySelected: (String) -> Unit
 ) {
     val context = LocalContext.current
-    
+
+    // 선택된 카테고리 관리
+    var expanded by remember { mutableStateOf(false) }
+    var selectedCategory by rememberSaveable { mutableStateOf("") }
+
     // 날짜 선택 다이얼로그 표시 상태 (rememberSaveable로 변경)
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
     
@@ -202,6 +219,60 @@ fun RequestFormContent(
         )
 
         Spacer(modifier = Modifier.height(8.dp))
+
+        // 카테고리 선택창
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            InputTextField(
+                label = "카테고리 선택",
+                value = selectedCategory,
+                onValueChange = {}, // 사용자 직접 입력 X
+                placeholder = "카테고리를 선택하세요",
+                iconResId = R.drawable.ic_item,
+                modifier = Modifier
+                    .menuAnchor() // 드롭다운 위치 고정용
+                    .fillMaxWidth(),
+                customContent = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(
+                                width = 1.dp,
+                                color = colorResource(id = R.color.gray),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .background(color = colorResource(id = R.color.white))
+                            .clickable { expanded = true }
+                            .padding(horizontal = 16.dp, vertical = 10.dp)
+                    ) {
+                        Text(
+                            text = if (selectedCategory.isNotBlank()) selectedCategory else "카테고리를 선택하세요",
+                            color = if (selectedCategory.isNotBlank()) Color.Black else Color.Gray,
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                categoryList.forEach { category ->
+                    DropdownMenuItem(
+                        text = { Text(text = category) },
+                        onClick = {
+                            selectedCategory = category
+                            onCategorySelected(category)
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
+
 
         // 날짜/시간 선택 필드
         Box(

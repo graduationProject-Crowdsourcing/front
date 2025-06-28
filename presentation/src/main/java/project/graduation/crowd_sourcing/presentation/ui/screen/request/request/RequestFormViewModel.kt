@@ -20,6 +20,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
+import project.graduation.crowd_sourcing.domain.usecase.GetSearchHomeInitDataUseCase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -27,8 +28,13 @@ import java.time.format.DateTimeFormatter
 class RequestFormViewModel @Inject constructor(
     private val requesterUseCase: RequesterUseCase,
     private val tokenManager: TokenManager,
-    private val martSearchUseCase: MartSearchUseCase
+    private val martSearchUseCase: MartSearchUseCase,
+    private val getSearchHomeInitDataUseCase: GetSearchHomeInitDataUseCase
 ) : ViewModel() {
+
+    init {
+        loadCategoryList()
+    }
 
     // 서울시 지역구 목록
     private val seoulDistricts = listOf(
@@ -52,6 +58,10 @@ class RequestFormViewModel @Inject constructor(
     // 지역 선택 - 자동완성 추천 리스트 상태
     private val _districtSuggestions = MutableStateFlow<List<String>>(emptyList())
     val districtSuggestions: StateFlow<List<String>> = _districtSuggestions.asStateFlow()
+
+    // 카테고리 리스트 상태
+    private val _categoryList = MutableStateFlow<List<String>>(emptyList())
+    val categoryList: StateFlow<List<String>> = _categoryList.asStateFlow()
 
     // 지역구 입력 시 호출
     fun onSigunguChange(input: String) {
@@ -82,6 +92,10 @@ class RequestFormViewModel @Inject constructor(
 
     fun onItemChange(value: String) {
         _uiState.update { it.copy(item = value) }
+    }
+
+    fun onCategorySelected(value: String) {
+        _uiState.update { it.copy(selectedCategory = value) }
     }
 
     fun onExpirationDateChange(value: String) {
@@ -180,8 +194,8 @@ class RequestFormViewModel @Inject constructor(
                         item = state.item,
                         workDate = workDate,
                         memberId = userId,
-                        category = "라면", // TODO: 하드코딩 제거 예정
-                        workhour = 2,     // TODO: 하드코딩 제거 예정
+                        category = state.selectedCategory,
+                        workhour = 2,     // TODO: 이 부분 수정이 필요할까요?
                         expirationDate = expirationDate
                     )
                     lastResult = result
@@ -212,12 +226,26 @@ class RequestFormViewModel @Inject constructor(
                 state.maxPeople.isNotBlank() &&
                 state.pointPerPerson.isNotBlank() &&
                 state.item.isNotBlank() &&
-                state.expirationDate.isNotBlank()
+                state.expirationDate.isNotBlank() &&
+                state.selectedCategory.isNotBlank()
     }
     
     // 요청 상태 초기화
     fun resetRequestState() {
         _requestState.value = RequestState.Initial
+    }
+
+    // 카테고리 초기 데이터 로딩
+    fun loadCategoryList() {
+        viewModelScope.launch {
+            try {
+                val searchHome = getSearchHomeInitDataUseCase()
+                _categoryList.value = searchHome.categoryList
+                Log.d("RequestFormViewModel", "카테고리 로딩 완료: ${searchHome.categoryList}")
+            } catch (e: Exception) {
+                Log.e("RequestFormViewModel", "카테고리 로딩 실패", e)
+            }
+        }
     }
 }
 
