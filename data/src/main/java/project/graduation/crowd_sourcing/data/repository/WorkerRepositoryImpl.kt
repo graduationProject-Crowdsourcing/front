@@ -27,7 +27,7 @@ class WorkerRepositoryImpl @Inject constructor(
         work: String,
         workCount: Int,
         workpoint: Int,
-        martName: String,
+        martNames: List<String>,
         sigungu: String,
         item: String,
         workDate: String,
@@ -41,7 +41,7 @@ class WorkerRepositoryImpl @Inject constructor(
                 work = work,
                 workCount = workCount,
                 workpoint = workpoint,
-                martName = martName,
+                martNames = martNames,
                 sigungu = sigungu,
                 item = item,
                 workDate = workDate,
@@ -51,7 +51,8 @@ class WorkerRepositoryImpl @Inject constructor(
                 expirationDate = expirationDate
             )
             val response = workerService.postWorker(request)
-            Result.success(response)
+            val body = response.body() ?: throw Exception("응답 바디가 비어 있습니다.")
+            Result.success(body)
         } catch (e: Exception) {
             Result.failure(e)
         }

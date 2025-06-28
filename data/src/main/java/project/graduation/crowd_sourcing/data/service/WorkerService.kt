@@ -2,6 +2,7 @@ package project.graduation.crowd_sourcing.data.service
 
 import project.graduation.crowd_sourcing.data.request.worker.PostAssignmentRequest
 import project.graduation.crowd_sourcing.data.request.worker.PostWorkRequest
+import project.graduation.crowd_sourcing.data.response.worker.PostWorkResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkCountResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkHistoryResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkHourResponse
@@ -22,7 +23,7 @@ interface WorkerService {
     @POST("/api/v1/worker/postwork")
     suspend fun postWorker(
         @Body request: PostWorkRequest
-    ): Int
+    ): Response<Int>
 
     @POST("/api/v1/worker/assignment/{assignmentId}/submit")
     suspend fun postAssignment(

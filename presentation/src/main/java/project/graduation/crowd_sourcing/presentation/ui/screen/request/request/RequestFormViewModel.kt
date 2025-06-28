@@ -156,11 +156,26 @@ class RequestFormViewModel @Inject constructor(
 
                 var lastResult: Result<Int>? = null
                 for (mart in martList) {
+                    Log.d("SubmitRequest", """
+                        postWork 요청 파라미터:
+                        - martName = ${mart.martName}
+                        - sigungu = ${state.sigungu}
+                        - work = 가격조사
+                        - workCount = $maxPeople
+                        - workpoint = $pointPerPerson
+                        - item = ${state.item}
+                        - category = 라면
+                        - workhour = 2
+                        - workDate = $workDate
+                        - expirationDate = $expirationDate
+                        - memberId = $userId
+                    """.trimIndent())
+
                     val result = requesterUseCase.postWork(
                         work = "가격조사",
                         workCount = maxPeople,
                         workpoint = pointPerPerson,
-                        martName = mart.martName,
+                        martNames = listOf(mart.martName),
                         sigungu = state.sigungu,
                         item = state.item,
                         workDate = workDate,
