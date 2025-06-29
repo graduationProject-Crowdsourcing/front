@@ -72,27 +72,6 @@ class HomeViewModel @Inject constructor(
     
     companion object {
         private const val TAG = "HomeViewModel"
-        
-        /**
-         * 테스트용 더미 의뢰 데이터
-         * Domain 계층 구현 시 실제 데이터로 교체 필요
-         */
-        private val DUMMY_REQUESTS = listOf(
-            Request(
-                id = "1",
-                title = "수색 아파트 - 벌기 편백",
-                location = Location(37.5820, 126.8895),
-                place = "수색 아파트",
-                reward = 15000
-            ),
-            Request(
-                id = "2",
-                title = "상암 물품 - 벌기 가격",
-                location = Location(37.5784, 126.8967),
-                place = "상암동",
-                reward = 10000
-            )
-        )
     }
 
     init {
@@ -105,39 +84,68 @@ class HomeViewModel @Inject constructor(
      * 위치 권한이 있는 경우에만 동작
      */
     private fun getCurrentLocation() {
+        Log.d(TAG, "=== 현재 위치 정보 가져오기 시작 ===")
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         
         try {
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            val hasFineLocation = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            val hasCoarseLocation = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            
+            Log.d(TAG, "위치 권한 확인 - FINE_LOCATION: $hasFineLocation, COARSE_LOCATION: $hasCoarseLocation")
+            
+            if (hasFineLocation || hasCoarseLocation) {
+                Log.d(TAG, "위치 권한 있음 - 위치 정보 요청")
                 
                 fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                    location?.let {
-                        val latitude = it.latitude
-                        val longitude = it.longitude
+                    if (location != null) {
+                        val latitude = location.latitude
+                        val longitude = location.longitude
                         
-                        Log.d(TAG, "현재 위치: $latitude, $longitude")
+                        Log.d(TAG, "✅ 위치 정보 획득 성공: $latitude, $longitude")
                         
                         // 위치가 변경된 경우에만 업데이트 및 마트 검색
                         if (lastLat != latitude || lastLng != longitude) {
                             lastLat = latitude
                             lastLng = longitude
                             
-                            Log.d(TAG, "위치 변경됨: 새로운 위치로 업데이트")
+                            Log.d(TAG, "🔄 위치 변경됨: 새로운 위치로 업데이트")
                             updateCurrentLocation(latitude, longitude)
                             
                             // 현재 반경 값으로 주변 마트 검색
                             val currentState = _uiState.value as? HomeUiState.Success
                             val radius = (currentState?.searchRadius ?: 0.1f).coerceIn(0.1f, 0.5f)
+                            Log.d(TAG, "마트 검색 시작 - 반경: ${radius}km")
                             searchNearbyMarts(latitude, longitude, radius)
+                            
+                            // 위치 기반 추천의뢰 로드
+                            Log.d(TAG, "🎯 위치 기반 추천의뢰 로드 시작")
+                            loadLocationBasedRecommendedRequests(latitude, longitude)
                         } else {
                             Log.d(TAG, "위치 변경 없음: 마트 검색 스킵")
+                            
+                            // 위치가 변경되지 않았더라도 추천의뢰가 비어있다면 로드
+                            val currentState = _uiState.value as? HomeUiState.Success
+                            val recommendedCount = currentState?.recommendedRequests?.size ?: -1
+                            Log.d(TAG, "현재 추천의뢰 개수: $recommendedCount")
+                            
+                            if (currentState?.recommendedRequests?.isEmpty() == true) {
+                                Log.d(TAG, "🎯 추천의뢰가 비어있음: 위치 기반 추천의뢰 로드")
+                                loadLocationBasedRecommendedRequests(latitude, longitude)
+                            } else {
+                                Log.d(TAG, "추천의뢰가 이미 존재함: 로드 스킵")
+                            }
                         }
+                    } else {
+                        Log.w(TAG, "⚠️ 위치 정보가 null임")
                     }
+                }.addOnFailureListener { exception ->
+                    Log.e(TAG, "❌ 위치 정보 획득 실패: ${exception.message}", exception)
                 }
+            } else {
+                Log.w(TAG, "⚠️ 위치 권한이 없음")
             }
         } catch (e: Exception) {
-            Log.e(TAG, "위치 정보 오류: ${e.message}", e)
+            Log.e(TAG, "❌ 위치 정보 오류: ${e.message}", e)
             _uiState.update { 
                 HomeUiState.Error("위치 정보를 가져오는데 실패했습니다: ${e.message}")
             }
@@ -146,17 +154,19 @@ class HomeViewModel @Inject constructor(
 
     /**
      * 초기 데이터를 로드하여 상태를 설정
-     * 현재는 더미 데이터를 사용하지만 향후 실제 데이터로 교체 필요
+     * 위치 정보를 얻은 후 위치 기반 추천의뢰를 로드
      */
     private fun loadInitialData() {
         viewModelScope.launch {
             try {
+                Log.d(TAG, "=== 초기 데이터 로드 시작 ===")
                 _uiState.update { 
                     HomeUiState.Success(
                         currentRequests = emptyList(),
-                        recommendedRequests = DUMMY_REQUESTS
+                        recommendedRequests = emptyList() // 위치 정보를 얻은 후에 로드
                     )
                 }
+                Log.d(TAG, "초기 상태 설정 완료")
             } catch (e: Exception) {
                 Log.e(TAG, "초기 데이터 로드 오류: ${e.message}", e)
                 _uiState.update { 
@@ -289,10 +299,36 @@ class HomeViewModel @Inject constructor(
      * @param requests 새로운 추천 의뢰 목록
      */
     fun updateRecommendedRequests(requests: List<Request>) {
+        Log.d(TAG, "📝 추천의뢰 상태 업데이트 - 개수: ${requests.size}")
+        requests.forEachIndexed { index, request ->
+            Log.d(TAG, "   ${index + 1}. ${request.title} (${request.reward}원)")
+        }
+        
+        val oldState = _uiState.value
+        Log.d(TAG, "이전 상태: ${oldState::class.simpleName}")
+        
         _uiState.update { currentState ->
             when (currentState) {
-                is HomeUiState.Success -> currentState.copy(recommendedRequests = requests)
-                else -> currentState
+                is HomeUiState.Success -> {
+                    val newState = currentState.copy(recommendedRequests = requests)
+                    Log.d(TAG, "✅ Success 상태 업데이트 완료")
+                    newState
+                }
+                else -> {
+                    Log.w(TAG, "⚠️ Success 상태가 아니므로 업데이트 불가: ${currentState::class.simpleName}")
+                    currentState
+                }
+            }
+        }
+        
+        // 업데이트 후 검증
+        val newState = _uiState.value
+        when (newState) {
+            is HomeUiState.Success -> {
+                Log.d(TAG, "🔍 업데이트 검증 - 현재 추천의뢰 개수: ${newState.recommendedRequests.size}")
+            }
+            else -> {
+                Log.e(TAG, "❌ 업데이트 검증 실패 - 현재 상태: ${newState::class.simpleName}")
             }
         }
     }
@@ -371,8 +407,9 @@ class HomeViewModel @Inject constructor(
                     val newState = currentState.copy(searchRadius = limitedRadius)
                     
                     currentState.currentLocation?.let { location ->
-                        // 위치 정보가 있으면 새 반경으로 마트 검색
+                        // 위치 정보가 있으면 새 반경으로 마트 검색 및 추천의뢰 다시 로드
                         searchNearbyMarts(location.latitude, location.longitude, limitedRadius)
+                        loadLocationBasedRecommendedRequests(location.latitude, location.longitude)
                     }
                     
                     newState
@@ -566,6 +603,149 @@ class HomeViewModel @Inject constructor(
                     isMartRequestDialogVisible = false
                 )
                 else -> currentState
+            }
+        }
+    }
+
+    /**
+     * 사용자 위치 기반으로 추천의뢰를 로드
+     * 
+     * @param lat 사용자 위도
+     * @param lng 사용자 경도
+     */
+    private fun loadLocationBasedRecommendedRequests(lat: Double, lng: Double) {
+        viewModelScope.launch {
+            try {
+                Log.d(TAG, "=== 위치 기반 추천의뢰 로드 시작 ===")
+                Log.d(TAG, "위치: ($lat, $lng)")
+                
+                // 1. 현재 설정된 반경으로 주변 마트 검색
+                val currentState = _uiState.value as? HomeUiState.Success
+                val radiusInKm = currentState?.searchRadius ?: 0.5f
+                val radiusInMeters = (radiusInKm * 1000).toDouble().coerceIn(100.0, 500.0) // 100m~500m로 제한
+                
+                Log.d(TAG, "1단계: 주변 마트 검색 - 반경: ${radiusInKm}km (${radiusInMeters}m)")
+                
+                val nearbyMarts = martSearchUseCase.searchMartByLocation(lat, lng, radiusInMeters)
+                Log.d(TAG, "주변 마트 검색 결과: ${nearbyMarts.size}개")
+                
+                if (nearbyMarts.isEmpty()) {
+                    Log.w(TAG, "주변에 마트가 없습니다")
+                    updateRecommendedRequests(emptyList())
+                    return@launch
+                }
+                
+                // 마트 목록 상세 로그
+                nearbyMarts.forEachIndexed { index, mart ->
+                    val distance = distanceInMeters(lat, lng, mart.latitude, mart.longitude)
+                    Log.d(TAG, "   마트 ${index + 1}: ${mart.martName} (의뢰: ${mart.existCommission}개, 거리: ${distance.toInt()}m)")
+                }
+                
+                // 2. 의뢰가 있는 마트만 필터링
+                Log.d(TAG, "2단계: 의뢰가 있는 마트 필터링")
+                val martsWithCommission = nearbyMarts.filter { mart ->
+                    val hasCommission = mart.existCommission > 0
+                    Log.d(TAG, "   ${mart.martName}: 의뢰 ${mart.existCommission}개 - ${if (hasCommission) "포함" else "제외"}")
+                    hasCommission
+                }
+                Log.d(TAG, "의뢰가 있는 마트: ${martsWithCommission.size}개")
+                
+                if (martsWithCommission.isEmpty()) {
+                    Log.w(TAG, "주변에 의뢰가 있는 마트가 없습니다")
+                    updateRecommendedRequests(emptyList())
+                    return@launch
+                }
+                
+                // 3. 사용자와 가까운 순으로 정렬
+                Log.d(TAG, "🔍 3단계: 거리순 정렬")
+                val sortedMarts = martsWithCommission.sortedBy { mart ->
+                    distanceInMeters(lat, lng, mart.latitude, mart.longitude)
+                }
+                
+                sortedMarts.forEachIndexed { index, mart ->
+                    val distance = distanceInMeters(lat, lng, mart.latitude, mart.longitude)
+                    Log.d(TAG, "   ${index + 1}번째: ${mart.martName} (거리: ${distance.toInt()}m)")
+                }
+                
+                // 4. 각 마트에서 의뢰를 가져와서 추천의뢰 생성
+                Log.d(TAG, "🔍 4단계: 각 마트별 의뢰 가져오기")
+                val recommendedRequests = mutableListOf<Request>()
+                val usedWorkIds = mutableSetOf<Int>() // 중복 의뢰 방지용
+                
+                for ((index, mart) in sortedMarts.withIndex()) {
+                    if (recommendedRequests.size >= 2) {
+                        Log.d(TAG, "   최대 개수 (2개) 도달로 중단")
+                        break
+                    }
+                    
+                    Log.d(TAG, "   마트 ${index + 1} - ${mart.martName} 의뢰 조회 중...")
+                    
+                    try {
+                        // 해당 마트의 의뢰 목록 가져오기
+                        val martWorks = martSearchUseCase.searchWorkByMartName(mart.martName)
+                        Log.d(TAG, "     API 응답: ${martWorks.size}개 의뢰")
+                        
+                        if (martWorks.isEmpty()) {
+                            Log.w(TAG, "     ${mart.martName}에 의뢰가 없음")
+                            continue
+                        }
+                        
+                        // 의뢰 목록 상세 로그
+                        martWorks.forEachIndexed { workIndex, work ->
+                            val isUsed = usedWorkIds.contains(work.id)
+                            Log.d(TAG, "       의뢰 ${workIndex + 1}: ID=${work.id}, ${work.work} (${work.workpoint}원) - ${if (isUsed) "이미 사용됨" else "사용 가능"}")
+                        }
+                        
+                        // 아직 사용하지 않은 의뢰 중에서 첫 번째 의뢰만 선택
+                        val availableWork = martWorks.firstOrNull { work ->
+                            !usedWorkIds.contains(work.id)
+                        }
+                        
+                        if (availableWork != null) {
+                            val request = Request(
+                                id = availableWork.id.toString(),
+                                title = "${mart.martName} - ${availableWork.work}",
+                                location = Location(mart.latitude, mart.longitude),
+                                place = mart.martName,
+                                reward = availableWork.workpoint
+                            )
+                            
+                            recommendedRequests.add(request)
+                            usedWorkIds.add(availableWork.id)
+                            
+                            Log.d(TAG, "     추천의뢰 추가: ${request.title}, 보상: ${request.reward}원")
+                        } else {
+                            Log.w(TAG, "     사용 가능한 의뢰가 없음")
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "     마트 ${mart.martName}의 의뢰 조회 실패: ${e.message}", e)
+                        continue
+                    }
+                }
+                
+                Log.d(TAG, "=== 추천의뢰 로드 완료: ${recommendedRequests.size}개 ===")
+                if (recommendedRequests.isNotEmpty()) {
+                    recommendedRequests.forEachIndexed { index, request ->
+                        Log.d(TAG, "   추천${index + 1}: ${request.title} (${request.reward}원)")
+                    }
+                } else {
+                    Log.w(TAG, "최종 추천의뢰가 0개입니다")
+                }
+                
+                // 5. 상태 업데이트
+                Log.d(TAG, "상태 업데이트 중...")
+                updateRecommendedRequests(recommendedRequests)
+                
+                // 업데이트 후 상태 확인
+                val updatedState = _uiState.value as? HomeUiState.Success
+                val updatedCount = updatedState?.recommendedRequests?.size ?: -1
+                Log.d(TAG, "상태 업데이트 완료 - 최종 추천의뢰 개수: $updatedCount")
+                
+            } catch (e: Exception) {
+                Log.e(TAG, "위치 기반 추천의뢰 로드 실패: ${e.message}", e)
+                e.printStackTrace()
+                // 실패 시 빈 목록으로 설정
+                updateRecommendedRequests(emptyList())
             }
         }
     }
