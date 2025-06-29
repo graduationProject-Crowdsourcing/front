@@ -105,20 +105,17 @@ fun AcceptRequestView(
         )
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 24.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // 네이버맵을 사용한 지도 섹션
+        // 상단 고정 - 지도 섹션
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(screenHeight * 0.25f)
+                .padding(top = 8.dp)
                 .shadow(2.dp, RoundedCornerShape(8.dp)),
             shape = RoundedCornerShape(8.dp),
             color = MaterialTheme.colorScheme.surface
@@ -148,34 +145,44 @@ fun AcceptRequestView(
             }
         }
 
-        // 의뢰 정보 제목
-        Text(
-            text = "의뢰 정보",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+        // 중간 스크롤 가능 영역 - 의뢰 정보
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = screenHeight * 0.25f + 24.dp, // 지도 높이 + 여백
+                    bottom = 80.dp // 버튼 높이만큼 여백
+                )
+                .verticalScroll(rememberScrollState())
+        ) {
+            // 의뢰 정보 제목
+            Text(
+                text = "의뢰 정보",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
 
-        // 의뢰 정보 목록
-        Column {
-            AcceptRequestWorkInfo(Icons.Default.Place, "위치", "${uiState.region} ${uiState.martName}")
-            GrayDivider()
-            AcceptRequestWorkInfo(Icons.Default.Category, "카테고리", uiState.category)
-            GrayDivider()
-            AcceptRequestWorkInfo(Icons.Default.ShoppingCart, "상품", uiState.item)
-            GrayDivider()
-            AcceptRequestWorkInfo(Icons.Default.Groups, "참여인원", "${uiState.acceptedWorkerCount}명 / ${uiState.commissionCount}명")
-            GrayDivider()
-            AcceptRequestWorkInfo(Icons.Default.Diamond, "리워드", "${uiState.commissionPoint}P")
-            GrayDivider()
-            AcceptRequestWorkInfo(Icons.Default.Edit, "의뢰 내역", uiState.commission)
-            GrayDivider()
-            AcceptRequestWorkInfo(Icons.Default.AccessTime, "의뢰 마감", uiState.expirationDate)
+            // 의뢰 정보 목록
+            Column {
+                AcceptRequestWorkInfo(Icons.Default.Place, "위치", "${uiState.region} ${uiState.martName}")
+                GrayDivider()
+                AcceptRequestWorkInfo(Icons.Default.Category, "카테고리", uiState.category)
+                GrayDivider()
+                AcceptRequestWorkInfo(Icons.Default.ShoppingCart, "상품", uiState.item)
+                GrayDivider()
+                AcceptRequestWorkInfo(Icons.Default.Groups, "참여인원", "${uiState.acceptedWorkerCount}명 / ${uiState.commissionCount}명")
+                GrayDivider()
+                AcceptRequestWorkInfo(Icons.Default.Diamond, "리워드", "${uiState.commissionPoint}P")
+                GrayDivider()
+                AcceptRequestWorkInfo(Icons.Default.Edit, "의뢰 내역", uiState.commission)
+                GrayDivider()
+                AcceptRequestWorkInfo(Icons.Default.AccessTime, "의뢰 마감", uiState.expirationDate)
+            }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
+        // 하단 고정 - 수락 버튼
         ConfirmButton(
             text = if (uiState.isAcceptLoading) "처리 중..." else "수락",
             onConfirm = {
@@ -183,7 +190,10 @@ fun AcceptRequestView(
                     viewModel.acceptRequest()
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp)
         )
     }
 }
