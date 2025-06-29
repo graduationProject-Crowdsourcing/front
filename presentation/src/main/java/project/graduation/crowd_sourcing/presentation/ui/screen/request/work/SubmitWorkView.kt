@@ -67,6 +67,8 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.request.componen
 fun SubmitWorkView(
     navController: NavController,
     workId: Int,
+    martName: String,
+    category: String,
     viewModel: SubmitWorkViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -89,8 +91,8 @@ fun SubmitWorkView(
     }
 
     // workId가 바뀔 때마다 데이터 로드
-    LaunchedEffect(workId) {
-        workId?.let { viewModel.loadWorkInfo(it) }
+    LaunchedEffect(Unit) {
+       viewModel.loadWorkInfo(workId, martName = martName, category = category)
     }
 
     Column(
@@ -346,5 +348,5 @@ fun SubmitWorkView(
 @Preview
 @Composable
 fun prevSubmitWorkView(){
-    SubmitWorkView(navController = rememberNavController(), workId = 10)
+    SubmitWorkView(navController = rememberNavController(), workId = 10, "우리마트", "라면")
 }

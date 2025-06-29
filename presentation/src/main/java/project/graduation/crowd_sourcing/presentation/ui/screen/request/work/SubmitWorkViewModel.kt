@@ -27,9 +27,9 @@ class SubmitWorkViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SubmitWorkUiState())
     val uiState: StateFlow<SubmitWorkUiState> = _uiState
 
-    fun loadWorkInfo(workId: Int) {
-        // TODO: 추후 작업 상세 API 연동 예정
-        _uiState.value = _uiState.value.copy(id = workId)
+    fun loadWorkInfo(workId: Int, martName: String, category :String) {
+
+        _uiState.value = _uiState.value.copy(id = workId, category = category, place = martName)
     }
 
     fun updatePrice(price: String) {
