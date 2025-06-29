@@ -16,7 +16,8 @@ data class CommissionDetailDto(
     val commissionPoint: Int,
     val commissionCount: Int,
     val createdAt: String,
-    val expirationDate: String
+    val expirationDate: String,
+    val acceptedWorkerCount: Int
 ) {
     @RequiresApi(Build.VERSION_CODES.O)
     fun toDomain(): CommissionDetailEntity {
@@ -34,7 +35,8 @@ data class CommissionDetailDto(
             commissionPoint = commissionPoint,
             commissionCount = commissionCount,
             createdAt = createdAtDateTime,
-            expirationDate = expirationDateTime
+            expirationDate = expirationDateTime,
+            acceptedWorkerCount = acceptedWorkerCount
         )
     }
 } 

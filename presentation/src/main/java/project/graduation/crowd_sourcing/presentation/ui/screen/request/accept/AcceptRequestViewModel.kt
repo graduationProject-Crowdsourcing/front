@@ -48,6 +48,7 @@ class AcceptRequestViewModel @Inject constructor(
                     item = commissionDetail.item,
                     commissionPoint = commissionDetail.commissionPoint,
                     commissionCount = commissionDetail.commissionCount,
+                    acceptedWorkerCount = commissionDetail.acceptedWorkerCount,
                     createdAt = formatDateTime(commissionDetail.createdAt),
                     expirationDate = formatDateTime(commissionDetail.expirationDate)
                 )

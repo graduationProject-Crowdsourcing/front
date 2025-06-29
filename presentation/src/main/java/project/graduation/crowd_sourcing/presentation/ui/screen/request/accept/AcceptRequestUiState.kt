@@ -10,6 +10,7 @@ data class AcceptRequestUiState(
     val item: String = "",
     val commissionPoint: Int = 0,
     val commissionCount: Int = 0,
+    val acceptedWorkerCount: Int = 0,
     val createdAt: String = "",
     val expirationDate: String = "",
     val isLoading: Boolean = false,

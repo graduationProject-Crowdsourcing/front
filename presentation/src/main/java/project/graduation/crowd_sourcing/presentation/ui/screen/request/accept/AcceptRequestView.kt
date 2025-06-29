@@ -165,7 +165,7 @@ fun AcceptRequestView(
             GrayDivider()
             AcceptRequestWorkInfo(Icons.Default.ShoppingCart, "상품", uiState.item)
             GrayDivider()
-            AcceptRequestWorkInfo(Icons.Default.Groups, "참여인원", "${uiState.commissionCount}명")
+            AcceptRequestWorkInfo(Icons.Default.Groups, "참여인원", "${uiState.acceptedWorkerCount}명 / ${uiState.commissionCount}명")
             GrayDivider()
             AcceptRequestWorkInfo(Icons.Default.Diamond, "리워드", "${uiState.commissionPoint}P")
             GrayDivider()
