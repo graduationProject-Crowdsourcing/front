@@ -22,7 +22,7 @@ interface WorkerService {
     @POST("/api/v1/worker/postwork")
     suspend fun postWorker(
         @Body request: PostWorkRequest
-    ): Int
+    ): Response<Int>
 
     @POST("/api/v1/worker/assignment/{assignmentId}/submit")
     suspend fun postAssignment(

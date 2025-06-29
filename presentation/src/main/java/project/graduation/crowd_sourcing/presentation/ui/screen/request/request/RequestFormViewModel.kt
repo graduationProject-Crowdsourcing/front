@@ -19,14 +19,22 @@ import javax.inject.Inject
 import android.util.Log
 import androidx.annotation.RequiresApi
 import project.graduation.crowd_sourcing.domain.local.TokenManager
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
+import project.graduation.crowd_sourcing.domain.usecase.GetSearchHomeInitDataUseCase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @HiltViewModel
 class RequestFormViewModel @Inject constructor(
     private val requesterUseCase: RequesterUseCase,
-    private val tokenManager: TokenManager
+    private val tokenManager: TokenManager,
+    private val martSearchUseCase: MartSearchUseCase,
+    private val getSearchHomeInitDataUseCase: GetSearchHomeInitDataUseCase
 ) : ViewModel() {
+
+    init {
+        loadCategoryList()
+    }
 
     // 서울시 지역구 목록
     private val seoulDistricts = listOf(
@@ -43,9 +51,17 @@ class RequestFormViewModel @Inject constructor(
     private val _requestState = MutableStateFlow<RequestState>(RequestState.Initial)
     val requestState: StateFlow<RequestState> = _requestState
 
+    // 마트 리스트 상태
+    private val _martList = MutableStateFlow<List<MartEntity>>(emptyList())
+    val martList: StateFlow<List<MartEntity>> = _martList.asStateFlow()
+
     // 지역 선택 - 자동완성 추천 리스트 상태
     private val _districtSuggestions = MutableStateFlow<List<String>>(emptyList())
     val districtSuggestions: StateFlow<List<String>> = _districtSuggestions.asStateFlow()
+
+    // 카테고리 리스트 상태
+    private val _categoryList = MutableStateFlow<List<String>>(emptyList())
+    val categoryList: StateFlow<List<String>> = _categoryList.asStateFlow()
 
     // 지역구 입력 시 호출
     fun onSigunguChange(input: String) {
@@ -63,6 +79,7 @@ class RequestFormViewModel @Inject constructor(
     fun onDistrictSelected(name: String) {
         _uiState.update { it.copy(sigungu = name) }
         _districtSuggestions.value = emptyList()
+        fetchMartsBySigungu(name)
     }
 
     fun onMaxPeopleChange(value: String) {
@@ -77,124 +94,158 @@ class RequestFormViewModel @Inject constructor(
         _uiState.update { it.copy(item = value) }
     }
 
+    fun onCategorySelected(value: String) {
+        _uiState.update { it.copy(selectedCategory = value) }
+    }
+
     fun onExpirationDateChange(value: String) {
         _uiState.update { it.copy(expirationDate = value) }
     }
-    
+
+    fun fetchMartsBySigungu(sigungu: String) {
+        viewModelScope.launch {
+            martSearchUseCase.getMartList(sigungu)
+                .onSuccess { list ->
+                    _martList.value = list
+                }
+                .onFailure { e ->
+                    Log.e("RequestFormViewModel", "마트 리스트 가져오기 실패", e)
+                }
+        }
+    }
+
+
     // 의뢰 생성
     @RequiresApi(Build.VERSION_CODES.O)
     fun submitRequest() {
         val state = _uiState.value
-        
-        // 입력값 유효성 검사
+
+        // 1) 필수 입력값이 비어 있는지 확인
         if (!validateInputs(state)) {
             _requestState.value = RequestState.Error("모든 필드를 입력해주세요.")
             return
         }
-        
+
         viewModelScope.launch {
             _requestState.value = RequestState.Loading
-            
+
             try {
-                // 문자열 타입 숫자 변환
+                // 2) 숫자 값 변환 (문자열 → Int)
                 val maxPeople = state.maxPeople.toIntOrNull() ?: 0
                 val pointPerPerson = state.pointPerPerson.toIntOrNull() ?: 0
-                
-                // 날짜 파싱 - 사용자가 입력한 형식 (yyyy-MM-dd HH:mm)
+
+                // 3) 사용자 입력 날짜 파싱 (yyyy-MM-dd HH:mm → Date)
                 val userDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-                userDateFormat.timeZone = TimeZone.getDefault() // 로컬 시간대 설정
+                userDateFormat.timeZone = TimeZone.getDefault() // 로컬 기준
 
-                // 디버그 로그 추가
-                Log.d("RequestFormViewModel", "현재 시스템 시간: ${Date()}")
-                Log.d("RequestFormViewModel", "파싱 시도할 사용자 입력 날짜 문자열: ${state.expirationDate}")
-                
-                try {
-                    // 사용자 입력 날짜 문자열을 Date 객체로 파싱
-                    val userDate = userDateFormat.parse(state.expirationDate)
-                    if (userDate != null) {
-                        Log.d("RequestFormViewModel", "사용자 입력 날짜: ${state.expirationDate}, 파싱된 날짜: ${userDate}")
-                        Log.d("RequestFormViewModel", "현재 시간과의 차이(밀리초): ${userDate.time - Date().time}")
-                        
-                        // 날짜가 이미 지난 경우
-                        if (userDate.before(Date())) {
-                            _requestState.value = RequestState.Error("마감 시간은 현재 시간 이후로 설정해야 합니다.")
-                            return@launch
-                        }
-                        
-                        // API 호출 전에 날짜를 ISO 8601 형식으로 포맷팅하여 로그로 확인
-                        val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-                        // UTC 시간대 사용
-                        isoFormat.timeZone = TimeZone.getTimeZone("UTC")
-                        val isoDateString = isoFormat.format(userDate)
-                        Log.d("RequestFormViewModel", "ISO 8601 형식으로 변환한 날짜: $isoDateString")
+                val userDate = userDateFormat.parse(state.expirationDate)
 
-                        val userId = tokenManager.getUserId()
-                        if (userId == -1) {
-                            _requestState.value = RequestState.Error("로그인이 필요합니다. 다시 로그인해 주세요.")
-                            return@launch
-                        }
-
-                        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-
-                        val workDate = LocalDateTime.now().format(formatter)
-                        val expirationDate = LocalDateTime.parse(isoDateString, formatter).format(formatter)
-
-                        // API 호출
-                        val result = requesterUseCase.postWork(
-                            work = "가격조사",
-                            workCount = maxPeople,
-                            workpoint = pointPerPerson,
-                            martName = "", // 백엔드에서 처리 예정, 현재는 placeholder로 빈 문자열 사용
-                            sigungu = state.sigungu,
-                            item = state.item,
-                            workDate = workDate,
-                            memberId = userId,
-                            category = "라면",  // TODO: 추후에 하드코딩 없애기
-                            workhour = 2,       // TODO: 추후에 하드코딩 없애기
-                            expirationDate = expirationDate
-                        )
-                        Log.d("RequestFormViewModel", "postWork 결과: $result")
-                        _requestState.value = RequestState.Success(result)
-
-                    } else {
-                        _requestState.value = RequestState.Error("날짜 형식이 올바르지 않습니다.")
-                    }
-                } catch (e: Exception) {
-                    Log.e("RequestFormViewModel", "날짜 파싱 오류", e)
-                    _requestState.value = RequestState.Error("날짜 형식이 올바르지 않습니다: ${e.message}")
+                // 4) 날짜 유효성 검사: null이거나 과거 시간이면 오류
+                if (userDate == null || userDate.before(Date())) {
+                    _requestState.value = RequestState.Error("마감 시간은 현재 시간 이후로 설정해야 합니다.")
+                    return@launch
                 }
+
+                // 5) Date → ISO 8601 문자열 포맷 변환 (Z: UTC 기준)
+                val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+                isoFormat.timeZone = TimeZone.getTimeZone("UTC")
+                val expirationDate = isoFormat.format(userDate) // 마감 시간
+
+                // 6) 현재 시간 → ISO8601 포맷 (workDate)
+                val workDate = isoFormat.format(Date())
+
+                // 7) 사용자 ID 가져오기
+                val userId = tokenManager.getUserId()
+                if (userId == -1) {
+                    _requestState.value = RequestState.Error("로그인이 필요합니다. 다시 로그인해 주세요.")
+                    return@launch
+                }
+
+                // 마트 리스트 전체에 대해 반복 호출
+                val martList = _martList.value
+                if (martList.isEmpty()) {
+                    _requestState.value = RequestState.Error("해당 지역의 마트 정보를 찾을 수 없습니다.")
+                    return@launch
+                }
+
+                var lastResult: Result<Int>? = null
+                for (mart in martList) {
+                    Log.d("SubmitRequest", """
+                        postWork 요청 파라미터:
+                        - martName = ${mart.martName}
+                        - sigungu = ${state.sigungu}
+                        - work = 가격조사
+                        - workCount = $maxPeople
+                        - workpoint = $pointPerPerson
+                        - item = ${state.item}
+                        - category = 라면
+                        - workhour = 2
+                        - workDate = $workDate
+                        - expirationDate = $expirationDate
+                        - memberId = $userId
+                    """.trimIndent())
+
+                    val result = requesterUseCase.postWork(
+                        work = "가격조사",
+                        workCount = maxPeople,
+                        workpoint = pointPerPerson,
+                        martNames = listOf(mart.martName),
+                        sigungu = state.sigungu,
+                        item = state.item,
+                        workDate = workDate,
+                        memberId = userId,
+                        category = state.selectedCategory,
+                        workhour = 2,     // TODO: 이 부분 수정이 필요할까요?
+                        expirationDate = expirationDate
+                    )
+                    lastResult = result
+                    Log.d("RequestFormViewModel", "postWork 결과: $result")
+                }
+
+                _requestState.value = RequestState.Success(lastResult ?: Result.failure(Exception("등록 실패")))
+
             } catch (e: Exception) {
-                // 상세한 오류 메시지 제공
+                Log.e("RequestFormViewModel", "의뢰 등록 오류", e)
                 val errorMessage = when {
                     e.message?.contains("403") == true -> "권한이 없습니다. 로그인 세션이 만료되었을 수 있습니다."
                     e.message?.contains("401") == true -> "인증 오류가 발생했습니다. 다시 로그인해 주세요."
                     e.message?.contains("400") == true -> "입력값이 올바르지 않습니다."
                     e.message?.contains("500") == true -> "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
-                    e.message?.contains("timeout") == true || e.message?.contains("timed out") == true -> 
-                        "서버 연결 시간이 초과되었습니다. 네트워크 상태를 확인해 주세요."
+                    e.message?.contains("timeout") == true -> "서버 연결 시간이 초과되었습니다."
                     else -> "의뢰 등록 중 오류가 발생했습니다: ${e.message ?: "알 수 없는 오류"}"
                 }
-                
-                // 로그에 상세 오류 정보 기록
-                Log.e("RequestFormViewModel", "의뢰 등록 오류", e)
-                
                 _requestState.value = RequestState.Error(errorMessage)
             }
         }
     }
-    
+
+
     // 입력값 유효 검사
     private fun validateInputs(state: RequestFormUiState): Boolean {
         return state.sigungu.isNotBlank() &&
                 state.maxPeople.isNotBlank() &&
                 state.pointPerPerson.isNotBlank() &&
                 state.item.isNotBlank() &&
-                state.expirationDate.isNotBlank()
+                state.expirationDate.isNotBlank() &&
+                state.selectedCategory.isNotBlank()
     }
     
     // 요청 상태 초기화
     fun resetRequestState() {
         _requestState.value = RequestState.Initial
+    }
+
+    // 카테고리 초기 데이터 로딩
+    fun loadCategoryList() {
+        viewModelScope.launch {
+            try {
+                val searchHome = getSearchHomeInitDataUseCase()
+                _categoryList.value = searchHome.categoryList
+                Log.d("RequestFormViewModel", "카테고리 로딩 완료: ${searchHome.categoryList}")
+            } catch (e: Exception) {
+                Log.e("RequestFormViewModel", "카테고리 로딩 실패", e)
+            }
+        }
     }
 }
 
