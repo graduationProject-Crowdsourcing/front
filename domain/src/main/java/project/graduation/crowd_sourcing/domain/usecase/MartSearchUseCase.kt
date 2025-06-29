@@ -23,4 +23,9 @@ class MartSearchUseCase @Inject constructor(
     suspend fun searchWorkByMartName(martName: String): List<MartWorkEntity> {
         return martSearchRepository.searchWorkByMartName(martName)
     }
+
+    suspend fun getMartList(sigungu: String): Result<List<MartEntity>> {
+        return martSearchRepository.getMartList(sigungu)
+    }
+
 } 

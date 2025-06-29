@@ -6,7 +6,7 @@ data class PostWorkRequest(
     @SerializedName("work") val work: String,
     @SerializedName("workCount") val workCount: Int,
     @SerializedName("workpoint") val workpoint: Int,
-    @SerializedName("martName") val martName: String,
+    @SerializedName("martNames") val martNames: List<String>,
     @SerializedName("sigungu") val sigungu: String,
     @SerializedName("item") val item: String,
     @SerializedName("workDate") val workDate: String,

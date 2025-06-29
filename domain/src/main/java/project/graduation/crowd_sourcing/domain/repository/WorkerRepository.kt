@@ -18,7 +18,7 @@ interface WorkerRepository {
         work: String,
         workCount: Int,
         workpoint: Int,
-        martName: String,
+        martNames: List<String>,
         sigungu: String,
         item: String,
         workDate: String,

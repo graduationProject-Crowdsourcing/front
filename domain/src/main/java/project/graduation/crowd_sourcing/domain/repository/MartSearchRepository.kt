@@ -8,4 +8,5 @@ interface MartSearchRepository {
     suspend fun searchMartByLocation(lat: Double, lng: Double, radius: Double): List<MartEntity>
     suspend fun searchMartByKeyword(keyword: String, radius: Double): List<MartEntity>
     suspend fun searchWorkByMartName(martName: String): List<MartWorkEntity>
+    suspend fun getMartList(sigungu: String): Result<List<MartEntity>>
 }
