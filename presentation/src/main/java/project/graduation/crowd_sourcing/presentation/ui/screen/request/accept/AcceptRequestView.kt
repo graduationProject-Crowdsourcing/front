@@ -33,6 +33,7 @@ import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
 import project.graduation.crowd_sourcing.presentation.ui.component.GrayDivider
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
+import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.*
 
 // 의뢰 수락 페이지
@@ -113,7 +114,7 @@ fun AcceptRequestView(
     ) {
         Spacer(modifier = Modifier.height(8.dp))
 
-        // 카카오맵을 사용한 지도 섹션
+        // 네이버맵을 사용한 지도 섹션
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -125,6 +126,15 @@ fun AcceptRequestView(
             val position = LatLng(uiState.latitude, uiState.longitude)
             val cameraPositionState = rememberCameraPositionState {
                 this.position = CameraPosition(position, 15.0)
+            }
+
+            // 위도/경도가 변경될 때 카메라를 해당 위치로 이동
+            LaunchedEffect(uiState.latitude, uiState.longitude) {
+                val newPosition = LatLng(uiState.latitude, uiState.longitude)
+                cameraPositionState.animate(
+                    update = CameraUpdate.scrollTo(newPosition),
+                    durationMs = 800
+                )
             }
 
             NaverMap(
