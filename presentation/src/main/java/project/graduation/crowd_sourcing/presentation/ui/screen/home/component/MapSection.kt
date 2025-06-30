@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.home.component
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +37,8 @@ import com.naver.maps.map.compose.Marker
 import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
+import com.naver.maps.map.overlay.OverlayImage
+import com.naver.maps.map.util.MarkerIcons
 import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.HomeUiState
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.Location
@@ -55,6 +58,9 @@ fun Location.toLatLng(): LatLng = LatLng(latitude, longitude)
  * - MARKER_ZINDEX: 마커 Z-인덱스
  * - CIRCLE_ZINDEX: 원 Z-인덱스
  * - METERS_PER_KM: KM당 미터 변환 상수
+ * - USER_LOCATION_MARKER_COLOR: 사용자 위치 마커 색상
+ * - MART_WITH_COMMISSION_COLOR: 의뢰가 있는 마트 마커 색상
+ * - MART_WITHOUT_COMMISSION_COLOR: 의뢰가 없는 마트 마커 색상
  */
 private object MapConstants {
     const val DEFAULT_ZOOM = 15.0
@@ -65,6 +71,9 @@ private object MapConstants {
     const val MARKER_ZINDEX = 2
     const val CIRCLE_ZINDEX = 1
     const val METERS_PER_KM = 1000.0
+    val USER_LOCATION_MARKER_COLOR = Color(0xFF4285F4) // 구글맵 스타일 파란색
+    val MART_WITH_COMMISSION_COLOR = Color(0xFF34A853) // 구글맵 스타일 초록색
+    val MART_WITHOUT_COMMISSION_COLOR = Color(0xFF9AA0A6) // 연한 회색
 }
 
 /**
@@ -74,6 +83,7 @@ private object MapConstants {
  * @param state 홈 화면 상태
  * @param onMartClick 마트 클릭 이벤트 핸들러
  */
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun MapSection(
     isMapServiceAvailable: Boolean,
@@ -210,7 +220,9 @@ private fun createMapUiSettings() = MapUiSettings(
 private fun DrawUserLocationMarker(location: Location) {
     Marker(
         state = MarkerState(position = location.toLatLng()),
-        captionText = "현재 위치"
+        captionText = "현재 위치",
+        icon = MarkerIcons.BLACK,
+        iconTintColor = MapConstants.USER_LOCATION_MARKER_COLOR
     )
 }
 
@@ -239,15 +251,31 @@ private fun DrawMartMarkers(
     onMartClick: (MartEntity) -> Unit
 ) {
     martEntities.forEach { mart ->
-        Marker(
-            state = MarkerState(position = LatLng(mart.latitude, mart.longitude)),
-            captionText = mart.martName,
-            zIndex = MapConstants.MARKER_ZINDEX,
-            onClick = { 
-                onMartClick(mart)
-                true // 클릭 이벤트 소모
-            }
-        )
+        if (mart.existCommission == 1) {
+            // 의뢰가 있는 마트: 기본 마커
+            Marker(
+                state = MarkerState(position = LatLng(mart.latitude, mart.longitude)),
+                captionText = mart.martName,
+                zIndex = MapConstants.MARKER_ZINDEX,
+                onClick = { 
+                    onMartClick(mart)
+                    true // 클릭 이벤트 소모
+                }
+            )
+        } else {
+            // 의뢰가 없는 마트: 검은색 마커 + 회색 색상 적용
+            Marker(
+                state = MarkerState(position = LatLng(mart.latitude, mart.longitude)),
+                captionText = mart.martName,
+                zIndex = MapConstants.MARKER_ZINDEX,
+                icon = MarkerIcons.BLACK,
+                iconTintColor = MapConstants.MART_WITHOUT_COMMISSION_COLOR,
+                onClick = { 
+                    onMartClick(mart)
+                    true // 클릭 이벤트 소모
+                }
+            )
+        }
     }
 }
 

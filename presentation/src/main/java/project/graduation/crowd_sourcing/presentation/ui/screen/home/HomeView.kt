@@ -270,7 +270,7 @@ fun HomeView(navController: NavController) {
                         onDismiss = viewModel::hideMartRequestDialog,
                         onRequestClick = { request ->
                             // 의뢰 클릭 시 AcceptRequestView로 이동
-                            val commissionId = 7;
+                            val commissionId = request.id.toInt()
                             navController.navigate(project.graduation.crowd_sourcing.presentation.ui.navigation.Screen.AcceptRequestScreen.createRoute(commissionId))
                         }
                     )

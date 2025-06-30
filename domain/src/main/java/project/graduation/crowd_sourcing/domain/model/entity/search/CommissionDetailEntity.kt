@@ -12,5 +12,6 @@ data class CommissionDetailEntity(
     val commissionPoint: Int,
     val commissionCount: Int,
     val createdAt: LocalDateTime,
-    val expirationDate: LocalDateTime
+    val expirationDate: LocalDateTime,
+    val acceptedWorkerCount: Int
 ) 

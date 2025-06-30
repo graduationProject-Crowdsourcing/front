@@ -29,7 +29,7 @@ interface MartSearchService {
 
     @GET("/api/v1/marts/search/martlist")
     suspend fun getSearchWorkByMartName(
-        @Query("martName") martName : String
+        @Query("martNames") martName : String
     ) : ApiResponseDtoListMartWorkDto
 
     @GET("/api/v1/marts/search")
