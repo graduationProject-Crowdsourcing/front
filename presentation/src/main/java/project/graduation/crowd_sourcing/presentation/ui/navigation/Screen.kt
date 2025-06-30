@@ -27,10 +27,10 @@ sealed class Screen(val title: String, val route: String) {
 
     // 작업 제출 관련 화면
     data object WorkListScreen : Screen(title = "작업 리스트", route = "work_list")
-    data object SubmitWorkScreen : Screen(title = "작업 제출", route = "submit_work/{workId}") {
-        const val routeWithArg = "submit_work/{workId}"
+    data object SubmitWorkScreen : Screen(title = "작업 제출", route = "submit_work/{workId}/{category}/{martName}") {
+        const val routeWithArg = "submit_work/{workId}/{category}/{martName}"
 
-        fun createRoute(workId: Int): String = "submit_work/$workId"
+        fun createRoute(workId: Int, category: String, martName: String): String = "submit_work/$workId/$category/$martName"
     }
     data object WorkCompleteScreen : Screen(title = "작업 완료", route = "work_complete") {
         const val routeWithArgs = "work_complete/{place}/{title}/{reward}"

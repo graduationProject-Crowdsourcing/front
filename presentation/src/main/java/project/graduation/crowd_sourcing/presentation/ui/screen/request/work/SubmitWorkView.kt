@@ -4,7 +4,6 @@ import android.location.Location
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -48,6 +47,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -67,6 +67,8 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.request.componen
 fun SubmitWorkView(
     navController: NavController,
     workId: Int,
+    martName: String,
+    category: String,
     viewModel: SubmitWorkViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -89,8 +91,8 @@ fun SubmitWorkView(
     }
 
     // workId가 바뀔 때마다 데이터 로드
-    LaunchedEffect(workId) {
-        workId?.let { viewModel.loadWorkInfo(it) }
+    LaunchedEffect(Unit) {
+       viewModel.loadWorkInfo(workId, martName = martName, category = category)
     }
 
     Column(
@@ -142,10 +144,51 @@ fun SubmitWorkView(
         GrayDivider()
         Spacer(modifier = Modifier.height(12.dp))
 
-        WorkInfo(Icons.Default.Edit, "의뢰 내역", uiState.title)
+        WorkInfo(Icons.Default.Edit, "의뢰 내역", uiState.category)
         Spacer(modifier = Modifier.height(12.dp))
         GrayDivider()
 
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_item),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Text(
+                text = "제품",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.width(80.dp)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            TextField(
+                value = uiState.item,
+                onValueChange = { viewModel.updateItem(it) },
+                singleLine = true,
+                modifier = Modifier
+                    .width(200.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.Transparent, // 배경 없음
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary, // 포커스 시 밑줄 색
+                    unfocusedIndicatorColor = Color.Gray, // 기본 밑줄 색
+                    disabledIndicatorColor = Color.Transparent
+                ),
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+                trailingIcon = {
+                }
+            )
+        }
+        GrayDivider()
+        
         // 가격 입력
         Row(
             modifier = Modifier
@@ -272,14 +315,16 @@ fun SubmitWorkView(
 
         Button(
             onClick = {
-                navController.navigate(
-                    Screen.WorkCompleteScreen.createRoute(
-                        uiState.place,
-                        uiState.title,
-                        uiState.reward
-                    )
-                ) {
-                    popUpTo(Screen.SubmitWorkScreen.route) { inclusive = true }
+                viewModel.submitWork {
+                    navController.navigate(
+                        Screen.WorkCompleteScreen.createRoute(
+                            uiState.place,
+                            uiState.category,
+                            uiState.reward
+                        )
+                    ) {
+                        popUpTo(Screen.SubmitWorkScreen.route) { inclusive = true }
+                    }
                 }
             },
             enabled = viewModel.isSavable(), // 저장 조건 만족 시 활성화
@@ -303,5 +348,5 @@ fun SubmitWorkView(
 @Preview
 @Composable
 fun prevSubmitWorkView(){
-    SubmitWorkView(navController = rememberNavController(), workId = 10)
+    SubmitWorkView(navController = rememberNavController(), workId = 10, "우리마트", "라면")
 }

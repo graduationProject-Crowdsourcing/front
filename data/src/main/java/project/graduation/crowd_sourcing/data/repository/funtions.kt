@@ -40,5 +40,5 @@ internal fun compressAndResizeImage(context: Context, uri: Uri, fileName:String 
     val byteArray = outputStream.toByteArray()
 
     val requestBody = byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull())
-    return MultipartBody.Part.createFormData("image", fileName, requestBody)
+    return MultipartBody.Part.createFormData("file", fileName, requestBody)
 }

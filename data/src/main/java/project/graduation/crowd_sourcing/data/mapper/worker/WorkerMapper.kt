@@ -15,6 +15,7 @@ import project.graduation.crowd_sourcing.data.response.worker.WorkMostResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkOngoingResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkPointEntity
 import project.graduation.crowd_sourcing.data.response.worker.WorkPointResponse
+import project.graduation.crowd_sourcing.domain.model.Category
 
 fun WorkCountResponse.toEntity() = WorkCountEntity(
     workCount = workCount
@@ -28,7 +29,9 @@ fun WorkOngoingResponse.toEntity() = WorkHistoryEntity(
     commissionRegion = stringToRegion(this.commissionRegion),
     commissionDate = commissionDate,
     commissionStatus = stringToWorkStatus(commissionStatus),
-    memberId = memberId
+    memberId = memberId,
+    martName = martName,
+    category = Category.from(category)
 )
 
 @RequiresApi(Build.VERSION_CODES.O)

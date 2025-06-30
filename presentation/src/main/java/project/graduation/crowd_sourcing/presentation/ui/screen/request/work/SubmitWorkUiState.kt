@@ -5,13 +5,14 @@ import java.util.Calendar
 
 data class SubmitWorkUiState(
     val id: Int? = null,
-    val title: String = "",
-    val place: String = "",
+    val category: String = "라면",
+    val item: String = "",
+    val place: String = "우리마트",
     val price: String = "",
     val reward: Int = 0,
     val executeTime: String = getCurrentDateTimeString(),
     val imageUri: Uri? = null,
-    val locationVerified: Boolean = false
+    val locationVerified: Boolean = true
 )
 
 

@@ -139,10 +139,15 @@ fun Navigation(
         // 작업 제출 화면
         composable(
             route = Screen.SubmitWorkScreen.routeWithArg,
-            arguments = listOf(navArgument("workId") { type = NavType.IntType })
+            arguments = listOf(
+                navArgument("workId") { type = NavType.IntType },
+                navArgument("category") { type = NavType.StringType },
+                navArgument("martName") { type = NavType.StringType })
         ) { backStackEntry ->
             val workId = backStackEntry.arguments?.getInt("workId") ?: 0
-            SubmitWorkView(navController = navController, workId = workId)
+            val category =  backStackEntry.arguments?.getString("category") ?: ""
+            val martName =  backStackEntry.arguments?.getString("martName") ?: ""
+            SubmitWorkView(navController = navController, workId = workId, martName = martName, category = category)
         }
         // 작업 완료 화면
         composable(

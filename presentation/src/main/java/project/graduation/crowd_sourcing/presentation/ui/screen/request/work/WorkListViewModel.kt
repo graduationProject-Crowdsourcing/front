@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import project.graduation.crowd_sourcing.domain.model.Category
 import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.domain.usecase.WorkerUseCase
 import javax.inject.Inject
@@ -16,16 +17,18 @@ data class Work(
     val id: Int,
     val title: String,
     val place: Region,
-    val reward: Int
+    val reward: Int,
+    val martName:String,
+    val category: Category
 ){
-    companion object{
-        fun test(): List<Work> = listOf(
-            Work(97, "a", Region.DONGDAEMUN, 7),
-            Work(97, "a", Region.DONGDAEMUN, 7),
-            Work(97, "a", Region.DONGDAEMUN, 7),
-            Work(97, "a", Region.DONGDAEMUN, 7),
-        )
-    }
+//    companion object{
+//        fun test(): List<Work> = listOf(
+//            Work(97, "a", Region.DONGDAEMUN, 7),
+//            Work(97, "a", Region.DONGDAEMUN, 7),
+//            Work(97, "a", Region.DONGDAEMUN, 7),
+//            Work(97, "a", Region.DONGDAEMUN, 7),
+//        )
+//    }
 }
 
 @HiltViewModel
@@ -42,9 +45,13 @@ class WorkListViewModel @Inject constructor(
                     id = it.id,
                     title = it.commission,
                     place = it.commissionRegion,
-                    reward = it.commissionPoint
+                    reward = it.commissionPoint,
+                    martName = it.martName,
+                    category = it.category
                 )
             }
+        }.onFailure {
+            it.printStackTrace()
         }
     }
 

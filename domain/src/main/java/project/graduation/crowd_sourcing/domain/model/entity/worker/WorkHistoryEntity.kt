@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.data.response.worker
 
+import project.graduation.crowd_sourcing.domain.model.Category
 import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.domain.model.WorkStatus
 import java.time.LocalDateTime
@@ -12,5 +13,7 @@ data class WorkHistoryEntity(
     val commissionRegion: Region,
     val commissionDate: LocalDateTime,
     val commissionStatus: WorkStatus,
-    val memberId: Int
+    val memberId: Int,
+    val martName: String = "",
+    val category: Category = Category.UNKNOWN
 )
