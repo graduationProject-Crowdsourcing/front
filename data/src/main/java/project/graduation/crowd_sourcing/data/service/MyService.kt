@@ -10,6 +10,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
@@ -23,7 +24,7 @@ interface MyService {
         @Query("userId") userId: Int
     ): RecentWorkResponse
 
-    @GET("/api/v1/mypage/recent-commission")
+    @GET("/api/v1/mypage/recent-workAssignment")
     suspend fun getRecentCommission(
         @Query("userId") userId: Int
     ): RecentCommissionResponse
@@ -34,10 +35,16 @@ interface MyService {
         @Body request: MyNicknameRequest
     ): Response<Unit>
 
-
     @Multipart
     @POST("/api/v1/mypage/myimage")
     suspend fun postProfileImage(
+        @Query("username") username: String,
+        @Part file: MultipartBody.Part
+    ): Response<ProfileImgResponse>
+
+    @Multipart
+    @PATCH ("/api/v1/mypage/myimage")
+    suspend fun patchProfileImage(
         @Query("username") username: String,
         @Part file: MultipartBody.Part
     ): Response<ProfileImgResponse>

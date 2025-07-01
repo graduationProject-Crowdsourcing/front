@@ -52,13 +52,11 @@ class MyViewModel @Inject constructor(
             .onSuccess { (work, commission) ->
                 val recentWork = MyUiState.RecentListItem(
                     name = work.item,
-                    date = work.workDate,
                     id = work.id
                 )
 
                 val recentCommission = MyUiState.RecentListItem(
                     name = commission.commission,
-                    date = commission.commissionDate,
                     id = commission.id
                 )
 
@@ -75,7 +73,7 @@ class MyViewModel @Inject constructor(
     }
 
     fun changeImg(uri: Uri) = viewModelScope.launch {
-        myUseCase.changeMyProfileImage(uri).onSuccess {
+        myUseCase.changeMyProfileImage(uri, uiState.value.profileImage).onSuccess {
             _uiState.update { prev ->
                 prev.copy(
                     profileImage = it

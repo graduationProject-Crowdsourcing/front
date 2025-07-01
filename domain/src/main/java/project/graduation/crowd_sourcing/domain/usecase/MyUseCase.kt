@@ -29,9 +29,10 @@ class MyUseCase @Inject constructor(
         return repository.putNickname(nickname)
     }
 
-    suspend fun changeMyProfileImage(imgUri: Uri): Result<String> {
+    suspend fun changeMyProfileImage(imgUri: Uri, currentImage: String?): Result<String> {
         return try {
-            repository.postProfileImage(imgUri)
+            if (currentImage == null) repository.postProfileImage(imgUri)
+            else repository.patchProfileImage(imgUri)
         } catch (e: Exception) {
             Result.failure(e)
         }

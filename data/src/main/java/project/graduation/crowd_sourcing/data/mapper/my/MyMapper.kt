@@ -14,11 +14,7 @@ import java.time.LocalDateTime
 @RequiresApi(Build.VERSION_CODES.O)
 fun RecentCommissionResponse.toEntity(): RecentCommissionEntity = RecentCommissionEntity(
     id = this.workId,
-    commission = this.workName,
-    region = stringToRegion(this.region),
-    category = this.category,
-    commissionDate = this.createdAt,
-    commissionPoint = this.workpoint
+    commission = this.workName
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
