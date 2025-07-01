@@ -161,13 +161,15 @@ fun SearchView(
                                 selectedCategory = state.selectedCategory,
                                 selectedRegion = state.selectedRegion,
                                 onFilterClick = { 
-                                    // 현재 상태를 필터 선택 화면으로 전달
+                                    // 현재 상태를 필터 선택 화면으로 전달 (null이면 "전체"로 변환)
                                     navController.currentBackStackEntry?.savedStateHandle?.set(
-                                        "initialCategory", state.selectedCategory
+                                        "initialCategory", state.selectedCategory ?: "전체"
                                     )
                                     navController.currentBackStackEntry?.savedStateHandle?.set(
-                                        "initialRegion", state.selectedRegion
+                                        "initialRegion", state.selectedRegion ?: "전체"
                                     )
+                                    
+                                    println("SearchView: 필터 화면으로 이동 - 카테고리: ${state.selectedCategory ?: "전체"}, 지역: ${state.selectedRegion ?: "전체"}")
                                     
                                     // 필터 선택 화면으로 이동
                                     navController.navigate(Screen.FilterSelectionScreen.route)

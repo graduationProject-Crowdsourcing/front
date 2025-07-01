@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -70,37 +71,73 @@ fun FilterSelectionView(
     val initialCategory = navController.previousBackStackEntry?.savedStateHandle?.get<String?>("initialCategory")
     val initialRegion = navController.previousBackStackEntry?.savedStateHandle?.get<String?>("initialRegion")
     
-    // 디버깅 로그
+    // 디버깅 로그 및 초기 데이터 로딩
     LaunchedEffect(Unit) {
         println("FilterSelectionView: 초기값 받음 - 카테고리=${initialCategory ?: "전체"}, 지역=${initialRegion ?: "전체"}")
+        
+        // 초기 데이터 로딩 확인 및 로드
+        viewModel.loadInitialData()
     }
     
-    // ViewModel 상태 초기화 (이전 선택값 적용)
-    LaunchedEffect(Unit) {
+    when (val state = uiState.value) {
+        is SearchUiState.Loading -> {
+            // 로딩 화면
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        is SearchUiState.Error -> {
+            // 에러 화면
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "데이터 로딩 중 오류가 발생했습니다: ${state.message}")
+            }
+        }
+        is SearchUiState.Success -> {
+            FilterSelectionContent(
+                navController = navController,
+                state = state,
+                initialCategory = initialCategory,
+                initialRegion = initialRegion
+            )
+        }
+    }
+}
+
+@Composable
+private fun FilterSelectionContent(
+    navController: NavController,
+    state: SearchUiState.Success,
+    initialCategory: String?,
+    initialRegion: String?
+) {
+    // 현재 선택된 카테고리와 지역
+    val selectedCategory = remember { mutableStateOf(initialCategory ?: "전체") }
+    val selectedRegion = remember { mutableStateOf(initialRegion ?: "전체") }
+    
+    // 전체 옵션이 명시적으로 선택되었는지 여부
+    val isAllCategorySelected = remember { mutableStateOf(initialCategory == null || initialCategory == "전체") }
+    val isAllRegionSelected = remember { mutableStateOf(initialRegion == null || initialRegion == "전체") }
+    
+    // 초기값 설정 (Success 상태가 된 후)
+    LaunchedEffect(state) {
+        // 전달받은 초기값이 있으면 적용
         if (initialCategory != null) {
-            viewModel.selectCategory(initialCategory)
+            selectedCategory.value = initialCategory
+            isAllCategorySelected.value = (initialCategory == "전체")
+            println("FilterSelectionView: 카테고리 초기값 적용 - ${initialCategory}")
         }
         if (initialRegion != null) {
-            viewModel.selectRegion(initialRegion)
+            selectedRegion.value = initialRegion
+            isAllRegionSelected.value = (initialRegion == "전체")
+            println("FilterSelectionView: 지역 초기값 적용 - ${initialRegion}")
         }
     }
-    
-    // 현재 선택된 카테고리와 지역 (초기값은 뷰모델의 상태에서 가져옴)
-    val currentState = uiState.value
-    val stateCategory = if (currentState is SearchUiState.Success) {
-        currentState.selectedCategory
-    } else null
-    
-    val stateRegion = if (currentState is SearchUiState.Success) {
-        currentState.selectedRegion
-    } else null
-    
-    // 전체 옵션이 명시적으로 선택되었는지 여부와 선택된 값 초기화
-    val isAllCategorySelected = remember { mutableStateOf(initialCategory == "전체" || initialCategory == null) }
-    val isAllRegionSelected = remember { mutableStateOf(initialRegion == "전체" || initialRegion == null) }
-    
-    val selectedCategory = remember { mutableStateOf(if (isAllCategorySelected.value) "전체" else initialCategory) }
-    val selectedRegion = remember { mutableStateOf(if (isAllRegionSelected.value) "전체" else initialRegion) }
     
     val scrollState = rememberScrollState()
     
@@ -134,23 +171,23 @@ fun FilterSelectionView(
                     isSelected = isAllRegionSelected.value,
                     onClick = { 
                         isAllRegionSelected.value = true
-                        selectedRegion.value = "전체"  // "전체"를 명시적으로 저장
+                        selectedRegion.value = "전체"
+                        println("FilterSelectionView: 지역 '전체' 선택")
                     }
                 )
             }
             
             // 나머지 지역 옵션들
-            if (currentState is SearchUiState.Success) {
-                items(currentState.regions.filter { it != "전체" }) { region ->
-                    RegionItem(
-                        name = region,
-                        isSelected = selectedRegion.value == region,
-                        onClick = { 
-                            isAllRegionSelected.value = false
-                            selectedRegion.value = region 
-                        }
-                    )
-                }
+            items(state.regions.filter { it != "전체" }) { region ->
+                RegionItem(
+                    name = region,
+                    isSelected = selectedRegion.value == region && !isAllRegionSelected.value,
+                    onClick = { 
+                        isAllRegionSelected.value = false
+                        selectedRegion.value = region
+                        println("FilterSelectionView: 지역 '$region' 선택")
+                    }
+                )
             }
         }
         
@@ -180,23 +217,23 @@ fun FilterSelectionView(
                     isSelected = isAllCategorySelected.value,
                     onClick = { 
                         isAllCategorySelected.value = true
-                        selectedCategory.value = "전체"  // "전체"를 명시적으로 저장
+                        selectedCategory.value = "전체"
+                        println("FilterSelectionView: 카테고리 '전체' 선택")
                     }
                 )
             }
             
             // 모든 카테고리 표시
-            if (currentState is SearchUiState.Success) {
-                items(currentState.categories.filter { it != "전체" }) { category ->
-                    CategoryItem(
-                        name = category,
-                        isSelected = selectedCategory.value == category,
-                        onClick = { 
-                            isAllCategorySelected.value = false
-                            selectedCategory.value = category 
-                        }
-                    )
-                }
+            items(state.categories.filter { it != "전체" }) { category ->
+                CategoryItem(
+                    name = category,
+                    isSelected = selectedCategory.value == category && !isAllCategorySelected.value,
+                    onClick = { 
+                        isAllCategorySelected.value = false
+                        selectedCategory.value = category
+                        println("FilterSelectionView: 카테고리 '$category' 선택")
+                    }
+                )
             }
         }
         

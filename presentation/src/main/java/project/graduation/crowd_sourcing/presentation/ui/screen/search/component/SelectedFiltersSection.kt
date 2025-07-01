@@ -5,8 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
+
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,7 +35,6 @@ import androidx.compose.ui.unit.sp
  * @param onFilterClick 필터 클릭 콜백
  * @param modifier 컴포넌트에 적용할 추가 수정자
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SelectedFiltersSection(
     selectedCategory: String?,
@@ -156,12 +154,11 @@ fun SelectedFiltersSection(
         
         Spacer(modifier = Modifier.height(12.dp))
         
-        // 선택된 필터 태그들 (FlowRow로 자동 줄바꿈)
+        // 선택된 필터 태그들 (Row로 가로 배치)
         if (hasSelectedFilters) {
-            FlowRow(
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // 선택된 카테고리가 있으면 표시
                 if (selectedCategory != null) {
