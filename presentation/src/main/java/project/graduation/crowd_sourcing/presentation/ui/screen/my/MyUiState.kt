@@ -16,8 +16,7 @@ data class MyUiState(
 ) {
     data class RecentListItem(
         val id:Int,
-        val name: String,
-        val date: LocalDateTime
+        val name: String
     )
 
     companion object {
@@ -25,8 +24,8 @@ data class MyUiState(
             profileImage = null,
             nickname = "",
             point = 0,
-            recentRequest = RecentListItem(0,name = "test1", date = twoDaysAgo),
-            recentWork = RecentListItem(0,name = "test1", date = twoDaysAgo)
+            recentRequest = RecentListItem(0,name = "test1"),
+            recentWork = RecentListItem(0,name = "test1")
         )
     }
 }

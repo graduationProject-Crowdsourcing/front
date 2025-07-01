@@ -40,7 +40,7 @@ fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
             CommonListItem(
                 CommonListItemData(
                     mainText = name,
-                    subText = getTimeAgo(date),
+                    subText = "",
                     icon = R.drawable.ic_list_box,
                     onClick = {}
                 )
@@ -58,7 +58,7 @@ fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
             CommonListItem(
                 CommonListItemData(
                     mainText = name,
-                    subText = getTimeAgo(date),
+                    subText = "",
                     icon = R.drawable.ic_list_box,
                     onClick = { navController.navigate(Screen.DetailStatsScreen.createRoute(Region.DONGDAEMUN, Category.Ramen, id)) }
                 )

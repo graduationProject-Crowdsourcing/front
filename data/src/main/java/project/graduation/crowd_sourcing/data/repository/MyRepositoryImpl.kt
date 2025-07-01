@@ -1,16 +1,10 @@
 package project.graduation.crowd_sourcing.data.repository
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
-import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import dagger.hilt.android.qualifiers.ApplicationContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import project.graduation.crowd_sourcing.data.mapper.my.toEntity
 import project.graduation.crowd_sourcing.data.request.MyNicknameRequest
 import project.graduation.crowd_sourcing.data.service.MyService
@@ -19,8 +13,6 @@ import project.graduation.crowd_sourcing.domain.model.entity.my.ProfileEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentCommissionEntity
 import project.graduation.crowd_sourcing.domain.model.entity.my.RecentWorkEntity
 import project.graduation.crowd_sourcing.domain.repository.MyRepository
-import retrofit2.Response
-import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 class MyRepositoryImpl @Inject constructor(
@@ -71,6 +63,26 @@ class MyRepositoryImpl @Inject constructor(
         return try {
             val file = compressAndResizeImage(context, imagUri)
             val response = myService.postProfileImage(username, file)
+
+            if (response.isSuccessful) {
+                val imageUrl = response.body()?.data?.imageUrl
+                if (imageUrl != null) Result.success(imageUrl)
+                else Result.failure(NullPointerException("imageUrl is null"))
+            } else {
+                Result.failure(Exception("API error: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun patchProfileImage(imageUri: Uri): Result<String> {
+        val username = tokenManager.getUserName()
+            ?: return Result.failure(IllegalStateException("No username found"))
+
+        return try {
+            val file = compressAndResizeImage(context, imageUri)
+            val response = myService.patchProfileImage(username, file)
 
             if (response.isSuccessful) {
                 val imageUrl = response.body()?.data?.imageUrl

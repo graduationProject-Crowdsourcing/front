@@ -6,9 +6,5 @@ import java.util.Date
 
 data class RecentCommissionEntity(
     val id: Int,
-    val commission: String,
-    val region: Region,
-    val category: String,
-    val commissionDate: LocalDateTime,
-    val commissionPoint: Int
+    val commission: String
 )
