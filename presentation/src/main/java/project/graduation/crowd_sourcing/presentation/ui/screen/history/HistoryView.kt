@@ -37,7 +37,7 @@ fun HistoryView(
         listOf("현재 작업 목록", "작업 기록") to {p1, p2, p3 -> }
     } else {
         listOf("현재 의뢰 목록", "의뢰 목록") to { region, category, statsId ->
-            navController.navigate(Screen.DetailStatsScreen.createRoute(region = Region.from(region), category = Category.from(category), statsId = statsId))
+            navController.navigate(Screen.DetailStatsScreen.createRoute(region = region, category = category, statsId = statsId))
         }
     }
 

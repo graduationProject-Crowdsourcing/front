@@ -43,7 +43,8 @@ class HistoryViewModel @Inject constructor(
                                         category = it.commission,
                                         date = it.commissionDate,
                                         point = it.commissionPoint,
-                                        id = it.id
+                                        id = it.id,
+                                        region = it.commissionRegion
                                     )
                                 },
                                 totalHistoryList = (data.currentList + data.completedList).map {
@@ -52,7 +53,8 @@ class HistoryViewModel @Inject constructor(
                                         category = it.commission,
                                         date = it.commissionDate,
                                         point = it.commissionPoint,
-                                        id = it.id
+                                        id = it.id,
+                                        region = it.commissionRegion
                                     )
                                 }
                             )
@@ -78,19 +80,21 @@ class HistoryViewModel @Inject constructor(
                                 currentHistoryList = data.currentList.map {
                                     HistoryItem(
                                         product = it.commission,
-                                        category = it.commission,
+                                        category = it.category,
                                         date = it.commissionDate,
                                         point = it.commissionPoint,
-                                        id = it.id
+                                        id = it.id,
+                                        region = it.commissionRegion
                                     )
                                 },
                                 totalHistoryList = (data.currentList + data.completedList).map {
                                     HistoryItem(
                                         product = it.commission,
-                                        category = it.commission,
+                                        category = it.category,
                                         date = it.commissionDate,
                                         point = it.commissionPoint,
-                                        id = it.id
+                                        id = it.id,
+                                        region = it.commissionRegion
                                     )
                                 }
                             )

@@ -44,7 +44,7 @@ fun HistoryList(
                             subText = "${getTimeAgo(date)} / ${category}",
                             leftText = "${point} points",
                             onClick = {
-                                historyItem.run { onClick(product, category, id) }
+                                historyItem.run { onClick(region, category, id) }
                             }
                         )
                     )

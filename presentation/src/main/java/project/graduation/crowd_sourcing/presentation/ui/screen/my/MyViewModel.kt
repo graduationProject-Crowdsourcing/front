@@ -49,15 +49,19 @@ class MyViewModel @Inject constructor(
 
     fun getRecentHistory() = viewModelScope.launch {
         myUseCase.getRecentHistory()
-            .onSuccess { (work, commission) ->
+            .onSuccess { (work, comission) ->
                 val recentWork = MyUiState.RecentListItem(
                     name = work.item,
-                    id = work.id
+                    id = work.id,
+                    region = work.region,
+                    category = work.category
                 )
 
                 val recentCommission = MyUiState.RecentListItem(
-                    name = commission.commission,
-                    id = commission.id
+                    name = comission.commission,
+                    id = comission.id,
+                    region = "",
+                    category = ""
                 )
 
                 _uiState.update { prev ->

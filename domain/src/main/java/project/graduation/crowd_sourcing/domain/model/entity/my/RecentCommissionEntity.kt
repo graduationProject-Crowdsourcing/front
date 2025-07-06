@@ -6,5 +6,5 @@ import java.util.Date
 
 data class RecentCommissionEntity(
     val id: Int,
-    val commission: String
+    val commission: String,
 )

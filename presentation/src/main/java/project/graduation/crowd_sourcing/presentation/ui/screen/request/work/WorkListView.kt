@@ -54,7 +54,7 @@ fun WorkListView(
             list = viewModel.workList.map {
                 CommonListItemData(
                     mainText = it.title,
-                    subText = it.place.koreanName,
+                    subText = it.place,
                     leftText = "리워드 : ${it.reward}p",
                     icon = null,
                     onClick = {

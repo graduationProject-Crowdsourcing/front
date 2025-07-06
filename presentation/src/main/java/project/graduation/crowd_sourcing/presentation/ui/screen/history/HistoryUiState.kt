@@ -13,6 +13,7 @@ data class HistoryUiState(
         val id: Int,
         val product: String,
         val category: String,
+        val region: String,
         val date: LocalDateTime,
         val point: Int
     )
