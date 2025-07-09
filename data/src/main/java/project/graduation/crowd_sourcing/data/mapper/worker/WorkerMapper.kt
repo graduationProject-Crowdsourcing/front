@@ -43,7 +43,8 @@ fun WorkHistoryResponse.toEntity() = WorkHistoryEntity(
     commissionRegion = this.commissionRegion,
     commissionDate = commissionDate,
     commissionStatus = stringToWorkStatus(commissionStatus),
-    memberId = memberId
+    memberId = memberId,
+    category = ""
 )
 
 fun WorkHourResponse.toEntity() = WorkHourEntity(

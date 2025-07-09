@@ -72,7 +72,8 @@ class HistoryUseCase @Inject constructor(
                             commissionRegion = it.commissionRegion,
                             commissionDate = it.commissionDate,
                             commissionStatus = WorkStatus.valueOf(it.commissionStatus),
-                            memberId = it.memberId
+                            memberId = it.memberId,
+                            category = it.category ?: ""
                         )
                     },
                     currentList = currentList.map {
@@ -84,7 +85,8 @@ class HistoryUseCase @Inject constructor(
                             commissionRegion = it.commissionRegion,
                             commissionDate = it.commissionDate,
                             commissionStatus = WorkStatus.valueOf(it.commissionStatus),
-                            memberId = it.memberId
+                            memberId = it.memberId,
+                            category = it.category ?: ""
                         )
                     },
                     mostRegion = Region.from(most.mostRequestedRegion),

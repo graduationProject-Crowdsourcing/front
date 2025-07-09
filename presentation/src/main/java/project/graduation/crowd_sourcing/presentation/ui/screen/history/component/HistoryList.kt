@@ -41,7 +41,7 @@ fun HistoryList(
                         CommonListItemData(
                             icon = R.drawable.ic_list_box,
                             mainText = product,
-                            subText = "${getTimeAgo(date)} / ${category}",
+                            subText = "${getTimeAgo(date)} / ${category} / ${region}",
                             leftText = "${point} points",
                             onClick = {
                                 historyItem.run { onClick(region, category, id) }

@@ -40,7 +40,7 @@ class HistoryViewModel @Inject constructor(
                                 currentHistoryList = data.currentList.map {
                                     HistoryItem(
                                         product = it.commission,
-                                        category = it.commission,
+                                        category = it.category,
                                         date = it.commissionDate,
                                         point = it.commissionPoint,
                                         id = it.id,
@@ -50,7 +50,7 @@ class HistoryViewModel @Inject constructor(
                                 totalHistoryList = (data.currentList + data.completedList).map {
                                     HistoryItem(
                                         product = it.commission,
-                                        category = it.commission,
+                                        category = it.category,
                                         date = it.commissionDate,
                                         point = it.commissionPoint,
                                         id = it.id,

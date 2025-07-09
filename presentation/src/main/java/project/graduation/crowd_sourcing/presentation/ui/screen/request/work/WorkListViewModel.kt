@@ -19,7 +19,7 @@ data class Work(
     val place: String,
     val reward: Int,
     val martName:String,
-    val category: Category
+    val category: String
 ){
 //    companion object{
 //        fun test(): List<Work> = listOf(
