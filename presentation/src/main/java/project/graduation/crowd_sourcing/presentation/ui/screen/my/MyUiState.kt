@@ -10,13 +10,15 @@ data class MyUiState(
     val profileImage: String?,
     val nickname: String,
     val point: Int,
-    val recentRequest: RecentListItem,
-    val recentWork: RecentListItem,
+    val recentRequest: RecentListItem?,
+    val recentWork: RecentListItem?,
     val isDialogVisible: Boolean = false
 ) {
     data class RecentListItem(
         val id:Int,
-        val name: String
+        val name: String,
+        val region: String,
+        val category: String,
     )
 
     companion object {
@@ -24,8 +26,8 @@ data class MyUiState(
             profileImage = null,
             nickname = "",
             point = 0,
-            recentRequest = RecentListItem(0,name = "test1"),
-            recentWork = RecentListItem(0,name = "test1")
+            recentRequest = null,
+            recentWork = null
         )
     }
 }

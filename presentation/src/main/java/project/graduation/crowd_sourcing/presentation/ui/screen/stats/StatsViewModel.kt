@@ -45,7 +45,7 @@ class StatsViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getDataList(region: Region, category: Category) = viewModelScope.launch {
+    fun getDataList(region: String, category: String) = viewModelScope.launch {
         when (uiState.value.type) {
             StatsType.MART -> {
                 statisticsUseCase.getMart(

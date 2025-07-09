@@ -27,10 +27,9 @@ class LoginRepositoryImpl @Inject constructor(
             val accessToken = response.headers()["authorization"]?.removePrefix("Bearer ")?.trim()
 
             // 3. Set-Cookie에서 refreshToken 추출
-            val refreshToken = response.headers().toMultimap()["Set-Cookie"]
-                ?.firstOrNull { it.startsWith("refreshToken=") }
-                ?.substringAfter("refreshToken=")
-                ?.substringBefore(";")
+            val refreshToken = response.headers().toMultimap()["x-refresh-token"]?.firstOrNull()
+
+
 
             // 4. 추출 결과 로그 확인
             Log.d("LoginDebug", "Extracted AccessToken: $accessToken")

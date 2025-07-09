@@ -26,18 +26,18 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.stats.component.
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun StatsView(
-    region: Region,
-    category: Category,
+    region: String,
+    category: String,
     id: Int
 ) {
     val viewModel: StatsViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(id) {
         viewModel.getDetail(id)
     }
 
-    LaunchedEffect(uiState.value.type) {
+    LaunchedEffect(uiState.value.type, id) {
         viewModel.getDataList(region = region, category = category)
     }
 

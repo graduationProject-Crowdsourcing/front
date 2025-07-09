@@ -10,10 +10,10 @@ data class WorkHistoryEntity(
     val commission: String,
     val commissionCount: Int,
     val commissionPoint: Int,
-    val commissionRegion: Region,
+    val commissionRegion: String,
     val commissionDate: LocalDateTime,
     val commissionStatus: WorkStatus,
     val memberId: Int,
     val martName: String = "",
-    val category: Category = Category.UNKNOWN
+    val category: String = ""
 )

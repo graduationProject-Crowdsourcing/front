@@ -350,7 +350,7 @@ class HomeViewModel @Inject constructor(
                             id = workHistory.id.toString(),
                             title = workHistory.commission,
                             location = Location(0.0, 0.0), // 위치 정보가 없어서 기본값 사용
-                            place = workHistory.commissionRegion.koreanName,
+                            place = workHistory.commissionRegion,
                             reward = workHistory.commissionPoint
                         )
                     }

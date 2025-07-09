@@ -21,10 +21,10 @@ fun RecentCommissionResponse.toEntity(): RecentCommissionEntity = RecentCommissi
 fun RecentWorkResponse.toEntity(): RecentWorkEntity = RecentWorkEntity(
     id = this.workId,
     work = this.workName,
-    region = stringToRegion(""),
-    category = "",
-    item = "",
-    itemPrice = 0,
+    region = this.region,
+    category = this.category,
+    item = this.item,
+    itemPrice = this.itemPrice,
     workDate = LocalDateTime.now()
 )
 

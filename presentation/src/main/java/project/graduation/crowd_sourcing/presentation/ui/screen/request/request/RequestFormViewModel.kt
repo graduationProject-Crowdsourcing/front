@@ -186,7 +186,7 @@ class RequestFormViewModel @Inject constructor(
                     """.trimIndent())
 
                     val result = requesterUseCase.postWork(
-                        work = "가격조사",
+                        work = "${state.sigungu} - ${state.item}",
                         workCount = maxPeople,
                         workpoint = pointPerPerson,
                         martNames = listOf(mart.martName),

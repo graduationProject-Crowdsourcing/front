@@ -69,7 +69,7 @@ class HistoryUseCase @Inject constructor(
                             commission = it.commission,
                             commissionCount = it.commissionCount,
                             commissionPoint = it.commissionPoint,
-                            commissionRegion = Region.from(it.commissionRegion),
+                            commissionRegion = it.commissionRegion,
                             commissionDate = it.commissionDate,
                             commissionStatus = WorkStatus.valueOf(it.commissionStatus),
                             memberId = it.memberId
@@ -81,7 +81,7 @@ class HistoryUseCase @Inject constructor(
                             commission = it.commission,
                             commissionCount = it.commissionCount,
                             commissionPoint = it.commissionPoint,
-                            commissionRegion = Region.from(it.commissionRegion),
+                            commissionRegion = it.commissionRegion,
                             commissionDate = it.commissionDate,
                             commissionStatus = WorkStatus.valueOf(it.commissionStatus),
                             memberId = it.memberId

@@ -26,12 +26,12 @@ fun WorkOngoingResponse.toEntity() = WorkHistoryEntity(
     commission = commission,
     commissionCount = commissionCount,
     commissionPoint = commissionPoint,
-    commissionRegion = stringToRegion(this.commissionRegion),
+    commissionRegion = this.commissionRegion,
     commissionDate = commissionDate,
     commissionStatus = stringToWorkStatus(commissionStatus),
     memberId = memberId,
     martName = martName,
-    category = Category.from(category)
+    category = category
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -40,7 +40,7 @@ fun WorkHistoryResponse.toEntity() = WorkHistoryEntity(
     commission = commission,
     commissionCount = commissionCount,
     commissionPoint = commissionPoint,
-    commissionRegion = stringToRegion(this.commissionRegion),
+    commissionRegion = this.commissionRegion,
     commissionDate = commissionDate,
     commissionStatus = stringToWorkStatus(commissionStatus),
     memberId = memberId

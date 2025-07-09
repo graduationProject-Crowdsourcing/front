@@ -47,8 +47,8 @@ sealed class Screen(val title: String, val route: String) {
     data object AlarmSettingScreen: Screen(title = "알람 설정", route = "alarm")
 
     data object DetailStatsScreen : Screen(title = "세부 통계", route = "detail_stats/{region}/{category}/{statsId}") {
-        fun createRoute(region: Region, category: Category, statsId: Int): String {
-            return "detail_stats/${region.koreanName}/${category.koreanName}/$statsId"
+        fun createRoute(region: String, category: String, statsId: Int): String {
+            return "detail_stats/${region}/${category}/$statsId"
         }
     }
 

@@ -16,7 +16,7 @@ import javax.inject.Inject
 data class Work(
     val id: Int,
     val title: String,
-    val place: Region,
+    val place: String,
     val reward: Int,
     val martName:String,
     val category: Category

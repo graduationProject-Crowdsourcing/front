@@ -197,8 +197,8 @@ fun Navigation(
                 navArgument("statsId") { type = NavType.IntType }
             )
         ) { backStackEntry ->
-            val region = Region.from(backStackEntry.arguments?.getString("region") ?: "")
-            val category = Category.from(backStackEntry.arguments?.getString("category") ?: "")
+            val region = backStackEntry.arguments?.getString("region") ?: ""
+            val category = backStackEntry.arguments?.getString("category") ?: ""
             val id = backStackEntry.arguments?.getInt("statsId") ?: 0
 
             StatsView(region = region, category = category, id = id)
