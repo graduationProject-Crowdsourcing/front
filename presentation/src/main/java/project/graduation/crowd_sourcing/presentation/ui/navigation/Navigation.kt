@@ -39,6 +39,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchRes
 import project.graduation.crowd_sourcing.presentation.ui.screen.search.SearchView
 import project.graduation.crowd_sourcing.presentation.ui.screen.stats.StatsView
 import project.graduation.crowd_sourcing.presentation.ui.screen.home.component.CurrentRequestsFullView
+import project.graduation.crowd_sourcing.presentation.ui.screen.request.request.SelectRegionView
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -104,6 +105,20 @@ fun Navigation(
         composable(route = Screen.RequestFormScreen.route) {
             RequestFormView(navController)
         }
+
+        // 의뢰 작성 - 지역 선택 화면
+        composable(route = Screen.SelectRegionScreen.route) {
+            SelectRegionView(
+                navController = navController,
+                onConfirmSelection = { selectedRegions ->
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("selectedRegions", selectedRegions)
+                    navController.popBackStack()
+                }
+            )
+        }
+
         // 의뢰 완료 화면
         composable(route = Screen.RequestCompleteScreen.route) {
             RequestCompleteView(navController)

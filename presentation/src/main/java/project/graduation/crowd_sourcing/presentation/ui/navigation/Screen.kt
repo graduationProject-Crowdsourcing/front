@@ -13,6 +13,7 @@ sealed class Screen(val title: String, val route: String) {
 
     // 의뢰 작성 관련 화면
     data object RequestFormScreen : Screen(title = "의뢰 작성", route = "request_form")
+    data object SelectRegionScreen : Screen(title = "의뢰 작성", route = "select_region")
     data object RequestCompleteScreen : Screen(title = "의뢰 완료", route = "request_complete")
 
     // 의뢰 수락 관련 화면
@@ -96,6 +97,7 @@ sealed class Screen(val title: String, val route: String) {
                 NotificationScreen.route -> NotificationScreen
 
                 RequestFormScreen.route -> RequestFormScreen
+                SelectRegionScreen.route -> SelectRegionScreen
                 RequestCompleteScreen.route -> RequestCompleteScreen
 
                 AcceptRequestScreen.routeWithArg -> AcceptRequestScreen

@@ -7,8 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import project.graduation.crowd_sourcing.domain.model.Category
-import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.domain.usecase.WorkerUseCase
 import javax.inject.Inject
 
@@ -19,7 +17,7 @@ data class Work(
     val place: String,
     val reward: Int,
     val martName:String,
-    val category: Category
+    val category: String
 ){
 //    companion object{
 //        fun test(): List<Work> = listOf(

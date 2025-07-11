@@ -60,6 +60,8 @@ fun RequestFormView(
 
     // 주요 입력 컴포넌트 호출
     RequestFormContent(
+        navController = navController,
+        selectedRegions = viewModel.selectedRegions,
         state = state,
         requestState = requestState,
         districtSuggestions = districtSuggestions,
@@ -79,6 +81,8 @@ fun RequestFormView(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RequestFormContent(
+    navController: NavController,
+    selectedRegions: List<String>,
     state: RequestFormUiState,
     requestState: RequestState,
     districtSuggestions: List<String>,
@@ -136,11 +140,11 @@ fun RequestFormContent(
 
         // 지역 검색 및 선택
         DistrictSearchField(
-            query = state.sigungu,
-            suggestions = districtSuggestions,
-            onQueryChange = onSigunguChange,
-            onSuggestionClick = onDistrictSelected,
-            iconResId = R.drawable.ic_mart
+            selectedRegions = selectedRegions,
+            iconResId = R.drawable.ic_mart,
+            onClick = {
+                navController.navigate(Screen.SelectRegionScreen.route)
+            }
         )
 
         Spacer(modifier = Modifier.height(8.dp))

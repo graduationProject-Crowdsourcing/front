@@ -18,6 +18,10 @@ import java.util.TimeZone
 import javax.inject.Inject
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
 import project.graduation.crowd_sourcing.domain.usecase.GetSearchHomeInitDataUseCase
@@ -29,11 +33,27 @@ class RequestFormViewModel @Inject constructor(
     private val requesterUseCase: RequesterUseCase,
     private val tokenManager: TokenManager,
     private val martSearchUseCase: MartSearchUseCase,
-    private val getSearchHomeInitDataUseCase: GetSearchHomeInitDataUseCase
+    private val getSearchHomeInitDataUseCase: GetSearchHomeInitDataUseCase,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(RequestFormUiState())
+    val uiState: StateFlow<RequestFormUiState> = _uiState
 
     init {
         loadCategoryList()
+
+        // SavedStateHandle에서 지역 데이터 수신
+        savedStateHandle.get<List<String>>("selectedRegions")?.let { regions ->
+            selectedRegions = regions
+            Log.d("RequestFormViewModel", "선택된 지역 수신됨: $regions")
+
+            // 필요 시: 해당 지역들 중 첫 번째 기준으로 마트 불러오기
+            if (regions.isNotEmpty()) {
+                fetchMartsBySigungu(regions.first())
+                _uiState.update { it.copy(selectedRegions = selectedRegions) }
+            }
+        }
     }
 
     // 서울시 지역구 목록
@@ -44,8 +64,9 @@ class RequestFormViewModel @Inject constructor(
         "종로구", "중구", "중랑구"
     )
 
-    private val _uiState = MutableStateFlow(RequestFormUiState())
-    val uiState: StateFlow<RequestFormUiState> = _uiState
+    // 선택된 지역 리스트
+    var selectedRegions by mutableStateOf<List<String>>(emptyList())
+        private set
 
     // 의뢰 등록 상태
     private val _requestState = MutableStateFlow<RequestState>(RequestState.Initial)
