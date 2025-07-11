@@ -44,7 +44,7 @@ fun WorkHistoryResponse.toEntity() = WorkHistoryEntity(
     commissionDate = commissionDate,
     commissionStatus = stringToWorkStatus(commissionStatus),
     memberId = memberId,
-    category = ""
+    category = commissionCategory
 )
 
 fun WorkHourResponse.toEntity() = WorkHourEntity(

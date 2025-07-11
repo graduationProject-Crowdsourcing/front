@@ -75,7 +75,7 @@ class RequesterRepositoryImpl @Inject constructor(
                     commissionDate = dto.commissionDate,
                     commissionStatus = dto.commissionStatus,
                     memberId = dto.memberId,
-                    category = dto.category
+                    commissionCategory = dto.commissionCategory,
                 )
             }
         } catch (e: Exception) {
@@ -141,7 +141,7 @@ class RequesterRepositoryImpl @Inject constructor(
                     commissionDate = dto.commissionDate,
                     commissionStatus = dto.commissionStatus,
                     memberId = dto.memberId,
-                    category = dto.category
+                    commissionCategory = dto.commissionCategory
                 )
             }
         } catch (e: Exception) {

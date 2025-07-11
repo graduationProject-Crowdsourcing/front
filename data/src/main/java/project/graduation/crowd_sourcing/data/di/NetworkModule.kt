@@ -105,7 +105,7 @@ class NetworkModule {
         gson: Gson
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://52.78.15.153:8112/")
+            .baseUrl("https://crowdsourcing.pe.kr/") // http://52.78.15.153:8112/
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

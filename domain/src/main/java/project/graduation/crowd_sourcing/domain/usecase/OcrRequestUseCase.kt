@@ -1,6 +1,7 @@
 package project.graduation.crowd_sourcing.domain.usecase
 
 import android.net.Uri
+import kotlinx.coroutines.delay
 import project.graduation.crowd_sourcing.domain.local.TokenManager
 import project.graduation.crowd_sourcing.domain.repository.WorkRepository
 import retrofit2.HttpException
@@ -19,7 +20,9 @@ class OcrRequestUseCase @Inject constructor(
                 val fileName = "${username}_${System.currentTimeMillis()}.jpg"
                 val uploadResult = repository.uploadImage(username, fileName, uri)
                 
-                if(uploadResult.isSuccess) repository.requestOcr(fileName, commissionId) else Result.failure(
+                if(uploadResult.isSuccess) {
+                    repository.requestOcr(fileName, commissionId)
+                }else Result.failure(
                     IllegalStateException("업로드 실패")
                 )
                 

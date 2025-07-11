@@ -14,6 +14,6 @@ data class RequestStatusEntity(
     val commissionRegion: String,
     val commissionDate: LocalDateTime,
     val commissionStatus: String,
-    val memberId: Int,
-    val category: String?
+    val commissionCategory: String,
+    val memberId: Int
 ) 

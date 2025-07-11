@@ -36,7 +36,7 @@ fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
             CommonListItem(
                 CommonListItemData(
                     mainText = name,
-                    subText = "",
+                    subText = "${getTimeAgo(date)} / ${category} / ${region}",
                     icon = R.drawable.ic_list_box,
                     onClick = {}
                 )
