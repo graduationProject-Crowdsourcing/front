@@ -2,16 +2,15 @@ package project.graduation.crowd_sourcing.data.repository
 
 import android.content.Context
 import android.net.Uri
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.qualifiers.ApplicationContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import project.graduation.crowd_sourcing.data.service.WorkService
 import project.graduation.crowd_sourcing.domain.repository.WorkRepository
 import retrofit2.HttpException
-import java.io.File
-import java.io.IOException
 import javax.inject.Inject
+import java.lang.reflect.Type
+
 
 class WorkRepositoryImpl @Inject constructor(
     private val service: WorkService,
@@ -22,15 +21,18 @@ class WorkRepositoryImpl @Inject constructor(
         username: String,
         fileName: String,
         uri: Uri
-    ): Result<Unit> {
+    ): Result<String> {
         return try {
             val directoryPath = "images/$fileName"
-            service.uploadImage(
+            val response = service.uploadImage(
                 username,
                 directoryPath,
                 compressAndResizeImage(context, uri, fileName)
             )
-            Result.success(Unit)
+
+            val responseString = response?.body()?.string() ?: ""
+
+            Result.success(responseString)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -39,11 +41,17 @@ class WorkRepositoryImpl @Inject constructor(
     override suspend fun requestOcr(
         fileName: String,
         commissionId: String
-    ): Result<String> {
+    ): Result<List<String>> {
         return try {
             val response = service.requestOcr(fileName, commissionId)
+
             if (response.isSuccessful) {
-                Result.success(response.body() ?: "")
+                val rawString = response.body()?.string() ?: "[]"
+
+                val listType = object : TypeToken<List<String>>() {}.type
+                val parsedList: List<String> = Gson().fromJson(rawString, listType)
+
+                Result.success(parsedList)
             } else {
                 Result.failure(HttpException(response))
             }
@@ -51,4 +59,5 @@ class WorkRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
 }

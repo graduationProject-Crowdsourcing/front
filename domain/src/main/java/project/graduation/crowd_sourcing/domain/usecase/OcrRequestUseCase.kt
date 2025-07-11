@@ -14,16 +14,17 @@ class OcrRequestUseCase @Inject constructor(
     suspend operator fun invoke(
         uri: Uri,
         commissionId: String
-    ): Result<String> {
+    ): Result<List<String>> {
         return try {
             tokenManager.getUserName()?.let{ username->
                 val fileName = "${username}_${System.currentTimeMillis()}.jpg"
                 val uploadResult = repository.uploadImage(username, fileName, uri)
-                
-                if(uploadResult.isSuccess) {
-                    repository.requestOcr(fileName, commissionId)
+
+                val savedKey = uploadResult.getOrNull()?.replaceFirst("images/", "")
+                if(uploadResult.isSuccess && savedKey != null) {
+                    repository.requestOcr(savedKey, commissionId)
                 }else Result.failure(
-                    IllegalStateException("업로드 실패")
+                    IllegalStateException("업로드 실패: ${uploadResult.exceptionOrNull()?.message}")
                 )
                 
             } ?: Result.failure(IllegalStateException("유저 정보가 없음."))

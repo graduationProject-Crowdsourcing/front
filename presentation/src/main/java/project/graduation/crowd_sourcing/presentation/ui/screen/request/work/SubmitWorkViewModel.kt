@@ -65,9 +65,9 @@ class SubmitWorkViewModel @Inject constructor(
 
         viewModelScope.launch {
             ocrRequestUseCase(uri, commissionId)
-                .onSuccess { text ->
+                .onSuccess { list ->
                     _uiState.value = uiState.value.copy(imageUri = uri)
-                    Log.d("ocr", "✅ OCR 결과: $text")
+                    Log.d("ocr", "✅ OCR 결과: $list")
                 }.onFailure {
                     it.printStackTrace()
                 }
