@@ -26,6 +26,7 @@ data class RequestStatusDto(
     val commissionRegion: String,
     val commissionDate: LocalDateTime,
     val commissionStatus: String,
+    val commissionCategory: String,
     val memberId: Int
 )
 

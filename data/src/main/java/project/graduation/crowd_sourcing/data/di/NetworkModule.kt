@@ -70,16 +70,11 @@ class NetworkModule {
                         context: JsonDeserializationContext
                     ): LocalDateTime {
                         val raw = json.asString
-                        Log.d("DateConverter", "원본 날짜 문자열: $raw")
-
                         // 소수점 이하(.SSS...)를 잘라냄 → 초까지만 남김
                         val trimmed = raw.substringBefore(".")
-                        Log.d("DateConverter", "소수점 제거된 문자열: $trimmed")
-
                         return try {
                             LocalDateTime.parse(trimmed, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
                         } catch (e: Exception) {
-                            Log.e("DateConverter", "날짜 파싱 실패: ${e.message}")
                             e.printStackTrace()
                             LocalDateTime.now()
                         }
@@ -110,7 +105,7 @@ class NetworkModule {
         gson: Gson
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://52.78.15.153:8112/")
+            .baseUrl("https://crowdsourcing.pe.kr/") // http://52.78.15.153:8112/
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

@@ -15,5 +15,5 @@ data class WorkHistoryEntity(
     val commissionStatus: WorkStatus,
     val memberId: Int,
     val martName: String = "",
-    val category: String = ""
+    val category: String
 )

@@ -54,14 +54,16 @@ class MyViewModel @Inject constructor(
                     name = work.item,
                     id = work.id,
                     region = work.region,
-                    category = work.category
+                    category = work.category,
+                    date = work.workDate
                 )
 
                 val recentCommission = MyUiState.RecentListItem(
                     name = comission.commission,
                     id = comission.id,
-                    region = "",
-                    category = ""
+                    region = comission.region,
+                    category = comission.category,
+                    date = comission.createdAt
                 )
 
                 _uiState.update { prev ->

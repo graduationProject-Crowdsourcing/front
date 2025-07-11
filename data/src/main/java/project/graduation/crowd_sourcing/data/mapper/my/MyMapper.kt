@@ -14,7 +14,10 @@ import java.time.LocalDateTime
 @RequiresApi(Build.VERSION_CODES.O)
 fun RecentCommissionResponse.toEntity(): RecentCommissionEntity = RecentCommissionEntity(
     id = this.workId,
-    commission = this.workName
+    commission = this.workName,
+    region = this.region,
+    category = this.category,
+    createdAt = this.createdAt
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -25,7 +28,7 @@ fun RecentWorkResponse.toEntity(): RecentWorkEntity = RecentWorkEntity(
     category = this.category,
     item = this.item,
     itemPrice = this.itemPrice,
-    workDate = LocalDateTime.now()
+    workDate = this.workDate
 )
 
 fun ProfileResponse.toEntity() = ProfileEntity(

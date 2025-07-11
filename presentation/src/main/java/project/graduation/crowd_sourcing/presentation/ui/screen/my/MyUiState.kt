@@ -19,6 +19,7 @@ data class MyUiState(
         val name: String,
         val region: String,
         val category: String,
+        val date: LocalDateTime
     )
 
     companion object {

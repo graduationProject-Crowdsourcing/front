@@ -11,5 +11,6 @@ data class WorkHistoryResponse (
     @SerializedName("commissionRegion") val commissionRegion: String,
     @SerializedName("commissionDate") val commissionDate: LocalDateTime,
     @SerializedName("commissionStatus") val commissionStatus: String,
-    @SerializedName("memberId") val memberId: Int
+    @SerializedName("memberId") val memberId: Int,
+    val commissionCategory: String
 )

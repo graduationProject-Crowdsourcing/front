@@ -58,7 +58,7 @@ fun WorkListView(
                     leftText = "리워드 : ${it.reward}p",
                     icon = null,
                     onClick = {
-                        navController.navigate(Screen.SubmitWorkScreen.createRoute(it.id, martName = it.martName, category = it.category.koreanName))
+                        navController.navigate(Screen.SubmitWorkScreen.createRoute(it.id, martName = it.martName, category = it.category))
                     }
                 )
             }

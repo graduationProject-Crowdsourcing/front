@@ -18,6 +18,7 @@ import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonLi
 import project.graduation.crowd_sourcing.presentation.ui.component.list.CommonListItemData
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.my.MyUiState
+import project.graduation.crowd_sourcing.presentation.utils.getTimeAgo
 
 @Composable
 fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
@@ -35,7 +36,7 @@ fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
             CommonListItem(
                 CommonListItemData(
                     mainText = name,
-                    subText = "",
+                    subText = "${getTimeAgo(date)} / ${category} / ${region}",
                     icon = R.drawable.ic_list_box,
                     onClick = {}
                 )
@@ -53,7 +54,7 @@ fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
             CommonListItem(
                 CommonListItemData(
                     mainText = name,
-                    subText = "",
+                    subText = "${getTimeAgo(date)} / ${category} / ${region}",
                     icon = R.drawable.ic_list_box,
                     onClick = {
                         navController.navigate(
