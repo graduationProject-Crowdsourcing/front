@@ -106,17 +106,9 @@ fun Navigation(
             RequestFormView(navController)
         }
 
-        // 의뢰 작성 - 지역 선택 화면
+        // 의뢰 작성 - 지역, 마트 선택 화면
         composable(route = Screen.SelectRegionScreen.route) {
-            SelectRegionView(
-                navController = navController,
-                onConfirmSelection = { selectedRegions ->
-                    navController.previousBackStackEntry
-                        ?.savedStateHandle
-                        ?.set("selectedRegions", selectedRegions)
-                    navController.popBackStack()
-                }
-            )
+            SelectRegionView(navController = navController)
         }
 
         // 의뢰 완료 화면

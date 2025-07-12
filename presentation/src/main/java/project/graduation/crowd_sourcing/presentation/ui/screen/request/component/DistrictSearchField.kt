@@ -65,11 +65,13 @@ fun DistrictSearchField(
                     Text(
                         text = label,
                         color = if (selectedRegions.isNotEmpty()) Color.Black else Color.Gray,
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
-
             }
         }
     }
 }
+
