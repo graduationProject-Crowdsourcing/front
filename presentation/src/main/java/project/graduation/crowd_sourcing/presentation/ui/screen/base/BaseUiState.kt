@@ -6,7 +6,8 @@ import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 data class BaseUiState(
     val currentScreen: Screen,
     val currentLocation: LatLng,
-    val serverLocation: LatLng
+    val serverLocation: LatLng,
+    val isKaKaoLogined: Boolean = false
 ){
     companion object{
         fun init() = BaseUiState(

@@ -98,5 +98,16 @@ class BaseViewModel @Inject constructor (
 
     fun kakaoLogined(token:String) = viewModelScope.launch{
         memberUseCase.getIsLogined()
+
+        _uiState.update { prev->
+            prev.copy(isKaKaoLogined = true)
+        }
+    }
+
+    fun navWithKaKaoLogined(navController: NavController){
+        navController.navigate(Screen.BottomScreen.HomeScreen)
+        _uiState.update { prev->
+            prev.copy(isKaKaoLogined = false)
+        }
     }
 }
