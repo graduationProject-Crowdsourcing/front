@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -18,13 +19,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.domain.usecase.MemberUseCase
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import javax.inject.Inject
 
 @HiltViewModel
 class BaseViewModel @Inject constructor (
-    private val memberUseCase: MemberUseCase
+    private val memberUseCase: MemberUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(BaseUiState.init())
     val uiState = _uiState.asStateFlow()
@@ -92,5 +94,9 @@ class BaseViewModel @Inject constructor (
           prev.copy(serverLocation = LatLng(location.latitude, location.longitude))
       }
         Log.d("location", "Moved over 250m: ${location.latitude}, ${location.longitude}")
+    }
+
+    fun kakaoLogined(token:String) = viewModelScope.launch{
+        memberUseCase.getIsLogined()
     }
 }
