@@ -29,14 +29,3 @@ fun ConfirmButton(
         Text(text, color = Color.White)
     }
 }
-
-/* 
-@Preview
-@Composable
-fun ConfirmButtonPrev() {
-    ConfirmButton(
-        text = "apply"
-    ) { }
-}
-
- */
