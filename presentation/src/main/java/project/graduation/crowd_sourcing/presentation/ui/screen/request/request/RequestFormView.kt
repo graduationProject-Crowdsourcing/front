@@ -1,34 +1,50 @@
 package project.graduation.crowd_sourcing.presentation.ui.screen.request.request
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.hilt.navigation.compose.hiltViewModel
-import project.graduation.crowd_sourcing.presentation.R
-import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
-import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
-import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
+import project.graduation.crowd_sourcing.presentation.R
+import project.graduation.crowd_sourcing.presentation.ui.component.ConfirmButton
+import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
+import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.DateTimePickerDialog
+import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.DateTimeSelectorField
+import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.DistrictSearchField
+import project.graduation.crowd_sourcing.presentation.ui.screen.request.component.InputTextField
 
 // ──────────────────────────── 진입 함수 ────────────────────────────
 @Composable
@@ -38,8 +54,18 @@ fun RequestFormView(
 ) {
     val state by viewModel.uiState.collectAsState()
     val requestState by viewModel.requestState.collectAsState()
-    val districtSuggestions by viewModel.districtSuggestions.collectAsState()
     val categoryList by viewModel.categoryList.collectAsState()
+
+    val selectedRegion = navController.currentBackStackEntry
+        ?.savedStateHandle?.get<String>("selectedRegion")
+    val selectedMarts = navController.currentBackStackEntry?.savedStateHandle?.get<List<MartEntity>>("selectedMarts")
+    val prefillMartNames = navController.currentBackStackEntry?.savedStateHandle?.get<List<String>>("selectedMarts_prefill")
+
+    LaunchedEffect(Unit) {
+        selectedRegion?.let { viewModel.updateSelectedRegion(it) }
+        selectedMarts?.let { viewModel.setMartList(it) } // Entity용
+        prefillMartNames?.let { viewModel.updateSelectedMarts(it) } // 이름만
+    }
 
 
     // 요청 상태 처리
@@ -60,12 +86,12 @@ fun RequestFormView(
 
     // 주요 입력 컴포넌트 호출
     RequestFormContent(
+        navController = navController,
+        selectedRegion = viewModel.selectedRegion,
+        selectedMarts = viewModel.selectedMarts,
         state = state,
         requestState = requestState,
-        districtSuggestions = districtSuggestions,
         categoryList = categoryList,
-        onSigunguChange = viewModel::onSigunguChange,
-        onDistrictSelected = viewModel::onDistrictSelected,
         onMaxPeopleChange = viewModel::onMaxPeopleChange,
         onPointPerPersonChange = viewModel::onPointPerPersonChange,
         onItemChange = viewModel::onItemChange,
@@ -79,12 +105,12 @@ fun RequestFormView(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RequestFormContent(
+    navController: NavController,
+    selectedRegion: String,
+    selectedMarts: List<String>,
     state: RequestFormUiState,
     requestState: RequestState,
-    districtSuggestions: List<String>,
     categoryList: List<String>,
-    onSigunguChange: (String) -> Unit,
-    onDistrictSelected: (String) -> Unit,
     onMaxPeopleChange: (String) -> Unit,
     onPointPerPersonChange: (String) -> Unit,
     onItemChange: (String) -> Unit,
@@ -92,7 +118,7 @@ fun RequestFormContent(
     onSubmit: () -> Unit,
     onCategorySelected: (String) -> Unit
 ) {
-    val context = LocalContext.current
+    LocalContext.current
 
     // 선택된 카테고리 관리
     var expanded by remember { mutableStateOf(false) }
@@ -100,7 +126,7 @@ fun RequestFormContent(
 
     // 날짜 선택 다이얼로그 표시 상태 (rememberSaveable로 변경)
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
-    
+
     // 달력 아이콘 리소스 안전하게 가져오기
     val calendarIconResId = try {
         R.drawable.ic_calendar
@@ -136,53 +162,32 @@ fun RequestFormContent(
 
         // 지역 검색 및 선택
         DistrictSearchField(
-            query = state.sigungu,
-            suggestions = districtSuggestions,
-            onQueryChange = onSigunguChange,
-            onSuggestionClick = onDistrictSelected,
-            iconResId = R.drawable.ic_mart
+            selectedRegion = state.sigungu,
+            iconResId = R.drawable.ic_mart,
+            onClick = {
+                navController.currentBackStackEntry?.savedStateHandle?.set(
+                    "selectedRegion", selectedRegion)
+
+                navController.currentBackStackEntry?.savedStateHandle?.set(
+                    "selectedMarts_prefill", selectedMarts)
+
+                navController.navigate(Screen.SelectRegionScreen.route)
+            }
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp)) // 여백
 
-        val viewModel: RequestFormViewModel = hiltViewModel()
-        val martList by viewModel.martList.collectAsState()
-
-        // 마트 리스트가 있을 때만 표시
-        if (martList.isNotEmpty()) {
+        // 선택한 마트 리스트 표시
+        if (selectedMarts.isNotEmpty()) {
             Text(
-                text = "선택하신 지역의 마트 목록입니다:",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(vertical = 8.dp)
+                text = "선택한 마트는 다음과 같습니다:\n${selectedMarts.joinToString(", ")}",
+                fontSize = 14.sp,
+                color = Color.DarkGray,
+                modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
             )
-
-            // 스크롤 가능한 고정 높이 박스
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp) // 높이 조정 가능
-                    .padding(bottom = 8.dp)
-            ) {
-                // 이 영역 내부만 스크롤
-                LazyColumn {
-                    items(martList) { mart ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(12.dp)) {
-                                Text(text = mart.martName, style = MaterialTheme.typography.bodyLarge)
-                                mart.sigungu?.let {
-                                    Text(text = it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         // 인원 수 입력
         InputTextField(
@@ -279,7 +284,6 @@ fun RequestFormContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    Log.d("RequestFormView", "기간 설정 Box 클릭됨")
                     showDatePicker = true
                 }
         ) {
@@ -288,28 +292,21 @@ fun RequestFormContent(
                 dateTimeText = state.expirationDate,
                 iconResId = calendarIconResId,
                 onClick = {
-                    Log.d("RequestFormView", "기간 설정 필드 클릭됨, 현재 상태: showDatePicker=$showDatePicker")
                     showDatePicker = true
-                    Log.d("RequestFormView", "showDatePicker 상태 변경됨: $showDatePicker")
                 }
             )
         }
-        
+
         // 날짜 선택 다이얼로그 표시
         Log.d("RequestFormView", "showDatePicker 검사: $showDatePicker")
         if (showDatePicker) {
-            Log.d("RequestFormView", "DateTimePickerDialog 표시 조건 충족됨")
             DateTimePickerDialog(
                 onDateTimeSelected = { dateTime ->
-                    Log.d("RequestFormView", "날짜/시간 선택됨: $dateTime")
                     onExpirationDateChange(dateTime)
                     showDatePicker = false
-                    Log.d("RequestFormView", "showDatePicker 상태 false로 변경됨")
                 },
-                onDismiss = { 
-                    Log.d("RequestFormView", "날짜/시간 선택 취소됨")
+                onDismiss = {
                     showDatePicker = false
-                    Log.d("RequestFormView", "showDatePicker 상태 false로 변경됨")
                 }
             )
         }
@@ -320,6 +317,7 @@ fun RequestFormContent(
         ConfirmButton(
             text = "의뢰 신청하기",
             onConfirm = onSubmit,
+
             enabled = requestState !is RequestState.Loading,
             modifier = Modifier
                 .fillMaxWidth()
