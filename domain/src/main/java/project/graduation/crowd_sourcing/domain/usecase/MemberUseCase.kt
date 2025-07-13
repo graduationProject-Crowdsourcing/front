@@ -36,6 +36,9 @@ class MemberUseCase @Inject constructor(
         } ?: Result.failure(IllegalStateException("로그인된 사용자 정보가 없습니다."))
     }
 
+    suspend fun tokenSave(token:String){
+        tokenManager.save(accessToken = token, refreshToken = "", userId = 0,)
+    }
     // 회원가입
     suspend fun signUp(username: String, password: String, nickname: String): Result<String> {
         return repository.signUp(username, password, nickname)

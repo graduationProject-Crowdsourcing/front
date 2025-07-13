@@ -7,10 +7,10 @@ interface WorkRepository {
         username: String,
         directoryPath: String,
         uri: Uri
-    ): Result<Unit>
+    ): Result<String>
 
     suspend fun requestOcr(
         fileName: String,
         commissionId: String
-    ): Result<String>
+    ): Result<List<String>>
 }

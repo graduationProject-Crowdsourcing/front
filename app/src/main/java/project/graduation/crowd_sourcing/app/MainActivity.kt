@@ -1,25 +1,29 @@
 package project.graduation.crowd_sourcing.app
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
-import project.graduation.crowd_sourcing.presentation.ui.screen.base.BaseView
-import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingTheme
 import androidx.hilt.navigation.compose.hiltViewModel
-import project.graduation.crowd_sourcing.domain.local.TokenManager
+import dagger.hilt.android.AndroidEntryPoint
+import project.graduation.crowd_sourcing.presentation.ui.screen.base.BaseView
+import project.graduation.crowd_sourcing.presentation.ui.screen.base.BaseViewModel
+import project.graduation.crowd_sourcing.presentation.ui.theme.CrowdSourcingTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    val viewModel: BaseViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -29,9 +33,25 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    BaseView()
+                    BaseView(viewModel)
                     TestServer()
                 }
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleLoginRedirect(intent)
+    }
+
+    private fun handleLoginRedirect(intent: Intent?) {
+        val uri = intent?.data ?: return
+        Log.d("uri", uri.toString())
+        if (uri.scheme == "crowdsourcing" && uri.host == "login" && uri.path == "/kakao") {
+            val token = uri.getQueryParameter("token")
+            token?.let {
+                viewModel.kakaoLogined(token)
             }
         }
     }

@@ -28,9 +28,10 @@ import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 
 
 @Composable
-fun BaseView() {
+fun BaseView(
+    viewModel: BaseViewModel
+) {
     val navController = rememberNavController()
-    val viewModel: BaseViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
 
     val context = LocalContext.current
@@ -59,8 +60,6 @@ fun BaseView() {
             }
         }
     }
-
-
 
 
     Scaffold(
