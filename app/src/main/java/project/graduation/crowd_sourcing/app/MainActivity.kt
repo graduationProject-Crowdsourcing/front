@@ -50,8 +50,11 @@ class MainActivity : ComponentActivity() {
         Log.d("uri", uri.toString())
         if (uri.scheme == "crowdsourcing" && uri.host == "login" && uri.path == "/kakao") {
             val token = uri.getQueryParameter("token")
+            val userId = uri.getQueryParameter("userId")?.toInt() ?: 0
+            val username = uri.getQueryParameter("username") ?: ""
+
             token?.let {
-                viewModel.kakaoLogined(token)
+                viewModel.kakaoLogined(token = token, userId = userId, username = username)
             }
         }
     }
