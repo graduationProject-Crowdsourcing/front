@@ -1,6 +1,7 @@
 package project.graduation.crowd_sourcing.data.repository
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import project.graduation.crowd_sourcing.data.mapper.formatToString
 import project.graduation.crowd_sourcing.data.mapper.worker.toEntity
@@ -51,8 +52,16 @@ class WorkerRepositoryImpl @Inject constructor(
                 expirationDate = expirationDate
             )
             val response = workerService.postWorker(request)
+            Log.d("SubmitRequest", "📡 응답 코드: ${response.code()}")
+            Log.d("SubmitRequest", "📡 응답 바디: ${response.body()}")
+            Log.d("SubmitRequest", "📡 에러 바디: ${response.errorBody()?.string()}")
+
             val body = response.body() ?: throw Exception("응답 바디가 비어 있습니다.")
-            Result.success(body)
+            if (body.isNotEmpty()) {
+                Result.success(body[0])
+            } else {
+                throw Exception("응답 배열이 비어 있습니다.")
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
