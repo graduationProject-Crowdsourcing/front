@@ -73,9 +73,18 @@ fun SelectRegionView(
                     text = "선택 완료",
                     enabled = selectedRegions.isNotEmpty() && selectedMarts.isNotEmpty(),
                     onConfirm = {
-                        navController.previousBackStackEntry?.savedStateHandle?.set("selectedRegions", selectedRegions)
-                        navController.previousBackStackEntry?.savedStateHandle?.set("selectedMartNames_prefill", selectedMarts)  // 🔥 수정 포인트
+                        val selectedRegion = selectedRegions.firstOrNull()
+                        if (selectedRegion != null) {
+                            navController.previousBackStackEntry
+                                ?.savedStateHandle
+                                ?.set("selectedRegion", selectedRegion) // ✅ 단일 값으로 저장!
+                            navController.previousBackStackEntry
+                                ?.savedStateHandle
+                                ?.set("selectedMarts_prefill", selectedMarts) // ✅ 수정된 키로 저장!
+                        }
+
                         navController.popBackStack()
+
                     },
                     modifier = Modifier.fillMaxWidth()
                 )

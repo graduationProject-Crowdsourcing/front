@@ -25,6 +25,8 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import javax.inject.Inject
+import retrofit2.HttpException
+
 
 @HiltViewModel
 class RequestFormViewModel @Inject constructor(
@@ -41,30 +43,19 @@ class RequestFormViewModel @Inject constructor(
     init {
         loadCategoryList()
 
-        // SavedStateHandle에서 지역 데이터 수신
-        savedStateHandle.get<List<String>>("selectedRegions")?.let { regions ->
-            selectedRegions = regions
-            Log.d("RequestFormViewModel", "선택된 지역 수신됨: $regions")
-
-            // UIState에도 반영
-            _uiState.update { it.copy(sigungu = regions.joinToString(", ")) }
-
-            // 첫 번째 지역 기준 마트 불러오기
-            if (regions.isNotEmpty()) {
-                fetchMartsBySigungu(regions.first())
-            }
-        }
-
-
         savedStateHandle.get<List<MartEntity>>("selectedMarts")?.let { marts ->
             selectedMarts = marts.map { it.martName }
             setMartList(marts)
         }
+
+        savedStateHandle.get<List<String>>("selectedMarts_prefill")?.let { martNames ->
+            updateSelectedMarts(martNames)
+        }
     }
 
     // 선택된 지역 리스트
-    var selectedRegions by mutableStateOf<List<String>>(emptyList())
-        private set
+    var selectedRegion by mutableStateOf("")
+
 
     // 선택된 마트 리스트
     var selectedMarts by mutableStateOf<List<String>>(emptyList())
@@ -81,11 +72,19 @@ class RequestFormViewModel @Inject constructor(
     private val _categoryList = MutableStateFlow<List<String>>(emptyList())
     val categoryList: StateFlow<List<String>> = _categoryList.asStateFlow()
 
-    fun updateSelectedRegions(regions: List<String>) {
-        selectedRegions = regions
+    fun updateSelectedRegion(region: String) {
+        selectedRegion = region
+        _uiState.update { it.copy(sigungu = region) }
 
-        if (regions.isNotEmpty()) {
-            _uiState.update { it.copy(sigungu = regions.first()) }
+        // 선택된 지역 기준으로 마트 리스트 불러오기
+        viewModelScope.launch {
+            try {
+                val marts = martSearchUseCase.getMartList(region).getOrThrow()
+                _martList.value = marts
+            } catch (e: Exception) {
+                Log.e("RequestFormViewModel", "마트 리스트 불러오기 실패: $region", e)
+                _martList.value = emptyList()
+            }
         }
     }
 
@@ -115,18 +114,6 @@ class RequestFormViewModel @Inject constructor(
 
     fun onExpirationDateChange(value: String) {
         _uiState.update { it.copy(expirationDate = value) }
-    }
-
-    fun fetchMartsBySigungu(sigungu: String) {
-        viewModelScope.launch {
-            martSearchUseCase.getMartList(sigungu)
-                .onSuccess { list ->
-                    _martList.value = list
-                }
-                .onFailure { e ->
-                    Log.e("RequestFormViewModel", "마트 리스트 가져오기 실패", e)
-                }
-        }
     }
 
 
@@ -196,6 +183,7 @@ class RequestFormViewModel @Inject constructor(
                 var lastResult: Result<Int>? = null
 
                 for (martName in selectedMartNames) {
+
                     val result = requesterUseCase.postWork(
                         work = "${state.sigungu} - ${state.item}",
                         workCount = maxPeople,
@@ -211,6 +199,12 @@ class RequestFormViewModel @Inject constructor(
                     )
                     lastResult = result
                     Log.d("SubmitRequest", "API 응답 결과: $result")
+
+                    val exception = result.exceptionOrNull()
+                    if (exception is retrofit2.HttpException) {
+                        Log.d("SubmitRequest", "HTTP 응답 코드: ${exception.code()}")
+                        Log.d("SubmitRequest", "응답 메시지: ${exception.response()?.errorBody()?.string()}")
+                    }
                 }
 
                 _requestState.value = RequestState.Success(lastResult ?: Result.failure(Exception("등록 실패")))
@@ -240,7 +234,7 @@ class RequestFormViewModel @Inject constructor(
                 state.expirationDate.isNotBlank() &&
                 state.selectedCategory.isNotBlank()
     }
-    
+
     // 요청 상태 초기화
     fun resetRequestState() {
         _requestState.value = RequestState.Initial

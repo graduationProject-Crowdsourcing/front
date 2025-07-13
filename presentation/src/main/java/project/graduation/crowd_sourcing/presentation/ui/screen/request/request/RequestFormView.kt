@@ -56,12 +56,13 @@ fun RequestFormView(
     val requestState by viewModel.requestState.collectAsState()
     val categoryList by viewModel.categoryList.collectAsState()
 
-    val selectedRegions = navController.currentBackStackEntry?.savedStateHandle?.get<List<String>>("selectedRegions")
+    val selectedRegion = navController.currentBackStackEntry
+        ?.savedStateHandle?.get<String>("selectedRegion")
     val selectedMarts = navController.currentBackStackEntry?.savedStateHandle?.get<List<MartEntity>>("selectedMarts")
-    val prefillMartNames = navController.currentBackStackEntry?.savedStateHandle?.get<List<String>>("selectedMartNames_prefill")
+    val prefillMartNames = navController.currentBackStackEntry?.savedStateHandle?.get<List<String>>("selectedMarts_prefill")
 
     LaunchedEffect(Unit) {
-        selectedRegions?.let { viewModel.updateSelectedRegions(it) }
+        selectedRegion?.let { viewModel.updateSelectedRegion(it) }
         selectedMarts?.let { viewModel.setMartList(it) } // Entity용
         prefillMartNames?.let { viewModel.updateSelectedMarts(it) } // 이름만
     }
@@ -86,7 +87,7 @@ fun RequestFormView(
     // 주요 입력 컴포넌트 호출
     RequestFormContent(
         navController = navController,
-        selectedRegions = viewModel.selectedRegions,
+        selectedRegion = viewModel.selectedRegion,
         selectedMarts = viewModel.selectedMarts,
         state = state,
         requestState = requestState,
@@ -105,7 +106,7 @@ fun RequestFormView(
 @Composable
 fun RequestFormContent(
     navController: NavController,
-    selectedRegions: List<String>,
+    selectedRegion: String,
     selectedMarts: List<String>,
     state: RequestFormUiState,
     requestState: RequestState,
@@ -125,7 +126,7 @@ fun RequestFormContent(
 
     // 날짜 선택 다이얼로그 표시 상태 (rememberSaveable로 변경)
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
-    
+
     // 달력 아이콘 리소스 안전하게 가져오기
     val calendarIconResId = try {
         R.drawable.ic_calendar
@@ -161,18 +162,17 @@ fun RequestFormContent(
 
         // 지역 검색 및 선택
         DistrictSearchField(
-            selectedRegions = selectedRegions,
+            selectedRegion = state.sigungu,
             iconResId = R.drawable.ic_mart,
             onClick = {
                 navController.currentBackStackEntry?.savedStateHandle?.set(
-                    "selectedRegions_prefill", selectedRegions)
+                    "selectedRegion", selectedRegion)
 
                 navController.currentBackStackEntry?.savedStateHandle?.set(
                     "selectedMarts_prefill", selectedMarts)
 
                 navController.navigate(Screen.SelectRegionScreen.route)
             }
-
         )
 
         Spacer(modifier = Modifier.height(8.dp)) // 여백
@@ -284,7 +284,6 @@ fun RequestFormContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    Log.d("RequestFormView", "기간 설정 Box 클릭됨")
                     showDatePicker = true
                 }
         ) {
@@ -293,28 +292,21 @@ fun RequestFormContent(
                 dateTimeText = state.expirationDate,
                 iconResId = calendarIconResId,
                 onClick = {
-                    Log.d("RequestFormView", "기간 설정 필드 클릭됨, 현재 상태: showDatePicker=$showDatePicker")
                     showDatePicker = true
-                    Log.d("RequestFormView", "showDatePicker 상태 변경됨: $showDatePicker")
                 }
             )
         }
-        
+
         // 날짜 선택 다이얼로그 표시
         Log.d("RequestFormView", "showDatePicker 검사: $showDatePicker")
         if (showDatePicker) {
-            Log.d("RequestFormView", "DateTimePickerDialog 표시 조건 충족됨")
             DateTimePickerDialog(
                 onDateTimeSelected = { dateTime ->
-                    Log.d("RequestFormView", "날짜/시간 선택됨: $dateTime")
                     onExpirationDateChange(dateTime)
                     showDatePicker = false
-                    Log.d("RequestFormView", "showDatePicker 상태 false로 변경됨")
                 },
-                onDismiss = { 
-                    Log.d("RequestFormView", "날짜/시간 선택 취소됨")
+                onDismiss = {
                     showDatePicker = false
-                    Log.d("RequestFormView", "showDatePicker 상태 false로 변경됨")
                 }
             )
         }

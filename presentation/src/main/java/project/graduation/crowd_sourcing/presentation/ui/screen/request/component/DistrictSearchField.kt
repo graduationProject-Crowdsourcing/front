@@ -20,7 +20,8 @@ import project.graduation.crowd_sourcing.presentation.ui.component.EditTextBox
 
 @Composable
 fun DistrictSearchField(
-    selectedRegions: List<String>,
+    // selectedRegions: List<String>,
+    selectedRegion: String,
     @DrawableRes iconResId: Int,
     onClick: () -> Unit
 ) {
@@ -56,15 +57,15 @@ fun DistrictSearchField(
                         .padding(horizontal = 16.dp, vertical = 10.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
-                    val label = if (selectedRegions.isNotEmpty()) {
-                        selectedRegions.joinToString(", ")
+                    val label = if (selectedRegion.isNotBlank()) {
+                        selectedRegion
                     } else {
                         "지역구를 선택해주세요"
                     }
 
                     Text(
                         text = label,
-                        color = if (selectedRegions.isNotEmpty()) Color.Black else Color.Gray,
+                        color = if (selectedRegion.isNotEmpty()) Color.Black else Color.Gray,
                         fontSize = 14.sp,
                         maxLines = 1,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
