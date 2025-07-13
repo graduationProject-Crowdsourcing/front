@@ -27,7 +27,7 @@ class SubmitWorkViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SubmitWorkUiState())
     val uiState: StateFlow<SubmitWorkUiState> = _uiState
 
-    fun loadWorkInfo(workId: Int, martName: String, category :String) {
+    fun loadWorkInfo(workId: Int, martName: String, category: String) {
 
         _uiState.value = _uiState.value.copy(id = workId, category = category, place = martName)
     }
@@ -66,7 +66,16 @@ class SubmitWorkViewModel @Inject constructor(
         viewModelScope.launch {
             ocrRequestUseCase(uri, commissionId)
                 .onSuccess { list ->
-                    _uiState.value = uiState.value.copy(imageUri = uri)
+                    val price = list.firstOrNull { it.all { ch -> ch.isDigit() } } ?: ""
+                    val item = list.firstOrNull { it.any { ch -> ch.isLetter() } } ?: ""
+
+                    _uiState.update { prev ->
+                        prev.copy(
+                            imageUri = uri,
+                            price = price,
+                            item = item
+                        )
+                    }
                     Log.d("ocr", "✅ OCR 결과: $list")
                 }.onFailure {
                     it.printStackTrace()
@@ -94,8 +103,8 @@ class SubmitWorkViewModel @Inject constructor(
                 val radius = 0.1 // 100미터 이내
 
                 val marts = martSearchUseCase.searchMartByLocation(lat, lng, radius)
-                if(marts.map { it.martName }.contains(uiState.value.place)){
-                    _uiState.update{prev->
+                if (marts.map { it.martName }.contains(uiState.value.place)) {
+                    _uiState.update { prev ->
                         prev.copy(locationVerified = true)
                     }
                 }

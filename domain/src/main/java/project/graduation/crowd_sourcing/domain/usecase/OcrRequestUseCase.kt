@@ -22,7 +22,7 @@ class OcrRequestUseCase @Inject constructor(
 
                 val savedKey = uploadResult.getOrNull()?.replaceFirst("images/", "")
                 if(uploadResult.isSuccess && savedKey != null) {
-                    repository.requestOcr(savedKey, commissionId)
+                    repository.requestOcr(savedKey, "1")
                 }else Result.failure(
                     IllegalStateException("업로드 실패: ${uploadResult.exceptionOrNull()?.message}")
                 )
