@@ -256,6 +256,7 @@ fun HomeView(navController: NavController) {
                 if (state.isSearchResultDialogVisible) {
                     MartSearchResultDialog(
                         marts = state.searchedMarts,
+                        martsWithValidCommissions = state.searchedMartsWithValidCommissions,
                         onDismiss = viewModel::hideSearchResultDialog,
                         searchQuery = state.searchQuery,
                         onMartClick = { mart ->

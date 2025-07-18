@@ -6,5 +6,6 @@ data class CommissionEntity(
     val commissionId: Int,
     val commission: String,
     val commissionpoint: Int,
-    val deadline: LocalDateTime
+    val deadline: LocalDateTime,
+    val region: String
 )

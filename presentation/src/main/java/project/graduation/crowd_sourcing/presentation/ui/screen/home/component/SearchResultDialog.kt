@@ -81,6 +81,7 @@ fun SearchResultDialog(
 @Composable
 fun MartSearchResultDialog(
     marts: List<MartEntity>,
+    martsWithValidCommissions: Set<String> = emptySet(),
     onDismiss: () -> Unit,
     searchQuery: String,
     onMartClick: (MartEntity) -> Unit = {}
@@ -128,6 +129,7 @@ fun MartSearchResultDialog(
                         items(marts) { mart ->
                             MartDialogItem(
                                 mart = mart,
+                                hasValidCommissions = martsWithValidCommissions.contains(mart.martName),
                                 onMartClick = onMartClick
                             )
                             if (marts.indexOf(mart) < marts.lastIndex) {
@@ -195,6 +197,7 @@ private fun DialogItem(request: Request) {
 @Composable
 private fun MartDialogItem(
     mart: MartEntity,
+    hasValidCommissions: Boolean = false,
     onMartClick: (MartEntity) -> Unit = {}
 ) {
     Surface(
@@ -250,9 +253,9 @@ private fun MartDialogItem(
         }
         
             Text(
-                text = if (mart.existCommission > 0) "의뢰 ${mart.existCommission}개" else "의뢰 없음",
+                text = if (hasValidCommissions) "유효한 의뢰 있음" else "유효한 의뢰 없음",
                 style = MaterialTheme.typography.bodyMedium,
-                color = if (mart.existCommission > 0) Color(0xFF1785E4) else Color.Gray
+                color = if (hasValidCommissions) Color(0xFF1785E4) else Color.Gray
             )
         }
     }

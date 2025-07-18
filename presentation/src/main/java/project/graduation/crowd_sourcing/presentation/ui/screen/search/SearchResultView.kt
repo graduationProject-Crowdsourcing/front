@@ -85,7 +85,7 @@ fun SearchResultView(
                 println("DEBUG_RESULT: 검색 결과를 리스트로 변환 완료 - 크기: ${searchResults.size}")
                 // 디버그를 위해 첫 번째 아이템 출력
                 val first = searchResults.first()
-                println("DEBUG_RESULT: 첫 번째 결과 - id: ${first.id}, title: ${first.title}, place: '${first.place}', reward: ${first.reward}, remainingDays: ${first.remainingDays}")
+                println("DEBUG_RESULT: 첫 번째 결과 - id: ${first.id}, title: ${first.title}, region: '${first.region}', reward: ${first.reward}, remainingDays: ${first.remainingDays}")
             } else {
                 println("DEBUG_RESULT: searchResults 배열이 null 또는 비어있음")
             }
@@ -349,7 +349,7 @@ fun SearchResultFilterBar(
 }
 
 /**
- * 검색 결과 아이템
+ * 검색 결과 아이템 - 추천의뢰 스타일
  */
 @Composable
 fun SearchResultItem(
@@ -363,39 +363,40 @@ fun SearchResultItem(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // 아이콘
+        // 매장 위치 아이콘
         Icon(
             painter = painterResource(id = result.icon),
             contentDescription = null,
             modifier = Modifier.width(40.dp),
-            tint = Color.Gray
+            tint = Color(0xFF1785E4)
         )
         
-        // 상품 정보
+        Spacer(modifier = Modifier.width(12.dp))
+        
+        // 매장 정보
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 12.dp)
+            modifier = Modifier.weight(1f)
         ) {
+            // 제품명 표시 (제목이 위에)
             Text(
                 text = result.title,
                 fontWeight = FontWeight.Medium,
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                color = Color.Black
             )
             
             Spacer(modifier = Modifier.height(4.dp))
             
-            // place가 빈 문자열이 아닌 경우에만 표시
-            if (result.place.isNotEmpty()) {
-                Text(
-                    text = result.place,
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
-                
-                Spacer(modifier = Modifier.height(4.dp))
-            }
+            // 지역명 표시 (지역이 아래에)
+            Text(
+                text = result.region,
+                color = Color.Gray,
+                fontSize = 14.sp
+            )
             
+            Spacer(modifier = Modifier.height(4.dp))
+            
+            // 리워드 정보
             Text(
                 text = "${result.reward} P",
                 color = Color(0xFF1785E4),
