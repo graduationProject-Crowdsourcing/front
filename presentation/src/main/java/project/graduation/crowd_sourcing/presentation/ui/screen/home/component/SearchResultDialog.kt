@@ -202,60 +202,71 @@ private fun MartDialogItem(
 ) {
     Surface(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .height(60.dp), // 고정 높이 설정
         onClick = { onMartClick(mart) }
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .fillMaxSize()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Surface(
-                shape = CircleShape,
-                color = Color(0xFF4CAF50),
-                modifier = Modifier.size(24.dp)
+            Row(
+                modifier = Modifier.weight(1f), // 가중치를 주어 공간 활용
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
+                Surface(
+                    shape = CircleShape,
+                    color = Color(0xFF4CAF50),
+                    modifier = Modifier.size(24.dp)
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Text(
+                            text = "🏪",
+                            color = Color.White,
+                            fontSize = 12.sp
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.width(12.dp))
+                
+                Column(
+                    modifier = Modifier.weight(1f), // 가중치를 주어 남은 공간 차지
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "🏪",
-                        color = Color.White,
-                        fontSize = 12.sp
+                        text = mart.martName,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        text = "${mart.sido} ${mart.sigungu ?: ""} ${mart.dong ?: ""}".trim(),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
             
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             
-            Column {
-                Text(
-                    text = mart.martName,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = "${mart.sido} ${mart.sigungu ?: ""} ${mart.dong ?: ""}".trim(),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-        
             Text(
-                text = if (hasValidCommissions) "유효한 의뢰 있음" else "유효한 의뢰 없음",
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (hasValidCommissions) Color(0xFF1785E4) else Color.Gray
+                text = if (hasValidCommissions) "의뢰 있음" else "의뢰 없음",
+                style = MaterialTheme.typography.bodySmall,
+                color = if (hasValidCommissions) Color(0xFF1785E4) else Color.Gray,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
