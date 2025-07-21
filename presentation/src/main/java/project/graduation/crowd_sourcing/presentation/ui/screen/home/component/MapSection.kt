@@ -176,6 +176,7 @@ private fun NaverMapView(
                 // 주변 마트 마커들
                 DrawMartMarkers(
                     martEntities = state.nearbyMartEntities,
+                    martsWithValidCommissions = state.martsWithValidCommissions,
                     onMartClick = onMartClick
                 )
 
@@ -248,11 +249,12 @@ private fun DrawSearchRadiusCircle(center: LatLng, radiusInKm: Float) {
 @Composable
 private fun DrawMartMarkers(
     martEntities: List<MartEntity>,
+    martsWithValidCommissions: Set<String>,
     onMartClick: (MartEntity) -> Unit
 ) {
     martEntities.forEach { mart ->
-        if (mart.existCommission == 1) {
-            // 의뢰가 있는 마트: 기본 마커
+        if (martsWithValidCommissions.contains(mart.martName)) {
+            // workDate가 남아있는 유효한 의뢰가 있는 마트: 기본 마커 (활성화 색깔)
             Marker(
                 state = MarkerState(position = LatLng(mart.latitude, mart.longitude)),
                 captionText = mart.martName,
@@ -263,7 +265,7 @@ private fun DrawMartMarkers(
                 }
             )
         } else {
-            // 의뢰가 없는 마트: 검은색 마커 + 회색 색상 적용
+            // 유효한 의뢰가 없는 마트: 검은색 마커 + 회색 색상 적용 (비활성화 색깔)
             Marker(
                 state = MarkerState(position = LatLng(mart.latitude, mart.longitude)),
                 captionText = mart.martName,

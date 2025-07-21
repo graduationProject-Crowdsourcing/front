@@ -42,7 +42,9 @@ sealed class HomeUiState {
         val isSearchResultDialogVisible: Boolean = false,
         val selectedMart: MartEntity? = null,
         val selectedMartRequests: List<Request> = emptyList(),
-        val isMartRequestDialogVisible: Boolean = false
+        val isMartRequestDialogVisible: Boolean = false,
+        val martsWithValidCommissions: Set<String> = emptySet(), // workDate가 남아있는 의뢰가 있는 마트들의 이름
+        val searchedMartsWithValidCommissions: Set<String> = emptySet() // 검색된 마트들 중 workDate가 남아있는 의뢰가 있는 마트들의 이름
     ) : HomeUiState()
     
     /**

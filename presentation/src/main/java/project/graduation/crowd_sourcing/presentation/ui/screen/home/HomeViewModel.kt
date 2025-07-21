@@ -221,6 +221,9 @@ class HomeViewModel @Inject constructor(
                 Log.d(TAG, "필터링 결과: ${cachedMartEntities.size}개 중 ${filteredMarts.size}개 " +
                          "(설정 반경: ${radiusInMeters}m 이내만 표시)")
                 
+                // 각 마트에 유효한 의뢰가 있는지 확인
+                checkMartsWithValidCommissions(filteredMarts)
+                
                 // 필터링 결과 상태 업데이트
                 _uiState.update { currentState ->
                     when (currentState) {
@@ -450,6 +453,9 @@ class HomeViewModel @Inject constructor(
                 
                 Log.d(TAG, "마트 검색 결과: ${searchResults.size}개 (유사도 순 + 거리 순 정렬 완료)")
                 
+                // 검색된 마트들에 대해서도 유효한 의뢰 확인
+                checkSearchedMartsWithValidCommissions(sortedResults)
+                
                 _uiState.update { currentState ->
                     when (currentState) {
                         is HomeUiState.Success -> currentState.copy(
@@ -553,8 +559,18 @@ class HomeViewModel @Inject constructor(
                 // 실제 usecase를 사용하여 마트 의뢰 정보 조회
                 val martWorkEntities = martSearchUseCase.searchWorkByMartName(mart.martName)
                 
-                // MartWorkEntity를 Request로 변환
-                val martRequests = martWorkEntities.map { workEntity ->
+                // 현재 시간
+                val currentTime = java.time.LocalDateTime.now()
+                
+                // 마감기한이 지나지 않은 의뢰만 필터링
+                val validWorkEntities = martWorkEntities.filter { workEntity ->
+                    workEntity.workDate.isAfter(currentTime)
+                }
+                
+                Log.d(TAG, "마트 ${mart.martName}: 전체 의뢰 ${martWorkEntities.size}개, 유효한 의뢰 ${validWorkEntities.size}개")
+                
+                // MartWorkEntity를 Request로 변환 (마감기한이 지나지 않은 것만)
+                val martRequests = validWorkEntities.map { workEntity ->
                     Request(
                         id = workEntity.id.toString(),
                         title = "${mart.martName} - ${workEntity.work}",
@@ -690,14 +706,29 @@ class HomeViewModel @Inject constructor(
                             continue
                         }
                         
+                        // 현재 시간
+                        val currentTime = java.time.LocalDateTime.now()
+                        
+                        // 마감기한이 지나지 않은 의뢰만 필터링
+                        val validMartWorks = martWorks.filter { work ->
+                            work.workDate.isAfter(currentTime)
+                        }
+                        
+                        Log.d(TAG, "     마감기한 필터링: ${martWorks.size}개 중 ${validMartWorks.size}개 유효")
+                        
+                        if (validMartWorks.isEmpty()) {
+                            Log.w(TAG, "     ${mart.martName}에 유효한 의뢰가 없음 (모두 마감됨)")
+                            continue
+                        }
+                        
                         // 의뢰 목록 상세 로그
-                        martWorks.forEachIndexed { workIndex, work ->
+                        validMartWorks.forEachIndexed { workIndex, work ->
                             val isUsed = usedWorkIds.contains(work.id)
                             Log.d(TAG, "       의뢰 ${workIndex + 1}: ID=${work.id}, ${work.work} (${work.workpoint}원) - ${if (isUsed) "이미 사용됨" else "사용 가능"}")
                         }
                         
                         // 아직 사용하지 않은 의뢰 중에서 첫 번째 의뢰만 선택
-                        val availableWork = martWorks.firstOrNull { work ->
+                        val availableWork = validMartWorks.firstOrNull { work ->
                             !usedWorkIds.contains(work.id)
                         }
                         
@@ -750,5 +781,127 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 각 마트에 유효한 의뢰가 있는지 확인하고 상태를 업데이트합니다.
+     * workDate가 현재 시간보다 이후인 의뢰가 있는 마트만 유효한 것으로 처리
+     * 
+     * @param marts 현재 표시되는 마트 목록
+     */
+    private fun checkMartsWithValidCommissions(marts: List<MartEntity>) {
+        viewModelScope.launch {
+            try {
+                val currentTime = java.time.LocalDateTime.now()
+                val martsWithValidCommissions = mutableSetOf<String>()
+                
+                Log.d(TAG, "=== 마트별 유효한 의뢰 확인 시작 ===")
+                Log.d(TAG, "검사할 마트 개수: ${marts.size}")
+                
+                for (mart in marts) {
+                    try {
+                        // 해당 마트의 의뢰 목록 가져오기
+                        val martWorks = martSearchUseCase.searchWorkByMartName(mart.martName)
+                        
+                        // 마감기한이 지나지 않은 의뢰만 필터링
+                        val validWorks = martWorks.filter { work ->
+                            work.workDate.isAfter(currentTime)
+                        }
+                        
+                        Log.d(TAG, "${mart.martName}: 전체 의뢰 ${martWorks.size}개, 유효한 의뢰 ${validWorks.size}개")
+                        
+                        // 유효한 의뢰가 있으면 Set에 추가
+                        if (validWorks.isNotEmpty()) {
+                            martsWithValidCommissions.add(mart.martName)
+                            Log.d(TAG, "  ✅ ${mart.martName} - 유효한 의뢰 있음")
+                        } else {
+                            Log.d(TAG, "  ❌ ${mart.martName} - 유효한 의뢰 없음")
+                        }
+                        
+                    } catch (e: Exception) {
+                        Log.e(TAG, "${mart.martName} 의뢰 확인 실패: ${e.message}", e)
+                        // 오류 발생 시 해당 마트는 유효하지 않은 것으로 처리
+                    }
+                }
+                
+                Log.d(TAG, "유효한 의뢰가 있는 마트: ${martsWithValidCommissions.size}개")
+                martsWithValidCommissions.forEach { martName ->
+                    Log.d(TAG, "  - $martName")
+                }
+                
+                // 상태 업데이트
+                _uiState.update { currentState ->
+                    when (currentState) {
+                        is HomeUiState.Success -> currentState.copy(martsWithValidCommissions = martsWithValidCommissions)
+                        else -> currentState
+                    }
+                }
+                
+                Log.d(TAG, "=== 마트별 유효한 의뢰 확인 완료 ===")
+                
+            } catch (e: Exception) {
+                Log.e(TAG, "마트별 유효한 의뢰 확인 중 오류: ${e.message}", e)
+            }
+        }
+    }
+
+    /**
+     * 검색된 마트들에 대해서도 유효한 의뢰를 확인합니다.
+     * 
+     * @param searchedMarts 검색된 마트 목록
+     */
+    private fun checkSearchedMartsWithValidCommissions(searchedMarts: List<MartEntity>) {
+        viewModelScope.launch {
+            try {
+                val currentTime = java.time.LocalDateTime.now()
+                val searchedMartsWithValidCommissions = mutableSetOf<String>()
+                
+                Log.d(TAG, "=== 검색된 마트별 유효한 의뢰 확인 시작 ===")
+                Log.d(TAG, "검사할 마트 개수: ${searchedMarts.size}")
+                
+                for (mart in searchedMarts) {
+                    try {
+                        // 해당 마트의 의뢰 목록 가져오기
+                        val martWorks = martSearchUseCase.searchWorkByMartName(mart.martName)
+                        
+                        // 마감기한이 지나지 않은 의뢰만 필터링
+                        val validWorks = martWorks.filter { work ->
+                            work.workDate.isAfter(currentTime)
+                        }
+                        
+                        Log.d(TAG, "${mart.martName}: 전체 의뢰 ${martWorks.size}개, 유효한 의뢰 ${validWorks.size}개")
+                        
+                        // 유효한 의뢰가 있으면 Set에 추가
+                        if (validWorks.isNotEmpty()) {
+                            searchedMartsWithValidCommissions.add(mart.martName)
+                            Log.d(TAG, "  ✅ ${mart.martName} - 유효한 의뢰 있음")
+                        } else {
+                            Log.d(TAG, "  ❌ ${mart.martName} - 유효한 의뢰 없음")
+                        }
+                        
+                    } catch (e: Exception) {
+                        Log.e(TAG, "${mart.martName} 의뢰 확인 실패: ${e.message}", e)
+                        // 오류 발생 시 해당 마트는 유효하지 않은 것으로 처리
+                    }
+                }
+                
+                Log.d(TAG, "유효한 의뢰가 있는 검색된 마트: ${searchedMartsWithValidCommissions.size}개")
+                searchedMartsWithValidCommissions.forEach { martName ->
+                    Log.d(TAG, "  - $martName")
+                }
+                
+                // 상태 업데이트
+                _uiState.update { currentState ->
+                    when (currentState) {
+                        is HomeUiState.Success -> currentState.copy(searchedMartsWithValidCommissions = searchedMartsWithValidCommissions)
+                        else -> currentState
+                    }
+                }
+                
+                Log.d(TAG, "=== 검색된 마트별 유효한 의뢰 확인 완료 ===")
+                
+            } catch (e: Exception) {
+                Log.e(TAG, "검색된 마트별 유효한 의뢰 확인 중 오류: ${e.message}", e)
+            }
+        }
+    }
 
 } 
