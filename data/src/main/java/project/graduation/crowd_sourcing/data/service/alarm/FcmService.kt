@@ -17,9 +17,9 @@ interface FcmService {
 
     @POST("/api/v1/fcm/register")
     suspend fun postRegister(
-        @Body request: FcmRegisterRequest
+        @Query("memberId") memberId: Int,
+        @Query("fcmToken") fcmToken: String
     ): Response<Unit>
-
 
     @POST("/api/v1/fcm/cancel")
     suspend fun postCancel(

@@ -109,7 +109,7 @@ dependencies {
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.google.firebase:firebase-analytics")
-
+    implementation("com.google.firebase:firebase-messaging:24.0.0")
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")

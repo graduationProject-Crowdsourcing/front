@@ -39,6 +39,8 @@ class MemberUseCase @Inject constructor(
     suspend fun tokenSave(token:String, userId: Int, username: String){
         tokenManager.save(accessToken = token, refreshToken = "", userId = userId)
         tokenManager.saveUsername(username)
+        val fcmToken = getFcmToken()
+        fcmRepository.postRegister(memberId = userId, fcmToken = fcmToken)
     }
     // 회원가입
     suspend fun signUp(username: String, password: String, nickname: String): Result<String> {

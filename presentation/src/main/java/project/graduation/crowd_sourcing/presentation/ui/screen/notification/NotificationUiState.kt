@@ -17,14 +17,16 @@ sealed class NotificationUiState {
     ) : NotificationUiState()
     data class Error(val message: String) : NotificationUiState()
     object Loading : NotificationUiState()
+
+    data class NotificationItem(
+        val id: String,
+        val message: String,
+        val type: NotificationType,
+        val timestamp: Long
+    )
 }
 
-data class NotificationItem(
-    val id: String,
-    val message: String,
-    val type: NotificationType,
-    val timestamp: Long
-)
+
 
 enum class NotificationType {
     SURVEY_COMPLETED,

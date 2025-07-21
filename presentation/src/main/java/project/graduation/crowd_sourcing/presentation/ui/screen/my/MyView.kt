@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import project.graduation.crowd_sourcing.presentation.R
@@ -25,7 +26,7 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.my.component.MyR
 @Composable
 fun MyView(navController: NavController) {
     val viewModel: MyViewModel = hiltViewModel()
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.getRecentHistory()
