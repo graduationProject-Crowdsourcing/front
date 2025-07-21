@@ -115,7 +115,7 @@ fun NotificationView() {
 // - 알림 타입별 아이콘 매핑 로직을 UseCase로 분리
 // - 현재는 Presentation Layer에서 직접 처리
 @Composable
-private fun NotificationItem(notification: NotificationItem) {
+private fun NotificationItem(notification: NotificationUiState.NotificationItem) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

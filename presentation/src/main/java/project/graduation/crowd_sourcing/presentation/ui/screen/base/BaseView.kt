@@ -61,6 +61,11 @@ fun BaseView(
         }
     }
 
+    LaunchedEffect(uiState.value.isKaKaoLogined) {
+        if(uiState.value.isKaKaoLogined){
+            viewModel.navWithKaKaoLogined(navController)
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

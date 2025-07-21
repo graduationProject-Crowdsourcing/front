@@ -6,8 +6,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import project.graduation.crowd_sourcing.domain.usecase.NotiUseCase
 import javax.inject.Inject
 
 // TODO: Domain Layer 구현 필요
@@ -41,25 +43,27 @@ import javax.inject.Inject
 //    - 에러 처리 추가
 
 @HiltViewModel
-class NotificationViewModel @Inject constructor() : ViewModel() {
+class NotificationViewModel @Inject constructor(
+    private val notiUseCase: NotiUseCase
+) : ViewModel() {
     private val _uiState = MutableStateFlow<NotificationUiState>(NotificationUiState.Loading)
     val uiState: StateFlow<NotificationUiState> = _uiState.asStateFlow()
 
     companion object {
         private val DUMMY_NOTIFICATIONS = listOf(
-            NotificationItem(
+            NotificationUiState.NotificationItem(
                 id = "1",
                 message = "'수색 아파트 - 벌기 편백' 요청이 승인되었습니다.",
                 type = NotificationType.SURVEY_COMPLETED,
                 timestamp = System.currentTimeMillis()
             ),
-            NotificationItem(
+            NotificationUiState.NotificationItem(
                 id = "2",
                 message = "새로운 의뢰가 도착했습니다.",
                 type = NotificationType.NEW_SURVEY,
                 timestamp = System.currentTimeMillis() - 3600000
             ),
-            NotificationItem(
+            NotificationUiState.NotificationItem(
                 id = "3",
                 message = "리워드: '상암 물품 - 벌기 가격'",
                 type = NotificationType.REWARD,
@@ -75,12 +79,23 @@ class NotificationViewModel @Inject constructor() : ViewModel() {
     private fun loadInitialData() {
         viewModelScope.launch {
             try {
-                _uiState.update { 
-                    NotificationUiState.Success(
-                        notifications = DUMMY_NOTIFICATIONS,
-                        isLoading = false
-                    )
+                notiUseCase.getAllNotes().collectLatest { list ->
+                    _uiState.update {
+                        NotificationUiState.Success(
+                            notifications = list.map {
+                                NotificationUiState.NotificationItem(
+                                    id = it.id.toString(),
+                                    message = it.content,
+                                    type = NotificationType.NEW_SURVEY,
+                                    timestamp = System.currentTimeMillis(),
+                                )
+                            },
+                            isLoading = false
+
+                        )
+                    }
                 }
+
             } catch (e: Exception) {
                 _uiState.update { 
                     NotificationUiState.Error("알림을 불러오는데 실패했습니다: ${e.message}")

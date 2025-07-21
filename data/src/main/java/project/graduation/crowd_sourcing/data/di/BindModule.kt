@@ -10,6 +10,7 @@ import project.graduation.crowd_sourcing.data.repository.LocationRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.LoginRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.MartSearchRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.MyRepositoryImpl
+import project.graduation.crowd_sourcing.data.repository.NotiRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.RequesterRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.SearchRepositoryImpl
 import project.graduation.crowd_sourcing.data.repository.StatisticsRepositoryImpl
@@ -22,6 +23,7 @@ import project.graduation.crowd_sourcing.domain.repository.LocationRepository
 import project.graduation.crowd_sourcing.domain.repository.LoginRepository
 import project.graduation.crowd_sourcing.domain.repository.MartSearchRepository
 import project.graduation.crowd_sourcing.domain.repository.MyRepository
+import project.graduation.crowd_sourcing.domain.repository.NotiRepository
 import project.graduation.crowd_sourcing.domain.repository.RequesterRepository
 import project.graduation.crowd_sourcing.domain.repository.SearchRepository
 import project.graduation.crowd_sourcing.domain.repository.StatisticsRepository
@@ -95,5 +97,10 @@ abstract class BindModule {
     abstract fun bindAlarmRepository(
         repository: AlarmRepositoryImpl
     ): AlarmRepository
+
+    @Binds
+    abstract fun bindNotiRepository(
+        repository: NotiRepositoryImpl
+    ): NotiRepository
 
 }

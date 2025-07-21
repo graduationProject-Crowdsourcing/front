@@ -82,7 +82,7 @@ fun TopBar(
             },
 
             actions = {
-                if (uiState.currentScreen !is Screen.NotificationScreen){
+                if (uiState.currentScreen is Screen.BottomScreen){
                     IconButton(onClick = {
                         navController.navigate(Screen.NotificationScreen.route)
                     }) {

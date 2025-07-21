@@ -96,7 +96,18 @@ class BaseViewModel @Inject constructor (
         Log.d("location", "Moved over 250m: ${location.latitude}, ${location.longitude}")
     }
 
-    fun kakaoLogined(token:String) = viewModelScope.launch{
-        memberUseCase.getIsLogined()
+    fun kakaoLogined(token:String, userId: Int, username: String) = viewModelScope.launch{
+        memberUseCase.tokenSave(token = token, userId = userId, username = username)
+
+        _uiState.update { prev->
+            prev.copy(isKaKaoLogined = true)
+        }
+    }
+
+    fun navWithKaKaoLogined(navController: NavController){
+        navController.navigate(Screen.BottomScreen.HomeScreen.route)
+        _uiState.update { prev->
+            prev.copy(isKaKaoLogined = false)
+        }
     }
 }

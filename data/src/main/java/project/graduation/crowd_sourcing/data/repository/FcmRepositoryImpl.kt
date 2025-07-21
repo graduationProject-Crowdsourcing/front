@@ -24,9 +24,8 @@ class FcmRepositoryImpl @Inject constructor(
 
     override suspend fun postRegister(memberId: Int, fcmToken: String): Result<Unit> {
         return try {
-            val response = fcmService.postRegister(
-                request = FcmRegisterRequest(memberId = memberId, fcmToken = fcmToken)
-            )
+            val response = fcmService.postRegister(memberId = memberId, fcmToken = fcmToken)
+
             if (response.isSuccessful) Result.success(Unit)
             else Result.failure(Exception("error"))
         } catch (e: Exception) {

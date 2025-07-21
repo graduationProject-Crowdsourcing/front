@@ -1,7 +1,7 @@
 [versions]
 accompanistPermissions = "0.34.0"
 android = "2.12.8"
-agp = "8.10.1"
+agp = "8.7.2"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -38,6 +38,8 @@ scenecore = "1.0.0-alpha03"
 playServicesBasement = "18.0.0"
 workRuntime = "2.3.4"
 firebaseMessagingKtx = "24.1.1"
+roomCommonJvm = "2.7.2"
+roomRuntimeAndroid = "2.7.2"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -95,6 +97,8 @@ androidx-scenecore = { group = "androidx.xr.scenecore", name = "scenecore", vers
 play-services-basement = { group = "com.google.android.gms", name = "play-services-basement", version.ref = "playServicesBasement" }
 androidx-work-runtime = { group = "androidx.work", name = "work-runtime", version.ref = "workRuntime" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
+androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
+androidx-room-runtime-android = { group = "androidx.room", name = "room-runtime-android", version.ref = "roomRuntimeAndroid" }
 
 
 [plugins]
