@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -59,21 +60,30 @@ fun LoginScreenContent(
     onLoginClick: () -> Unit,
     onSignUpClick: () -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+    
+    // 화면 크기에 따른 로고 높이 계산 (화면 높이의 15~20%)
+    val logoHeight = (screenHeight * 0.18f).coerceAtMost(160.dp).coerceAtLeast(100.dp)
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(dimensionResource(R.dimen.space_medium)),
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            "PRICE-IT",
-            fontSize = 55.sp,
-            fontWeight = FontWeight.Bold,
-            color = colorResource(id = R.color.primary),
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+        Image(
+            painter = painterResource(id = R.drawable.logo_price_it_no_text),
+            contentDescription = "PRICE-IT 로고",
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .height(logoHeight)
+                .fillMaxWidth(0.8f),
+            contentScale = ContentScale.Fit
         )
 
-        Spacer(modifier = Modifier.height(100.dp))
+        Spacer(modifier = Modifier.height((screenHeight * 0.06f).coerceAtMost(48.dp).coerceAtLeast(24.dp)))
 
         Text(text = "ID", fontWeight = FontWeight.Bold)
         EditTextBox(

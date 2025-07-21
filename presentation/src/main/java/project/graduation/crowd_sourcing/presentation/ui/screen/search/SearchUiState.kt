@@ -52,14 +52,14 @@ sealed class SearchUiState {
  * 
  * @param id 제품 고유 ID
  * @param title 제품명
- * @param place 매장명
+ * @param region 지역명
  * @param remainingDays 남은 일수
  * @param reward 보상금액
  */
 data class SearchResult(
     val id: String,
     val title: String,
-    val place: String,
+    val region: String,
     val remainingDays: Int,
     val reward: Int,
     @DrawableRes val icon: Int = R.drawable.ic_list_box // 기본 아이콘 설정

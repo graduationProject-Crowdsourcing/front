@@ -17,7 +17,8 @@ data class CommissionDto(
     val commissionId: Int,
     val commission: String,
     val commissionpoint: Int,
-    val deadline: String
+    val deadline: String,
+    val region: String
 ) {
     @RequiresApi(Build.VERSION_CODES.O)
     fun toCommission(): CommissionEntity {
@@ -28,7 +29,8 @@ data class CommissionDto(
             commissionId = commissionId,
             commission = commission,
             commissionpoint = commissionpoint,
-            deadline = deadlineDateTime
+            deadline = deadlineDateTime,
+            region = region
         )
     }
 }

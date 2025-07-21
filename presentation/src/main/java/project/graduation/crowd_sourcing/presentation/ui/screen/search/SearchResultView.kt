@@ -2,7 +2,6 @@ package project.graduation.crowd_sourcing.presentation.ui.screen.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,7 +37,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -53,6 +51,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.compose.runtime.LaunchedEffect
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.Alignment
 
 /**
  * 검색 결과 화면
@@ -85,7 +85,7 @@ fun SearchResultView(
                 println("DEBUG_RESULT: 검색 결과를 리스트로 변환 완료 - 크기: ${searchResults.size}")
                 // 디버그를 위해 첫 번째 아이템 출력
                 val first = searchResults.first()
-                println("DEBUG_RESULT: 첫 번째 결과 - id: ${first.id}, title: ${first.title}, place: '${first.place}', reward: ${first.reward}, remainingDays: ${first.remainingDays}")
+                println("DEBUG_RESULT: 첫 번째 결과 - id: ${first.id}, title: ${first.title}, region: '${first.region}', reward: ${first.reward}, remainingDays: ${first.remainingDays}")
             } else {
                 println("DEBUG_RESULT: searchResults 배열이 null 또는 비어있음")
             }
@@ -179,7 +179,6 @@ fun SearchResultView(
                             }
                         }
                     )
-                    Divider()
                 }
             }
         }
@@ -349,81 +348,99 @@ fun SearchResultFilterBar(
 }
 
 /**
- * 검색 결과 아이템
+ * 검색 결과 아이템 - 추천의뢰 스타일
  */
 @Composable
 fun SearchResultItem(
     result: SearchResult,
     onItemClick: () -> Unit = {}
 ) {
-    Row(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onItemClick() }
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(12.dp)
     ) {
-        // 아이콘
-        Icon(
-            painter = painterResource(id = result.icon),
-            contentDescription = null,
-            modifier = Modifier.width(40.dp),
-            tint = Color.Gray
-        )
-        
-        // 상품 정보
-        Column(
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 12.dp)
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = result.title,
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp
+            // 매장 위치 아이콘
+            Icon(
+                painter = painterResource(id = result.icon),
+                contentDescription = null,
+                modifier = Modifier.width(32.dp),
+                tint = Color(0xFF1785E4)
             )
             
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.width(16.dp))
             
-            // place가 빈 문자열이 아닌 경우에만 표시
-            if (result.place.isNotEmpty()) {
+            // 메인 컨텐츠 영역
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                // 제품명 (제목)
                 Text(
-                    text = result.place,
-                    color = Color.Gray,
-                    fontSize = 14.sp
+                    text = result.title,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 16.sp,
+                    color = Color.Black
                 )
                 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(6.dp))
+                
+                // 지역명
+                Text(
+                    text = result.region,
+                    color = Color.Gray,
+                    fontSize = 12.sp
+                )
             }
             
-            Text(
-                text = "${result.reward} P",
-                color = Color(0xFF1785E4),
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp
-            )
-        }
-        
-        // 남은 시간
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFE3F2FD)
-            ),
-            shape = RoundedCornerShape(4.dp)
-        ) {
-            // remainingDays 값에 따라 텍스트 표시
-            val timeText = when {
-                result.remainingDays > 0 -> "${result.remainingDays}일 남음"
-                result.remainingDays < 0 -> "${-result.remainingDays}시간 남음"
-                else -> "마감됨" // remainingDays가 0인 경우 마감됨으로 표시
+            // 오른쪽 영역: 포인트와 남은 시간
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                // 리워드 정보 (포인트)
+                Text(
+                    text = "${result.reward} P",
+                    color = Color(0xFF1785E4),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                // 남은 시간
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFE3F2FD)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    // remainingDays 값에 따라 텍스트 표시
+                    val timeText = when {
+                        result.remainingDays > 0 -> "${result.remainingDays}일 남음"
+                        result.remainingDays < 0 -> "${-result.remainingDays}시간 남음"
+                        else -> "마감됨" // remainingDays가 0인 경우 마감됨으로 표시
+                    }
+                    
+                    Text(
+                        text = timeText,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        color = if (result.remainingDays == 0) Color.Red else Color(0xFF1785E4),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
-            
-            Text(
-                text = timeText,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                color = if (result.remainingDays == 0) Color.Red else Color(0xFF1785E4),
-                fontSize = 12.sp
-            )
         }
     }
 }

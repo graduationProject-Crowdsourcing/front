@@ -24,6 +24,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -44,6 +46,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -86,7 +90,9 @@ fun FilterSelectionView(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    color = Color(0xFF1785E4)
+                )
             }
         }
         is SearchUiState.Error -> {
@@ -95,7 +101,10 @@ fun FilterSelectionView(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "데이터 로딩 중 오류가 발생했습니다: ${state.message}")
+                Text(
+                    text = "데이터 로딩 중 오류가 발생했습니다: ${state.message}",
+                    color = Color.Red
+                )
             }
         }
         is SearchUiState.Success -> {
@@ -139,169 +148,210 @@ private fun FilterSelectionContent(
         }
     }
     
-    val scrollState = rememberScrollState()
-    
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(scrollState)
+            .background(Color(0xFFF8F9FA))
     ) {
-        // 지역 선택 섹션
-        Text(
-            text = "지역선택",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-        
-        // 지역 선택 그리드 (2x2)
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+        // 컨텐츠 영역
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(220.dp) // 고정 높이
+                .fillMaxSize()
+                .padding(20.dp)
+                .padding(bottom = 80.dp) // 하단 버튼 공간 확보
         ) {
-            // 전체 옵션
-            item {
-                RegionItem(
-                    name = "전체",
-                    isSelected = isAllRegionSelected.value,
-                    onClick = { 
-                        isAllRegionSelected.value = true
-                        selectedRegion.value = "전체"
-                        println("FilterSelectionView: 지역 '전체' 선택")
-                    }
-                )
+            // 지역 선택 섹션
+            Text(
+                text = "🗺️ 지역 선택",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF2C3E50),
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            
+            // 지역 선택 그리드 (2x2)
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp) // 고정 높이
+            ) {
+                // 전체 옵션
+                item {
+                    RegionItem(
+                        name = "전체",
+                        isSelected = isAllRegionSelected.value,
+                        onClick = { 
+                            isAllRegionSelected.value = true
+                            selectedRegion.value = "전체"
+                            println("FilterSelectionView: 지역 '전체' 선택")
+                        }
+                    )
+                }
+                
+                // 나머지 지역 옵션들
+                items(state.regions.filter { it != "전체" }) { region ->
+                    RegionItem(
+                        name = region,
+                        isSelected = selectedRegion.value == region && !isAllRegionSelected.value,
+                        onClick = { 
+                            isAllRegionSelected.value = false
+                            selectedRegion.value = region
+                            println("FilterSelectionView: 지역 '$region' 선택")
+                        }
+                    )
+                }
             }
             
-            // 나머지 지역 옵션들
-            items(state.regions.filter { it != "전체" }) { region ->
-                RegionItem(
-                    name = region,
-                    isSelected = selectedRegion.value == region && !isAllRegionSelected.value,
-                    onClick = { 
-                        isAllRegionSelected.value = false
-                        selectedRegion.value = region
-                        println("FilterSelectionView: 지역 '$region' 선택")
-                    }
-                )
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            // 카테고리 선택 섹션
+            Text(
+                text = "🏷️ 카테고리 선택",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF2C3E50),
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            
+            // 카테고리 선택 그리드 (2x2)
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(350.dp) // 고정 높이
+            ) {
+                // 전체 옵션
+                item {
+                    CategoryItem(
+                        name = "전체",
+                        isSelected = isAllCategorySelected.value,
+                        onClick = { 
+                            isAllCategorySelected.value = true
+                            selectedCategory.value = "전체"
+                            println("FilterSelectionView: 카테고리 '전체' 선택")
+                        }
+                    )
+                }
+                
+                // 모든 카테고리 표시
+                items(state.categories.filter { it != "전체" }) { category ->
+                    CategoryItem(
+                        name = category,
+                        isSelected = selectedCategory.value == category && !isAllCategorySelected.value,
+                        onClick = { 
+                            isAllCategorySelected.value = false
+                            selectedCategory.value = category
+                            println("FilterSelectionView: 카테고리 '$category' 선택")
+                        }
+                    )
+                }
             }
+            
+            Spacer(modifier = Modifier.height(24.dp))
         }
         
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        // 카테고리 선택 섹션
-        Text(
-            text = "카테고리 선택",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-        
-        // 카테고리 선택 그리드 (2x2)
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+        // 하단 고정 버튼 영역
+        Box(
             modifier = Modifier
+                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .height(330.dp) // 고정 높이
-        ) {
-            // 전체 옵션
-            item {
-                CategoryItem(
-                    name = "전체",
-                    isSelected = isAllCategorySelected.value,
-                    onClick = { 
-                        isAllCategorySelected.value = true
-                        selectedCategory.value = "전체"
-                        println("FilterSelectionView: 카테고리 '전체' 선택")
-                    }
-                )
-            }
-            
-            // 모든 카테고리 표시
-            items(state.categories.filter { it != "전체" }) { category ->
-                CategoryItem(
-                    name = category,
-                    isSelected = selectedCategory.value == category && !isAllCategorySelected.value,
-                    onClick = { 
-                        isAllCategorySelected.value = false
-                        selectedCategory.value = category
-                        println("FilterSelectionView: 카테고리 '$category' 선택")
-                    }
-                )
-            }
-        }
-        
-        Spacer(modifier = Modifier.weight(1f))
-        
-        // 하단 버튼 영역
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            // 취소 버튼
-            Button(
-                onClick = { 
-                    navController.popBackStack()
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .height(48.dp),
-                shape = RoundedCornerShape(4.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.LightGray
-                )
-            ) {
-                Text(
-                    text = "취소",
-                    color = Color.Black
-                )
-            }
-            
-            // 적용 버튼
-            Button(
-                onClick = { 
-                    // 선택된 값을 다음 화면으로 전달
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        "selectedCategory", selectedCategory.value
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            Color(0xFFF8F9FA).copy(alpha = 0.9f),
+                            Color(0xFFF8F9FA)
+                        )
                     )
-                    
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        "selectedRegion", selectedRegion.value
-                    )
-                    
-                    // 디버깅용 로그
-                    println("필터 선택 적용: 카테고리=${selectedCategory.value ?: "오류"}, 지역=${selectedRegion.value ?: "오류"}")
-                    
-                    // 이전 화면으로 돌아가기
-                    navController.popBackStack()
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .height(48.dp),
-                shape = RoundedCornerShape(4.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF1785E4)
                 )
+                .padding(20.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = "적용",
-                    color = Color.White
-                )
+                // 취소 버튼
+                Button(
+                    onClick = { 
+                        navController.popBackStack()
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp)
+                        .shadow(
+                            elevation = 2.dp,
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 0.dp,
+                        pressedElevation = 4.dp
+                    )
+                ) {
+                    Text(
+                        text = "취소",
+                        color = Color(0xFF6C757D),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+                
+                // 적용 버튼
+                Button(
+                    onClick = { 
+                        // 선택된 값을 다음 화면으로 전달
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                            "selectedCategory", selectedCategory.value
+                        )
+                        
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                            "selectedRegion", selectedRegion.value
+                        )
+                        
+                        // 디버깅용 로그
+                        println("필터 선택 적용: 카테고리=${selectedCategory.value ?: "오류"}, 지역=${selectedRegion.value ?: "오류"}")
+                        
+                        // 이전 화면으로 돌아가기
+                        navController.popBackStack()
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp)
+                        .shadow(
+                            elevation = 4.dp,
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF1785E4)
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 0.dp,
+                        pressedElevation = 6.dp
+                    )
+                ) {
+                    Text(
+                        text = "적용",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }
 }
 
 /**
- * 지역 아이템 컴포넌트
+ * 지역 아이템 컴포넌트 - 개선된 디자인
  */
 @Composable
 fun RegionItem(
@@ -309,48 +359,60 @@ fun RegionItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (isSelected) Color(0xFFDDDDDD) else Color.White
-    val icon = R.drawable.ic_list_box
+    val cardColors = if (isSelected) {
+        CardDefaults.cardColors(
+            containerColor = Color(0xFF1785E4)
+        )
+    } else {
+        CardDefaults.cardColors(
+            containerColor = Color.White
+        )
+    }
     
-    Box(
+    val textColor = if (isSelected) Color.White else Color(0xFF2C3E50)
+    val iconTint = if (isSelected) Color.White else Color(0xFF6C757D)
+    
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .background(backgroundColor)
-            .border(
-                width = 1.dp,
-                color = Color.LightGray,
-                shape = RoundedCornerShape(4.dp)
-            )
+            .height(90.dp)
             .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
+        shape = RoundedCornerShape(16.dp),
+        colors = cardColors,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isSelected) 8.dp else 4.dp,
+            pressedElevation = 12.dp
+        )
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Icon(
-                painter = painterResource(id = icon),
+                painter = painterResource(id = R.drawable.ic_place),
                 contentDescription = name,
-                tint = Color.Gray,
-                modifier = Modifier.size(24.dp)
+                tint = iconTint,
+                modifier = Modifier.size(28.dp)
             )
             
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             
             Text(
                 text = name,
                 fontSize = 14.sp,
-                color = Color.Black,
-                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                color = textColor,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
+                maxLines = 1
             )
         }
     }
 }
 
 /**
- * 카테고리 아이템 컴포넌트
+ * 카테고리 아이템 컴포넌트 - 개선된 디자인
  */
 @Composable
 fun CategoryItem(
@@ -358,61 +420,76 @@ fun CategoryItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (isSelected) Color(0xFFDDDDDD) else Color.White
+    val cardColors = if (isSelected) {
+        CardDefaults.cardColors(
+            containerColor = Color(0xFF1785E4)
+        )
+    } else {
+        CardDefaults.cardColors(
+            containerColor = Color.White
+        )
+    }
+    
+    val textColor = if (isSelected) Color.White else Color(0xFF2C3E50)
+    val iconTint = if (isSelected) Color.White else Color(0xFF6C757D)
     val icon = getCategoryIcon(name)
     
-    Box(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .background(backgroundColor)
-            .border(
-                width = 1.dp,
-                color = Color.LightGray,
-                shape = RoundedCornerShape(4.dp)
-            )
+            .height(90.dp)
             .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
+        shape = RoundedCornerShape(16.dp),
+        colors = cardColors,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isSelected) 8.dp else 4.dp,
+            pressedElevation = 12.dp
+        )
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Icon(
                 painter = painterResource(id = icon),
                 contentDescription = name,
-                tint = Color.Gray,
-                modifier = Modifier.size(24.dp)
+                tint = iconTint,
+                modifier = Modifier.size(28.dp)
             )
             
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             
             Text(
                 text = name,
-                fontSize = 14.sp,
-                color = Color.Black,
-                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                fontSize = 12.sp,
+                color = textColor,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
+                maxLines = 2,
+                lineHeight = 14.sp
             )
         }
     }
 }
 
 /**
- * 카테고리별 아이콘 리소스 ID 반환
+ * 카테고리별 아이콘 리소스 ID 반환 - 개선된 아이콘 매핑
  */
 fun getCategoryIcon(category: String): Int {
     return when (category) {
-        "과자/스낵" -> R.drawable.ic_list_box
-        "라면/면류" -> R.drawable.ic_list_box
-        "통조림/캔" -> R.drawable.ic_list_box
-        "유제품" -> R.drawable.ic_list_box
-        "냉동식품" -> R.drawable.ic_list_box
-        "즉석식품" -> R.drawable.ic_list_box
-        "소스/양념" -> R.drawable.ic_list_box
-        "음료/커피" -> R.drawable.ic_list_box
-        "쌀/잡곡" -> R.drawable.ic_list_box
-        else -> R.drawable.ic_list_box
+        "전체" -> R.drawable.ic_list_box
+        "과자/스낵" -> R.drawable.ic_star
+        "라면/면류" -> R.drawable.ic_item
+        "통조림/캔" -> R.drawable.ic_home
+        "유제품" -> R.drawable.ic_point
+        "냉동식품" -> R.drawable.ic_bell
+        "즉석식품" -> R.drawable.ic_calendar
+        "소스/양념" -> R.drawable.ic_support
+        "음료/커피" -> R.drawable.ic_search
+        "쌀/잡곡" -> R.drawable.ic_mart
+        else -> R.drawable.ic_item
     }
 }
 
