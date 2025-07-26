@@ -6,13 +6,23 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.android.migration.CustomInjection.inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import project.graduation.crowd_sourcing.domain.model.Noti
+import project.graduation.crowd_sourcing.domain.usecase.NotiUseCase
+import project.graduation.crowd_sourcing.presentation.di.NotiUseCaseEntryPoint
 
-
+@AndroidEntryPoint
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -22,6 +32,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
+
+        val entryPoint = EntryPointAccessors.fromApplication(
+            applicationContext,
+            NotiUseCaseEntryPoint::class.java
+        )
+
+        val notiUseCase = entryPoint.notiUseCase()
 
         val title = remoteMessage.notification?.title ?: "알림"
         val body = remoteMessage.notification?.body ?: "내용 없음"
@@ -52,8 +69,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             notificationManager.createNotificationChannel(channel)
         }
 
+        val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_history_work)
+
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_history_work) // 알림 아이콘
+            .setLargeIcon(largeIcon)
             .setContentTitle(title)
             .setContentText(body)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -62,6 +82,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .build()
 
         notificationManager.notify(0, notification)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            notiUseCase.insertNote(Noti(title = title, content = body))
+        }
     }
 
 }
