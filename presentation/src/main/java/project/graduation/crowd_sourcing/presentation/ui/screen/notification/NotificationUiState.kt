@@ -19,7 +19,6 @@ sealed class NotificationUiState {
     object Loading : NotificationUiState()
 
     data class NotificationItem(
-        val id: String,
         val message: String,
         val type: NotificationType,
         val timestamp: Long

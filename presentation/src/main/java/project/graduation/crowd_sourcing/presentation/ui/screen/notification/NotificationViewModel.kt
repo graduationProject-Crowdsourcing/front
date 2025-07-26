@@ -52,19 +52,16 @@ class NotificationViewModel @Inject constructor(
     companion object {
         private val DUMMY_NOTIFICATIONS = listOf(
             NotificationUiState.NotificationItem(
-                id = "1",
                 message = "'수색 아파트 - 벌기 편백' 요청이 승인되었습니다.",
                 type = NotificationType.SURVEY_COMPLETED,
                 timestamp = System.currentTimeMillis()
             ),
             NotificationUiState.NotificationItem(
-                id = "2",
                 message = "새로운 의뢰가 도착했습니다.",
                 type = NotificationType.NEW_SURVEY,
                 timestamp = System.currentTimeMillis() - 3600000
             ),
             NotificationUiState.NotificationItem(
-                id = "3",
                 message = "리워드: '상암 물품 - 벌기 가격'",
                 type = NotificationType.REWARD,
                 timestamp = System.currentTimeMillis() - 7200000
@@ -84,7 +81,6 @@ class NotificationViewModel @Inject constructor(
                         NotificationUiState.Success(
                             notifications = list.map {
                                 NotificationUiState.NotificationItem(
-                                    id = it.id.toString(),
                                     message = it.content,
                                     type = NotificationType.NEW_SURVEY,
                                     timestamp = System.currentTimeMillis(),
