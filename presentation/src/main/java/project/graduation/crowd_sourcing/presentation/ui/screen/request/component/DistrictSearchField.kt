@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -32,11 +33,14 @@ fun DistrictSearchField(
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
         ) {
-            Icon(
-                painter = painterResource(id = iconResId),
-                contentDescription = null,
-                modifier = Modifier.padding(top = 25.dp, end = 15.dp)
-            )
+            Box(modifier = Modifier.width(30.dp)) {
+                // 아이콘
+                Icon(
+                    painter = painterResource(id = iconResId),
+                    contentDescription = null,
+                    modifier = Modifier.padding(top = 25.dp, end = 15.dp)
+                )
+            }
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = "지역 선택",
@@ -53,6 +57,7 @@ fun DistrictSearchField(
                             color = colorResource(id = R.color.gray),
                             shape = RoundedCornerShape(8.dp)
                         )
+                        .clip(RoundedCornerShape(8.dp))
                         .background(color = colorResource(id = R.color.white))
                         .padding(horizontal = 16.dp, vertical = 10.dp),
                     contentAlignment = Alignment.CenterStart

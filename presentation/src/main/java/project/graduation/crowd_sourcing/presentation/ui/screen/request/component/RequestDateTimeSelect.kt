@@ -47,11 +47,14 @@ fun DateTimeSelectorField(
             }
     ) {
         // 아이콘
-        Icon(
-            painter = painterResource(id = iconResId),
-            contentDescription = null,
-            modifier = Modifier.padding(top = 25.dp, end = 15.dp)
-        )
+        Box(modifier = Modifier.width(30.dp)) {
+            // 아이콘
+            Icon(
+                painter = painterResource(id = iconResId),
+                contentDescription = null,
+                modifier = Modifier.padding(top = 25.dp, end = 15.dp)
+            )
+        }
 
         // 라벨 + 날짜/시간 필드
         Column(modifier = Modifier.fillMaxWidth()) {

@@ -14,12 +14,10 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.android.migration.CustomInjection.inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.domain.model.Noti
-import project.graduation.crowd_sourcing.domain.usecase.NotiUseCase
 import project.graduation.crowd_sourcing.presentation.di.NotiUseCaseEntryPoint
 
 @AndroidEntryPoint
@@ -81,7 +79,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .addAction(android.R.drawable.ic_menu_close_clear_cancel, "거절", rejectPendingIntent)
             .build()
 
-        notificationManager.notify(0, notification)
+        notificationManager.notify(101, notification)
 
         CoroutineScope(Dispatchers.IO).launch {
             notiUseCase.insertNote(Noti(title = title, content = body))
@@ -96,10 +94,29 @@ class NotificationActionReceiver : BroadcastReceiver() {
         when (intent.action) {
             "ACTION_ACCEPT" -> {
                 Log.d("FCM_ACTION", "수락 누름")
+
+                val launchIntent = Intent(Intent.ACTION_MAIN).apply {
+                    addCategory(Intent.CATEGORY_LAUNCHER)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    setClassName(context.packageName, "project.graduation.crowd_sourcing.app.MainActivity")
+                }
+                try {
+                    context.startActivity(launchIntent)
+
+                    val notificationManager =
+                        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                    notificationManager.cancel(101)
+                } catch (e: Exception) {
+                    Log.e("FCM_ACTION", "Activity 실행 실패", e)
+                }
             }
 
             "ACTION_REJECT" -> {
                 Log.d("FCM_ACTION", "거절 누름")
+
+                val notificationManager =
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.cancel(101)
             }
         }
     }
