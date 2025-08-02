@@ -286,8 +286,10 @@ fun SubmitWorkView(
             )
 
             Text(
-                text = if (uiState.locationVerified) "✅ 인증되었습니다" else "여기를 클릭해주세요",
-                color = if (uiState.locationVerified)
+                text = uiState?.locationVerified?.let {
+                    if (it) "✅ 인증되었습니다" else "인증에 실패하였습니다"
+                } ?: "인증이 필요합니다",
+                color = if (uiState.locationVerified != null && uiState.locationVerified == true)
                     MaterialTheme.colorScheme.primary
                 else
                     Color.Gray,

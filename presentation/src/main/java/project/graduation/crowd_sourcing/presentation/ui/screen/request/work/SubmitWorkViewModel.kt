@@ -28,7 +28,6 @@ class SubmitWorkViewModel @Inject constructor(
     val uiState: StateFlow<SubmitWorkUiState> = _uiState
 
     fun loadWorkInfo(workId: Int, martName: String, category: String) {
-
         _uiState.value = _uiState.value.copy(id = workId, category = category, place = martName)
     }
 
@@ -54,7 +53,7 @@ class SubmitWorkViewModel @Inject constructor(
         val state = uiState.value
         return state.price.isNotBlank() &&
                 state.executeTime.isNotBlank() &&
-                state.locationVerified &&
+                state.locationVerified == true &&
                 state.item.isNotBlank() &&
                 state.id != null
     }
@@ -106,6 +105,10 @@ class SubmitWorkViewModel @Inject constructor(
                 if (marts.map { it.martName }.contains(uiState.value.place)) {
                     _uiState.update { prev ->
                         prev.copy(locationVerified = true)
+                    }
+                } else{
+                    _uiState.update { prev ->
+                        prev.copy(locationVerified = false)
                     }
                 }
             } catch (e: Exception) {
