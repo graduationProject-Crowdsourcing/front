@@ -34,7 +34,7 @@ fun SignUpView(
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var nickname by remember { mutableStateOf("") }
+//    var nickname by remember { mutableStateOf("") }
 
     // Focus 요청자들 선언
     val passwordFocusRequester = remember { FocusRequester() }
@@ -111,20 +111,20 @@ fun SignUpView(
         Spacer(modifier = Modifier.height(12.dp))
 
         // 닉네임
-        Text("닉네임", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp))
-        EditTextBox(
-            value = nickname,
-            onValueChange = { nickname = it },
-            placeHolder = "닉네임",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp)
-                .focusRequester(nicknameFocusRequester),
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(
-                onDone = { focusManager.clearFocus() }
-            )
-        )
+//        Text("닉네임", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp))
+//        EditTextBox(
+//            value = nickname,
+//            onValueChange = { nickname = it },
+//            placeHolder = "닉네임",
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(horizontal = 10.dp)
+//                .focusRequester(nicknameFocusRequester),
+//            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+//            keyboardActions = KeyboardActions(
+//                onDone = { focusManager.clearFocus() }
+//            )
+//        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -132,7 +132,7 @@ fun SignUpView(
             text = "회원가입",
             onConfirm = {
                 if (password == confirmPassword) {
-                    viewModel.signUp(username, password, nickname)
+                    viewModel.signUp(username, password)
                 } else {
                     // 비밀번호 불일치 처리
                 }
