@@ -84,6 +84,25 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun signUp(username: String, password: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(errorMessage = null)
+
+            memberUseCase.signUp(username, password, "example")
+                .onSuccess {
+                    Log.d("SignUp", "✅ 회원가입 성공! 서버 응답: $it")
+                    _isSignUpSuccess.value = true
+                    _uiState.value = _uiState.value.copy(errorMessage = null)
+                }
+                .onFailure {
+                    Log.e("SignUp", "❌ 회원가입 실패: ${it.message}")
+                    _uiState.value = _uiState.value.copy(
+                        errorMessage = it.message ?: "회원가입에 실패했습니다."
+                    )
+                }
+        }
+    }
+
     fun onSignUpSuccess() {
         _isSignUpSuccess.value = false // 바텀시트 닫힌 뒤 초기화
     }

@@ -24,7 +24,6 @@ fun HistoryList(
     modifier: Modifier = Modifier,
     onClick: (String, String, Int) -> Unit
 ) {
-    if(historyList.isNotEmpty()) {
         Column(
             modifier = modifier
         ) {
@@ -52,7 +51,6 @@ fun HistoryList(
                 GrayDivider()
             }
         }
-    }
 }
 
 @Preview

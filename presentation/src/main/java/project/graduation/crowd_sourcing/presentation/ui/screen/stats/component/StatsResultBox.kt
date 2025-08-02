@@ -211,7 +211,7 @@ fun StatsResultList(
         Spacer(Modifier.height(dimensionResource(R.dimen.space_small)))
 
         Text(
-            text = "평균 ${average}원",
+            text = "평균 ${String.format("%.1f", average)}원",
             style = TextStyle(fontSize = dimensionResource(R.dimen.sp_large).value.sp),
             color = Color.Black,
 

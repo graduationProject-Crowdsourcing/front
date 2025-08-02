@@ -23,7 +23,9 @@ fun getTimeAgo(date: LocalDateTime): String {
         minutes < 60 -> "${minutes}분 전"
         hours < 24 -> "${hours}시간 전"
         days < 7 -> "${days}일 전"
-        else -> date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+        days < 30 -> "${days / 7}주 전"
+        days < 365 -> "${days / 30}달 전"
+        else -> "${days / 365}년 전"
     }
 }
 
