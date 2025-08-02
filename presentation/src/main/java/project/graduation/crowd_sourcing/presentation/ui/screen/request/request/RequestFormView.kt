@@ -29,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -248,6 +249,7 @@ fun RequestFormContent(
                                 color = colorResource(id = R.color.gray),
                                 shape = RoundedCornerShape(8.dp)
                             )
+                            .clip(RoundedCornerShape(8.dp))
                             .background(color = colorResource(id = R.color.white))
                             .clickable { expanded = true }
                             .padding(horizontal = 16.dp, vertical = 10.dp)
