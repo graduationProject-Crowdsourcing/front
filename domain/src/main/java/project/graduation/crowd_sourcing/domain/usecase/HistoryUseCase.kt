@@ -39,7 +39,7 @@ class HistoryUseCase @Inject constructor(
                         completedList = completedList,
                         currentList = currentList,
                         mostRegion = most?.region ?: Region.UNKNOWN,
-                        mostCategory = Category.from(most?.item ?: ""),
+                        mostCategory = most?.item ?: "",
                     )
                 )
             } ?: Result.failure(IllegalStateException("로그인된 사용자 정보가 없습니다."))
@@ -90,7 +90,7 @@ class HistoryUseCase @Inject constructor(
                         )
                     },
                     mostRegion = Region.from(most.mostRequestedRegion),
-                    mostCategory = Category.from(most.mostRequestedCategory)
+                    mostCategory = most.mostRequestedCategory
                 ))
             } ?: Result.failure(IllegalStateException("로그인된 사용자 정보가 없습니다."))
         }catch (e:Exception){

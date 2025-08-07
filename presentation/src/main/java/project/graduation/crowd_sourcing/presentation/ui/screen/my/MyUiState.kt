@@ -25,7 +25,7 @@ data class MyUiState(
     companion object {
         fun init() = MyUiState(
             profileImage = null,
-            nickname = "",
+            nickname = "Unknown",
             point = 0,
             recentRequest = null,
             recentWork = null

@@ -11,5 +11,5 @@ data class HistoryStats(
     val completedList: List<WorkHistoryEntity>,
     val currentList: List<WorkHistoryEntity>,
     val mostRegion: Region,
-    val mostCategory: Category,
+    val mostCategory: String,
 )

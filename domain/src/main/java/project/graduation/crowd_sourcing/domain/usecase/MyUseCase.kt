@@ -38,17 +38,13 @@ class MyUseCase @Inject constructor(
         }
     }
 
-    suspend fun loadProfile(): Result<Pair<ProfileEntity, String>> {
+    suspend fun loadProfile(): Result<Pair<ProfileEntity, String?>> {
         return try {
             val profileResult = repository.getProfile()
             val imageResult = repository.getProfileImg()
 
-            if (profileResult.isSuccess && imageResult.isSuccess) {
-                Result.success(Pair(profileResult.getOrThrow(), imageResult.getOrThrow()))
-            } else {
-                val error = profileResult.exceptionOrNull() ?: imageResult.exceptionOrNull()
-                Result.failure(error ?: Exception("Unknown error"))
-            }
+            Result.success(Pair(profileResult.getOrThrow(), imageResult.getOrNull()))
+
         } catch (e: Exception) {
             Result.failure(e)
         }

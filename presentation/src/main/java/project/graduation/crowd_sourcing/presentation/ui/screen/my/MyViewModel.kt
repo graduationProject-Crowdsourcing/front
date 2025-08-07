@@ -68,8 +68,8 @@ class MyViewModel @Inject constructor(
 
                 _uiState.update { prev ->
                     prev.copy(
-                        recentWork = recentWork,
-                        recentRequest = recentCommission
+                        recentWork = recentCommission,
+                        recentRequest = recentWork
                     )
                 }
             }

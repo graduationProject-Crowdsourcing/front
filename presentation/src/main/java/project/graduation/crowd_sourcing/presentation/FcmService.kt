@@ -74,10 +74,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setLargeIcon(largeIcon)
             .setContentTitle(title)
             .setContentText(body)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .addAction(android.R.drawable.ic_menu_send, "수락", acceptPendingIntent)
-            .addAction(android.R.drawable.ic_menu_close_clear_cancel, "거절", rejectPendingIntent)
-            .build()
+            .setPriority(NotificationCompat.PRIORITY_HIGH).let{
+                if(!title.contains("승인")){
+                    it.addAction(android.R.drawable.ic_menu_send, "수락", acceptPendingIntent)
+                        .addAction(android.R.drawable.ic_menu_close_clear_cancel, "거절", rejectPendingIntent).build()
+                } else{
+                    it.build()
+                }
+            }
+
+
 
         notificationManager.notify(101, notification)
 

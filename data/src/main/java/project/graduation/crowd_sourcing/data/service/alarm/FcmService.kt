@@ -28,7 +28,8 @@ interface FcmService {
 
     @POST("/api/v1/fcm/accept")
     suspend fun postAccept(
-        @Body request: FcmWorkRequest
+        @Query("memberId") memberId: Int,
+        @Query("workId") workId: Int
     ): Response<Unit>
 
     @GET("/api/v1/fcm/send-notifications")
