@@ -182,13 +182,11 @@ class RequestFormViewModel @Inject constructor(
 
                 var lastResult: Result<Int>? = null
 
-                for (martName in selectedMartNames) {
-
                     val result = requesterUseCase.postWork(
                         work = "${state.sigungu} - ${state.item}",
                         workCount = maxPeople,
                         workpoint = pointPerPerson,
-                        martNames = listOf(martName),
+                        martNames = selectedMartNames,
                         sigungu = state.sigungu,
                         item = state.item,
                         workDate = workDate,
@@ -205,7 +203,6 @@ class RequestFormViewModel @Inject constructor(
                         Log.d("SubmitRequest", "HTTP 응답 코드: ${exception.code()}")
                         Log.d("SubmitRequest", "응답 메시지: ${exception.response()?.errorBody()?.string()}")
                     }
-                }
 
                 _requestState.value = RequestState.Success(lastResult ?: Result.failure(Exception("등록 실패")))
 

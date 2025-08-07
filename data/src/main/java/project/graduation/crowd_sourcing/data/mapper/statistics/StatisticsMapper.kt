@@ -18,7 +18,7 @@ import project.graduation.crowd_sourcing.domain.model.entity.statistics.MartMinM
 @RequiresApi(Build.VERSION_CODES.O)
 fun DetailResponse.toEntity() = DetailEntity(
     commission = this.commission,
-    commissionregion = Region.from(this.commissionregion),
+    commissionregion = commissionregion,
     category = this.category,
     commissionDate = this.commissionDate,
     expirationDate = this.expirationDate,
@@ -30,7 +30,7 @@ fun MartListPriceResponse.toEntity() = MartListPriceEntity(
     region = stringToRegion(this.region),
     category = this.category,
     mart = this.mart,
-    categoryPrice = this.categoryPrice?: 0
+    categoryPrice =  categoryPrice?.toInt() ?: 0
 )
 
 fun ItemMinMaxPriceResponse.toEntity() = ItemMinMaxPriceEntity(

@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 data class DetailEntity(
     val commission: String,
-    val commissionregion: Region,
+    val commissionregion: String,
     val category: String,
     val commissionDate: LocalDateTime,
     val expirationDate: LocalDateTime,

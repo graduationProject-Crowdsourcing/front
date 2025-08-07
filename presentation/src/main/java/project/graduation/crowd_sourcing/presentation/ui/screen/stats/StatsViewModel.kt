@@ -33,7 +33,7 @@ class StatsViewModel @Inject constructor(
         statisticsUseCase.getDetail(id).onSuccess {
             _uiState.update { prev ->
                 prev.copy(
-                    requestRegion = it.commissionregion.koreanName,
+                    requestRegion = it.commissionregion,
                     requestStartDate = it.commissionDate,
                     requestCompleteDate = it.expirationDate,
                     requestProduct = it.category

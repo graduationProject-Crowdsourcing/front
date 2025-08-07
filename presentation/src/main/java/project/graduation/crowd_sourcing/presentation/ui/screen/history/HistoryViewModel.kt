@@ -35,7 +35,12 @@ class HistoryViewModel @Inject constructor(
                                 ) to StatsType.Work.Detail(
                                     mostRegion = data.mostRegion.koreanName,
                                     averageTime = data.countOrHour / data.completed,
-                                    mostCategory = data.mostCategory.koreanName
+                                    mostCategory = (data.currentList + data.completedList)
+                                        .map { it.category }
+                                        .groupingBy { it }
+                                        .eachCount()
+                                        .maxByOrNull { it.value }
+                                        ?.key ?: ""
                                 ),
                                 currentHistoryList = data.currentList.map {
                                     HistoryItem(

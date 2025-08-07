@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.components.SingletonComponent
 import project.graduation.crowd_sourcing.domain.local.TokenManager
+import project.graduation.crowd_sourcing.domain.repository.AlarmRepository
 import project.graduation.crowd_sourcing.domain.repository.FcmRepository
 import project.graduation.crowd_sourcing.domain.repository.LocationRepository
 import project.graduation.crowd_sourcing.domain.repository.LoginRepository
@@ -20,6 +21,7 @@ import project.graduation.crowd_sourcing.domain.usecase.HistoryUseCase
 import project.graduation.crowd_sourcing.domain.usecase.MemberUseCase
 import project.graduation.crowd_sourcing.domain.usecase.MyUseCase
 import project.graduation.crowd_sourcing.domain.usecase.NotiUseCase
+import project.graduation.crowd_sourcing.domain.usecase.PostAcceptUseCase
 import project.graduation.crowd_sourcing.domain.usecase.RequesterUseCase
 import project.graduation.crowd_sourcing.domain.usecase.StatisticsUseCase
 import project.graduation.crowd_sourcing.domain.usecase.WorkerUseCase
@@ -68,6 +70,11 @@ object PresentationModule {
     @Provides
     fun provideNotiUscCase(repository: NotiRepository): NotiUseCase{
         return NotiUseCase(repository)
+    }
+
+    @Provides
+    fun providePostAcceptUseCase(alarmRepository: AlarmRepository, fcmRepository: FcmRepository): PostAcceptUseCase{
+        return PostAcceptUseCase(alarmRepository, fcmRepository)
     }
 }
 
