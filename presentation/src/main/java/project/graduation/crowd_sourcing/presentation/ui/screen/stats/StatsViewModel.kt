@@ -45,11 +45,11 @@ class StatsViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getDataList(region: String, category: String) = viewModelScope.launch {
+    fun getDataList(id: Int, category: String) = viewModelScope.launch {
         when (uiState.value.type) {
             StatsType.MART -> {
                 statisticsUseCase.getMart(
-                    region, category
+                    id, category
                 ).onSuccess { dataList ->
                     _uiState.update { prev ->
                         prev.copy(
@@ -65,7 +65,7 @@ class StatsViewModel @Inject constructor(
 
             StatsType.PRODUCT -> {
                 statisticsUseCase.getItem(
-                    region, category
+                    id, category
                 ).onSuccess { dataList ->
                     _uiState.update { prev ->
                         prev.copy(

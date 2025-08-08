@@ -12,26 +12,34 @@ class StatisticsUseCase @Inject constructor(
     private val repository: StatisticsRepository
 ) {
 
-    suspend fun getMart(region: String, category: String): Result<List<MartListPriceEntity>> {
+    suspend fun getMart(id: Int, category: String): Result<List<MartListPriceEntity>> {
         return try {
-            repository.getMartList(region, category)
+            val martNames = repository.getMartNames(id)
+
+            repository.getMartList(
+                martNames.getOrThrow().toTypedArray(),
+                category
+            )
+
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    suspend fun getItem(region: String, category: String): Result<List<ItemListPriceEntity>> {
+    suspend fun getItem(id: Int, category: String): Result<List<ItemListPriceEntity>> {
         return try {
-            repository.getItemList(region, category)
+            val martNames = repository.getMartNames(id)
+
+            repository.getItemList(martNames.getOrThrow().toTypedArray(), category)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    suspend fun getDetail(id: Int): Result<DetailEntity>{
-        return try{
+    suspend fun getDetail(id: Int): Result<DetailEntity> {
+        return try {
             repository.getCommissionDetail(id)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Result.failure(e)
         }
     }
