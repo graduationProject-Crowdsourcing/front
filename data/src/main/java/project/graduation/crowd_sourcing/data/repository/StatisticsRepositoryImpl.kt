@@ -15,6 +15,14 @@ import javax.inject.Inject
 class StatisticsRepositoryImpl @Inject constructor(
     private val statisticsService: StatisticsService
 ) : StatisticsRepository {
+    override suspend fun getMartNames(id: Int): Result<List<String>> {
+        return try {
+            Result.success(statisticsService.getMartNames(id).map { it.martName })
+        }catch (e:Exception){
+            Result.failure(e)
+        }
+    }
+
     override suspend fun getMinPriceMart(
         region: String,
         category: String
@@ -64,11 +72,11 @@ class StatisticsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMartList(
-        region: String,
+        martNames: Array<String>,
         category: String
     ): Result<List<MartListPriceEntity>> {
         return try {
-            val response = statisticsService.getMartList(region, category).map { it.toEntity() }
+            val response = statisticsService.getMartList(martNames, category).map { it.toEntity() }
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
@@ -76,11 +84,11 @@ class StatisticsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getItemList(
-        region: String,
+        martNames: Array<String>,
         category: String
     ): Result<List<ItemListPriceEntity>> {
         return try {
-            val response = statisticsService.getItemList(region, category).map { it.toEntity() }
+            val response = statisticsService.getItemList(martNames, category).map { it.toEntity() }
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)

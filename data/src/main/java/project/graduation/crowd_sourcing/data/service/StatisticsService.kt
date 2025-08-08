@@ -5,11 +5,17 @@ import project.graduation.crowd_sourcing.data.response.statistics.MartListPriceR
 import project.graduation.crowd_sourcing.data.response.statistics.ItemMinMaxPriceResponse
 import project.graduation.crowd_sourcing.data.response.statistics.ItemListPriceResponse
 import project.graduation.crowd_sourcing.data.response.statistics.MartMinMaxPriceResponse
+import project.graduation.crowd_sourcing.data.response.statistics.MartNameResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface StatisticsService {
+    @GET("/api/v1/statistics/{id}/mart-names")
+    suspend fun getMartNames(
+        @Path("id") id: Int
+    ): List<MartNameResponse>
+
     @GET("/api/v1/statistics/statistics/region-category-min-mart")
     suspend fun getMinPriceMart(
         @Query("region") region: String,
@@ -34,15 +40,15 @@ interface StatisticsService {
         @Query("category") category: String
     ): ItemMinMaxPriceResponse
 
-    @GET("/api/v1/statistics/statistics/region-category-mart-prices")
+    @GET("/api/v1/statistics/statistics/mart-category-prices")
     suspend fun getMartList(
-        @Query("region") region: String,
+        @Query("martNames") martNames: Array<String>,
         @Query("category") category: String
     ): List<MartListPriceResponse>
 
-    @GET("/api/v1/statistics/statistics/region-category-item-prices")
+    @GET("/api/v1/statistics/statistics/mart-category-item-prices")
     suspend fun getItemList(
-        @Query("region") region: String,
+        @Query("martNames") martNames: Array<String>,
         @Query("category") category: String
     ): List<ItemListPriceResponse>
 

@@ -38,7 +38,7 @@ fun StatsView(
     }
 
     LaunchedEffect(uiState.value.type, id) {
-        viewModel.getDataList(region = region, category = category)
+        viewModel.getDataList(id = id, category = category)
     }
 
     Column(

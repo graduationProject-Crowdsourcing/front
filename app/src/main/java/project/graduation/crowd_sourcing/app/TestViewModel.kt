@@ -48,19 +48,19 @@ class TestViewModel @Inject constructor(
         statisticsRepository.run{
 //            getCommissionDetail(userId) // ok
 
-            getItemList(region = "동대문구", category = "라면")
-                .onSuccess {
-                    Log.d("statistics", "ItemList: $it")
-                }.onFailure {
-                    Log.e("statistics", "ItemList error: $it")
-                }
-
-            getMartList(region = "동대문구", category = "라면")
-                .onSuccess {
-                    Log.d("statistics", "MartList: $it")
-                }.onFailure {
-                    Log.e("statistics", "MartList error: $it")
-                }
+//            getItemList(region = "동대문구", category = "라면")
+//                .onSuccess {
+//                    Log.d("statistics", "ItemList: $it")
+//                }.onFailure {
+//                    Log.e("statistics", "ItemList error: $it")
+//                }
+//
+//            getMartList(region = "동대문구", category = "라면")
+//                .onSuccess {
+//                    Log.d("statistics", "MartList: $it")
+//                }.onFailure {
+//                    Log.e("statistics", "MartList error: $it")
+//                }
 
 
             getMaxPriceItem(region = "동대문구", category = "라면")
