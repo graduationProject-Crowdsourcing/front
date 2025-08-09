@@ -201,14 +201,15 @@ fun Navigation(
             arguments = listOf(
                 navArgument("region") { type = NavType.StringType },
                 navArgument("category") { type = NavType.StringType },
-                navArgument("statsId") { type = NavType.IntType }
+                navArgument("statsId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val region = backStackEntry.arguments?.getString("region") ?: ""
             val category = backStackEntry.arguments?.getString("category") ?: ""
-            val id = backStackEntry.arguments?.getInt("statsId") ?: 0
+            val statsIdString = backStackEntry.arguments?.getString("statsId") ?: ""
+            val statsIdList = statsIdString.split(",").mapNotNull { it.toIntOrNull() } // 🔹 List<Int> 변환
 
-            StatsView(region = region, category = category, id = id)
+            StatsView(region = region, category = category, idList = statsIdList)
         }
     }
 }

@@ -22,7 +22,7 @@ fun HistoryList(
     listTitle: String,
     historyList: List<HistoryUiState.HistoryItem>,
     modifier: Modifier = Modifier,
-    onClick: (String, String, Int) -> Unit
+    onClick: (String, String, List<Int>) -> Unit
 ) {
         Column(
             modifier = modifier

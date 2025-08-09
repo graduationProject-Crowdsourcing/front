@@ -22,7 +22,7 @@ class StatsViewModel @Inject constructor(
     private val workerUseCase: WorkerUseCase
 ) : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
-    private val _uiState = MutableStateFlow(StatsUiState.test())
+    private val _uiState = MutableStateFlow(StatsUiState.init())
 
     @RequiresApi(Build.VERSION_CODES.O)
     val uiState = _uiState.asStateFlow()
@@ -45,11 +45,11 @@ class StatsViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getDataList(id: Int, category: String) = viewModelScope.launch {
+    fun getDataList(idList: List<Int>, category: String) = viewModelScope.launch {
         when (uiState.value.type) {
             StatsType.MART -> {
                 statisticsUseCase.getMart(
-                    id, category
+                    idList, category
                 ).onSuccess { dataList ->
                     _uiState.update { prev ->
                         prev.copy(
@@ -65,7 +65,7 @@ class StatsViewModel @Inject constructor(
 
             StatsType.PRODUCT -> {
                 statisticsUseCase.getItem(
-                    id, category
+                    idList, category
                 ).onSuccess { dataList ->
                     _uiState.update { prev ->
                         prev.copy(

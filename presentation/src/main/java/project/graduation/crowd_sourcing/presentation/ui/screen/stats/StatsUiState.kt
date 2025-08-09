@@ -33,6 +33,15 @@ data class StatsUiState(
             ),
             type = StatsType.MART
         )
+
+        fun init() = StatsUiState(
+            requestRegion = "",
+            requestStartDate = LocalDateTime.now(),
+            requestCompleteDate = LocalDateTime.now(),
+            requestProduct = "",
+            dataList = emptyList(),
+            type = StatsType.MART
+        )
     }
 }
 

@@ -48,7 +48,7 @@ class HistoryViewModel @Inject constructor(
                                     category = it.category,
                                     date = it.commissionDate,
                                     point = it.commissionPoint,
-                                    id = it.id,
+                                    id = listOf(it.id),
                                     region = it.commissionRegion
                                 )
                             },
@@ -58,7 +58,7 @@ class HistoryViewModel @Inject constructor(
                                     category = it.category,
                                     date = it.commissionDate,
                                     point = it.commissionPoint,
-                                    id = it.id,
+                                    id = listOf(it.id),
                                     region = it.commissionRegion
                                 )
                             }
@@ -82,26 +82,29 @@ class HistoryViewModel @Inject constructor(
                                 mostCategory = data.mostCategory,
                                 averagePoint = data.countOrHour / data.completed
                             ),
-                            currentHistoryList = data.currentList.map {
-                                HistoryItem(
-                                    product = it.commission,
-                                    category = it.category,
-                                    date = it.commissionDate,
-                                    point = it.commissionPoint,
-                                    id = it.id,
-                                    region = it.commissionRegion
-                                )
-                            }.distinctBy { it.id },
-                            totalHistoryList = (data.currentList + data.completedList).map {
-                                HistoryItem(
-                                    product = it.commission,
-                                    category = it.category,
-                                    date = it.commissionDate,
-                                    point = it.commissionPoint,
-                                    id = it.id,
-                                    region = it.commissionRegion
-                                )
-                            }.distinctBy { it.id }
+                            currentHistoryList = data.currentList.groupBy { it.commission }
+                                .map { (product, items) ->
+                                    HistoryItem(
+                                        product = product,
+                                        category = items.first().category,
+                                        date = items.first().commissionDate,
+                                        point = items.first().commissionPoint,
+                                        id = items.map { it.id },
+                                        region = items.first().commissionRegion
+                                    )
+                                },
+                            totalHistoryList = (data.currentList + data.completedList)
+                                .groupBy { it.commission }
+                                .map { (product, items) ->
+                                    HistoryItem(
+                                        product = product,
+                                        category = items.first().category,
+                                        date = items.first().commissionDate,
+                                        point = items.first().commissionPoint,
+                                        id = items.map { it.id },
+                                        region = items.first().commissionRegion
+                                    )
+                                }
                         )
                     }
                 }.onFailure {

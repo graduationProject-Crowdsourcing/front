@@ -32,7 +32,7 @@ fun HistoryView(
     val viewModel: HistoryViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
 
-    val listTitles: Pair<List<String>, (String, String, Int) -> Unit>
+    val listTitles: Pair<List<String>, (String, String, List<Int>) -> Unit>
     = if (historyType == HistoryType.WORK) {
         listOf("현재 작업 목록", "작업 기록") to {p1, p2, p3 -> }
     } else {
