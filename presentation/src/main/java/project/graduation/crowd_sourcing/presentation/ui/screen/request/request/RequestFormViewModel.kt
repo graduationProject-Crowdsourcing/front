@@ -243,7 +243,6 @@ class RequestFormViewModel @Inject constructor(
             try {
                 val searchHome = getSearchHomeInitDataUseCase()
                 _categoryList.value = searchHome.categoryList
-                Log.d("RequestFormViewModel", "카테고리 로딩 완료: ${searchHome.categoryList}")
             } catch (e: Exception) {
                 Log.e("RequestFormViewModel", "카테고리 로딩 실패", e)
             }
