@@ -33,7 +33,7 @@ class HistoryViewModel @Inject constructor(
                                 totalTime = data.countOrHour,
                                 totalPoint = data.point
                             ) to StatsType.Work.Detail(
-                                mostRegion = data.mostRegion.koreanName,
+                                mostRegion = data.mostRegion,
                                 averageTime = data.countOrHour / data.completed,
                                 mostCategory = (data.currentList + data.completedList)
                                     .map { it.category }
@@ -78,7 +78,7 @@ class HistoryViewModel @Inject constructor(
                                 totalPoint = data.point,
                                 completedRequests = data.completed
                             ) to StatsType.Request.Detail(
-                                mostRegion = data.mostRegion.koreanName,
+                                mostRegion = data.mostRegion,
                                 mostCategory = data.mostCategory,
                                 averagePoint = data.countOrHour / data.completed
                             ),

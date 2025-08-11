@@ -2,8 +2,6 @@ package project.graduation.crowd_sourcing.domain.usecase
 
 import project.graduation.crowd_sourcing.data.response.worker.WorkHistoryEntity
 import project.graduation.crowd_sourcing.domain.local.TokenManager
-import project.graduation.crowd_sourcing.domain.model.Category
-import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.domain.model.WorkStatus
 import project.graduation.crowd_sourcing.domain.model.entity.history.HistoryStats
 import project.graduation.crowd_sourcing.domain.model.entity.userpoint.UserPointHistoryEntity
@@ -38,7 +36,7 @@ class HistoryUseCase @Inject constructor(
                         completed = (completedList.size).coerceAtLeast(1),
                         completedList = completedList,
                         currentList = currentList,
-                        mostRegion = most?.region ?: Region.UNKNOWN,
+                        mostRegion = most?.region ?: "",
                         mostCategory = most?.item ?: "",
                     )
                 )
@@ -89,7 +87,7 @@ class HistoryUseCase @Inject constructor(
                             category = it.commissionCategory ?: ""
                         )
                     },
-                    mostRegion = Region.from(most.mostRequestedRegion),
+                    mostRegion = most.mostRequestedRegion,
                     mostCategory = most.mostRequestedCategory
                 ))
             } ?: Result.failure(IllegalStateException("로그인된 사용자 정보가 없습니다."))

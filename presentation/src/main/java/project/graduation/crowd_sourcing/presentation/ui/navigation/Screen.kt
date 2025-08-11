@@ -1,8 +1,6 @@
 package project.graduation.crowd_sourcing.presentation.ui.navigation
 
 import androidx.annotation.DrawableRes
-import project.graduation.crowd_sourcing.domain.model.Category
-import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.presentation.R
 
 sealed class Screen(val title: String, val route: String) {

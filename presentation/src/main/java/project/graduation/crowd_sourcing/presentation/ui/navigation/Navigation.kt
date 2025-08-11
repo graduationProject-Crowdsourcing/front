@@ -16,7 +16,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import project.graduation.crowd_sourcing.domain.model.Category
-import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.presentation.ui.screen.alarm.AlarmView
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.HistoryType
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.HistoryView
