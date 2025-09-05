@@ -23,6 +23,11 @@ interface FcmRepository {
         memberId: Int
     ): Result<Unit>
 
+    suspend fun postRejectWork(
+        workId: Int,
+        memberId: Int
+    ): Result<Unit>
+
     suspend fun getSendNotifications(
         latitude: Double,
         longitude: Double

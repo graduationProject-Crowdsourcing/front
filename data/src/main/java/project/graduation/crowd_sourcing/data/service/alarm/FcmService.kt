@@ -32,6 +32,13 @@ interface FcmService {
         @Query("workId") workId: Int
     ): Response<Unit>
 
+    @POST("/api/v1/fcm/rejectwork")
+    suspend fun postRejectWork(
+        @Query("memberId") memberId: Int,
+        @Query("workId") workId: Int
+    ): Response<Unit>
+
+
     @GET("/api/v1/fcm/send-notifications")
     suspend fun getSendNotifications(
         @Query("latitude") latitude: Double,

@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.domain.model.Noti
+import project.graduation.crowd_sourcing.presentation.di.FcmUseCaseEntryPoint
 import project.graduation.crowd_sourcing.presentation.di.NotiUseCaseEntryPoint
 
 @AndroidEntryPoint
@@ -45,11 +46,18 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val channelId = "default_channel"
 
+        val workId = remoteMessage.data["workId"]?.toIntOrNull() ?: -1
+        val memberId = remoteMessage.data["memberId"]?.toIntOrNull() ?: -1
+
         val acceptIntent = Intent(this, NotificationActionReceiver::class.java).apply {
             action = "ACTION_ACCEPT"
+            putExtra("EXTRA_WORK_ID", workId)
+            putExtra("EXTRA_MEMBER_ID", memberId)
         }
         val rejectIntent = Intent(this, NotificationActionReceiver::class.java).apply {
             action = "ACTION_REJECT"
+            putExtra("EXTRA_WORK_ID", workId)
+            putExtra("EXTRA_MEMBER_ID", memberId)
         }
 
         val acceptPendingIntent = PendingIntent.getBroadcast(
@@ -97,32 +105,63 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
 class NotificationActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+
+        val entryPoint = EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            FcmUseCaseEntryPoint::class.java
+        )
+        val postAcceptUseCase = entryPoint.postAcceptUseCase()
+        val postRejectWorkUseCase = entryPoint.postRejectWorkUseCase()
+
+        // 알림에서 전달된 값 꺼내기
+        val workId = intent.getIntExtra("EXTRA_WORK_ID", -1)
+        val memberId = intent.getIntExtra("EXTRA_MEMBER_ID", -1)
+
         when (intent.action) {
             "ACTION_ACCEPT" -> {
-                Log.d("FCM_ACTION", "수락 누름")
+                Log.d("FCM_ACTION", "수락 누름: workId=$workId, memberId=$memberId")
 
-                val launchIntent = Intent(Intent.ACTION_MAIN).apply {
-                    addCategory(Intent.CATEGORY_LAUNCHER)
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    setClassName(context.packageName, "project.graduation.crowd_sourcing.app.MainActivity")
-                }
-                try {
-                    context.startActivity(launchIntent)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val result = postAcceptUseCase(workId, memberId)
+                    if (result.isSuccess) {
+                        Log.d("FCM_ACTION", "수락 API 성공")
 
-                    val notificationManager =
-                        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                    notificationManager.cancel(101)
-                } catch (e: Exception) {
-                    Log.e("FCM_ACTION", "Activity 실행 실패", e)
+                        // 홈(MainActivity) 이동
+                        val launchIntent = Intent(Intent.ACTION_MAIN).apply {
+                            addCategory(Intent.CATEGORY_LAUNCHER)
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            setClassName(
+                                context.packageName,
+                                "project.graduation.crowd_sourcing.app.MainActivity"
+                            )
+                        }
+                        context.startActivity(launchIntent)
+
+                        // 알림 제거
+                        val notificationManager =
+                            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                        notificationManager.cancel(101)
+                    } else {
+                        Log.e("FCM_ACTION", "수락 API 실패")
+                    }
                 }
             }
 
             "ACTION_REJECT" -> {
-                Log.d("FCM_ACTION", "거절 누름")
+                Log.d("FCM_ACTION", "거절 누름: workId=$workId, memberId=$memberId")
 
-                val notificationManager =
-                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.cancel(101)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val result = postRejectWorkUseCase(workId, memberId)
+                    if (result.isSuccess) {
+                        Log.d("FCM_ACTION", "거절 API 성공")
+
+                        val notificationManager =
+                            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                        notificationManager.cancel(101)
+                    } else {
+                        Log.e("FCM_ACTION", "거절 API 실패")
+                    }
+                }
             }
         }
     }
