@@ -54,6 +54,13 @@
 
         </activity>
 
+        <receiver
+            android:name="project.graduation.crowd_sourcing.presentation.NotificationActionReceiver"
+            android:exported="true"/>
+
+
+
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"

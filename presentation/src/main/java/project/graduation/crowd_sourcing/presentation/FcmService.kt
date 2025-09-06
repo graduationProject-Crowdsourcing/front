@@ -32,6 +32,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
+        Log.d("FCM_DATA", "data payload: ${remoteMessage.data}")
+
         val entryPoint = EntryPointAccessors.fromApplication(
             applicationContext,
             NotiUseCaseEntryPoint::class.java
@@ -47,7 +49,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val channelId = "default_channel"
 
         val workId = remoteMessage.data["workId"]?.toIntOrNull() ?: -1
-        val memberId = remoteMessage.data["memberId"]?.toIntOrNull() ?: -1
+        val memberId = remoteMessage.data["workerId"]?.toIntOrNull() ?: -1
 
         val acceptIntent = Intent(this, NotificationActionReceiver::class.java).apply {
             action = "ACTION_ACCEPT"
@@ -142,7 +144,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
                             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                         notificationManager.cancel(101)
                     } else {
-                        Log.e("FCM_ACTION", "수락 API 실패")
+                        Log.e("FCM_ACTION", "수락 API 실패: ${result.exceptionOrNull()?.message}")
                     }
                 }
             }
