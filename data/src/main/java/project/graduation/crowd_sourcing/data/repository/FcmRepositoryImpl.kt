@@ -1,5 +1,6 @@
 package project.graduation.crowd_sourcing.data.repository
 
+import android.util.Log
 import project.graduation.crowd_sourcing.data.request.fcm.FcmRegisterRequest
 import project.graduation.crowd_sourcing.data.request.fcm.FcmSendRequest
 import project.graduation.crowd_sourcing.data.request.fcm.FcmWorkRequest
@@ -48,12 +49,19 @@ class FcmRepositoryImpl @Inject constructor(
     override suspend fun postAccept(workId: Int, memberId: Int): Result<Unit> {
         return try {
             val response = fcmService.postAccept(memberId = memberId, workId = workId)
+
+            Log.d("FCM_ACTION", "수락 API code=${response.code()}, success=${response.isSuccessful}")
+            Log.d("FCM_ACTION", "수락 API message=${response.message()}")
+            Log.d("FCM_ACTION", "수락 API errorBody=${response.errorBody()?.string()}")
+
             if (response.isSuccessful) Result.success(Unit)
-            else Result.failure(Exception("error"))
+            else Result.failure(Exception("HTTP ${response.code()} ${response.message()}"))
         } catch (e: Exception) {
+            Log.e("FCM_ACTION", "수락 API 예외 발생: ${e.message}", e)
             Result.failure(e)
         }
     }
+
 
     override suspend fun postRejectWork(workId: Int, memberId: Int): Result<Unit> {
         return try {
@@ -61,12 +69,19 @@ class FcmRepositoryImpl @Inject constructor(
                 memberId = memberId,
                 workId = workId
             )
+
+            Log.d("FCM_ACTION", "거절 API code=${response.code()}, success=${response.isSuccessful}")
+            Log.d("FCM_ACTION", "거절 API message=${response.message()}")
+            Log.d("FCM_ACTION", "거절 API errorBody=${response.errorBody()?.string()}")
+
             if (response.isSuccessful) Result.success(Unit)
-            else Result.failure(Exception("error"))
+            else Result.failure(Exception("HTTP ${response.code()} ${response.message()}"))
         } catch (e: Exception) {
+            Log.e("FCM_ACTION", "거절 API 예외 발생: ${e.message}", e)
             Result.failure(e)
         }
     }
+
 
 
     override suspend fun getSendNotifications(latitude: Double, longitude: Double): Result<Unit> {
