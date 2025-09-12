@@ -18,7 +18,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.domain.model.Noti
+import project.graduation.crowd_sourcing.domain.usecase.NotiUseCase
 import project.graduation.crowd_sourcing.presentation.di.NotiUseCaseEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -40,17 +42,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val title = remoteMessage.notification?.title ?: "알림"
         val body = remoteMessage.notification?.body ?: "내용 없음"
+        val workId = remoteMessage.data["workId"]?.toIntOrNull() ?: -1
 
-        Log.d("FCM", "푸시 수신: $title - $body")
+        Log.d("FCM", "푸시 수신: $title - $body - $workId")
 
         val channelId = "default_channel"
 
         val acceptIntent = Intent(this, NotificationActionReceiver::class.java).apply {
             action = "ACTION_ACCEPT"
+            putExtra("workId", workId)
         }
+
         val rejectIntent = Intent(this, NotificationActionReceiver::class.java).apply {
             action = "ACTION_REJECT"
+            putExtra("workId", workId)
         }
+
 
         val acceptPendingIntent = PendingIntent.getBroadcast(
             this, 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -95,34 +102,48 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 }
 
 
+@AndroidEntryPoint
 class NotificationActionReceiver : BroadcastReceiver() {
+    @Inject
+    lateinit var notiUseCase: NotiUseCase
+
     override fun onReceive(context: Context, intent: Intent) {
+        val workId = intent.getIntExtra("workId", -1)
+
         when (intent.action) {
             "ACTION_ACCEPT" -> {
-                Log.d("FCM_ACTION", "수락 누름")
-
-                val launchIntent = Intent(Intent.ACTION_MAIN).apply {
-                    addCategory(Intent.CATEGORY_LAUNCHER)
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    setClassName(context.packageName, "project.graduation.crowd_sourcing.app.MainActivity")
-                }
-                try {
-                    context.startActivity(launchIntent)
-
-                    val notificationManager =
-                        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                    notificationManager.cancel(101)
-                } catch (e: Exception) {
-                    Log.e("FCM_ACTION", "Activity 실행 실패", e)
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        notiUseCase.accept(workId).onSuccess {
+                            val launchIntent = Intent(Intent.ACTION_MAIN).apply {
+                                addCategory(Intent.CATEGORY_LAUNCHER)
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                setClassName(
+                                    context.packageName,
+                                    "project.graduation.crowd_sourcing.app.MainActivity"
+                                )
+                            }
+                            context.startActivity(launchIntent)
+                        }
+                        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(101)
+                    } catch (e: Exception) {
+                        Log.e("FCM_ACTION", "Activity 실행 실패", e)
+                    }
                 }
             }
 
             "ACTION_REJECT" -> {
-                Log.d("FCM_ACTION", "거절 누름")
-
-                val notificationManager =
-                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.cancel(101)
+                try {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        notiUseCase.reject(workId).onSuccess {
+                            (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(
+                                101
+                            )
+                        }
+                    }
+                }catch(e:Exception){
+                    Log.e("FCM_ACTION", "${e.message}")
+                }
             }
         }
     }

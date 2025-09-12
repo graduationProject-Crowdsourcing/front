@@ -1,8 +1,6 @@
 package project.graduation.crowd_sourcing.data.service.alarm
 
-import project.graduation.crowd_sourcing.data.request.fcm.FcmRegisterRequest
 import project.graduation.crowd_sourcing.data.request.fcm.FcmSendRequest
-import project.graduation.crowd_sourcing.data.request.fcm.FcmWorkRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,6 +13,12 @@ interface FcmService {
         @Body request: FcmSendRequest
     ): Response<Unit>
 
+    @POST("/api/v1/fcm/rejectwork")
+    suspend fun postRejectWork(
+        @Query("memberId") memberId: Int,
+        @Query("workId") workId: Int
+    ): Response<Unit>
+
     @POST("/api/v1/fcm/register")
     suspend fun postRegister(
         @Query("memberId") memberId: Int,
@@ -23,7 +27,8 @@ interface FcmService {
 
     @POST("/api/v1/fcm/cancel")
     suspend fun postCancel(
-        @Body request: FcmWorkRequest
+        @Query("memberId") memberId: Int,
+        @Query("workId") workId: Int
     ): Response<Unit>
 
     @POST("/api/v1/fcm/accept")

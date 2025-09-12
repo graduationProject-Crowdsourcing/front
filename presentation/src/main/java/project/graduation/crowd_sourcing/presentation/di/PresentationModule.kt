@@ -68,8 +68,8 @@ object PresentationModule {
     }
 
     @Provides
-    fun provideNotiUscCase(repository: NotiRepository): NotiUseCase{
-        return NotiUseCase(repository)
+    fun provideNotiUscCase(repository: NotiRepository, fcmRepository: FcmRepository, tokenManager: TokenManager): NotiUseCase{
+        return NotiUseCase(repository, fcmRepository, tokenManager)
     }
 
     @Provides
