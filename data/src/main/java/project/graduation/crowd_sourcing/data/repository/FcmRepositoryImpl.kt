@@ -36,7 +36,7 @@ class FcmRepositoryImpl @Inject constructor(
     override suspend fun postCancel(workId: Int, memberId: Int): Result<Unit> {
         return try {
             val response = fcmService.postCancel(
-                request = FcmWorkRequest(memberId = memberId, workId = workId)
+               memberId = memberId, workId = workId
             )
             if (response.isSuccessful) Result.success(Unit)
             else Result.failure(Exception("error"))

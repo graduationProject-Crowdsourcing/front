@@ -23,7 +23,8 @@ interface FcmService {
 
     @POST("/api/v1/fcm/cancel")
     suspend fun postCancel(
-        @Body request: FcmWorkRequest
+        @Query("memberId") memberId: Int,
+        @Query("workId") workId: Int
     ): Response<Unit>
 
     @POST("/api/v1/fcm/accept")

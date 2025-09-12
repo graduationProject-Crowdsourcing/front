@@ -42,9 +42,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val title = remoteMessage.notification?.title ?: "알림"
         val body = remoteMessage.notification?.body ?: "내용 없음"
-        val workId = remoteMessage.data["workId"]
+        val workId = remoteMessage.data["workId"]?.toIntOrNull() ?: -1
 
-        Log.d("FCM", "푸시 수신: $title - $body")
+        Log.d("FCM", "푸시 수신: $title - $body - $workId")
 
         val channelId = "default_channel"
 
