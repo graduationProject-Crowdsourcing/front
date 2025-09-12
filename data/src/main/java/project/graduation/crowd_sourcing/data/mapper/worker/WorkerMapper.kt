@@ -2,7 +2,6 @@ package project.graduation.crowd_sourcing.data.mapper.worker
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import project.graduation.crowd_sourcing.data.mapper.stringToRegion
 import project.graduation.crowd_sourcing.data.mapper.stringToWorkStatus
 import project.graduation.crowd_sourcing.data.response.worker.WorkCountEntity
 import project.graduation.crowd_sourcing.data.response.worker.WorkCountResponse
@@ -15,7 +14,6 @@ import project.graduation.crowd_sourcing.data.response.worker.WorkMostResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkOngoingResponse
 import project.graduation.crowd_sourcing.data.response.worker.WorkPointEntity
 import project.graduation.crowd_sourcing.data.response.worker.WorkPointResponse
-import project.graduation.crowd_sourcing.domain.model.Category
 
 fun WorkCountResponse.toEntity() = WorkCountEntity(
     workCount = workCount
@@ -52,7 +50,7 @@ fun WorkHourResponse.toEntity() = WorkHourEntity(
 )
 
 fun WorkMostResponse.toEntity() = WorkMostEntity(
-    region = stringToRegion(this.region),
+    region = this.region,
     item = item,
     dayOfWeek = dayOfWeek
 )

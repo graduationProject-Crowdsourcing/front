@@ -1,6 +1,5 @@
 package project.graduation.crowd_sourcing.domain.model.entity.my
 
-import project.graduation.crowd_sourcing.domain.model.Region
 import java.time.LocalDateTime
 
 data class RecentWorkEntity(

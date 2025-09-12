@@ -57,13 +57,13 @@ fun MyRecentActivity(myUiState: MyUiState, navController: NavController) {
                     subText = "${getTimeAgo(date)} / ${category} / ${region}",
                     icon = R.drawable.ic_list_box,
                     onClick = {
-                        navController.navigate(
-                            Screen.DetailStatsScreen.createRoute(
-                                region = region,
-                                category = category,
-                                id
-                            )
-                        )
+//                        navController.navigate(
+//                            Screen.DetailStatsScreen.createRoute(
+//                                region = region,
+//                                category = category,
+//                                id
+//                            )
+//                        )
                     }
                 )
             )

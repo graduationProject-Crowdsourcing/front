@@ -10,7 +10,7 @@ data class HistoryUiState(
     val totalHistoryList: List<HistoryItem>,
 ) {
     data class HistoryItem(
-        val id: Int,
+        val id: List<Int>,
         val product: String,
         val category: String,
         val region: String,

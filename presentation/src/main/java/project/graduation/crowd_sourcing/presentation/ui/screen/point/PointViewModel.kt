@@ -26,7 +26,7 @@ class PointViewModel @Inject constructor(
                         PointUiState.PointItem(
                             name = it.item,
                             date = it.date,
-                            region = it.region.koreanName,
+                            region = it.region,
                             type = it.type,
                             point = it.point
                         )

@@ -49,18 +49,18 @@ class LocationWorker @AssistedInject  constructor(
 
                 // suspend 함수 직접 호출
                 alarmUseCase.updateLocation(lat, lng).onFailure {
-                  sendNotification("updateLocation", it.toString())
+//                  sendNotification("updateLocation", it.toString())
                 }.onSuccess {
 //                    sendNotification("updateLocation", "성공")
                 }
 
                 Result.success()
             } else {
-                sendNotification("위치 확인 실패", "위치 정보를 가져올 수 없습니다.")
+//                sendNotification("위치 확인 실패", "위치 정보를 가져올 수 없습니다.")
                 Result.retry()
             }
         } catch (e: Exception) {
-            sendNotification("오류", "위치 정보를 가져오는 중 오류가 발생했습니다.")
+//            sendNotification("오류", "위치 정보를 가져오는 중 오류가 발생했습니다.")
             Result.retry()
         }
     }
