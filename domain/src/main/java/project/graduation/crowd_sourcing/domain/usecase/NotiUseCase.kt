@@ -25,6 +25,6 @@ class NotiUseCase @Inject constructor(
     }
 
     suspend fun reject(workId: Int):  Result<Unit> {
-        return fcmRepository.postCancel(workId = workId, memberId = tokenManager.getUserId())
+        return fcmRepository.postRejectWork(workId = workId, memberId = tokenManager.getUserId())
     }
 }

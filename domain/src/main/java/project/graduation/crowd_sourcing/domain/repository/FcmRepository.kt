@@ -7,6 +7,11 @@ interface FcmRepository {
         body: String
     ): Result<Unit>
 
+    suspend fun postRejectWork(
+        workId: Int,
+        memberId: Int
+    ): Result<Unit>
+
     suspend fun postRegister(
         memberId: Int,
         fcmToken: String

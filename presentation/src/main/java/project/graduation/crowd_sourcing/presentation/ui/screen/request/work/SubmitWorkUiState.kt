@@ -12,7 +12,7 @@ data class SubmitWorkUiState(
     val reward: Int = 0,
     val executeTime: String = getCurrentDateTimeString(),
     val imageUri: Uri? = null,
-    val locationVerified: Boolean? = null
+    val locationVerified: Boolean? = true
 )
 
 
