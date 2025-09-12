@@ -16,8 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import project.graduation.crowd_sourcing.domain.model.Category
-import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.screen.stats.component.StatsRequestedTerm
 import project.graduation.crowd_sourcing.presentation.ui.screen.stats.component.StatsResultBox
@@ -28,17 +26,17 @@ import project.graduation.crowd_sourcing.presentation.ui.screen.stats.component.
 fun StatsView(
     region: String,
     category: String,
-    id: Int
+    idList: List<Int>
 ) {
     val viewModel: StatsViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
 
-    LaunchedEffect(id) {
-        viewModel.getDetail(id)
+    LaunchedEffect(idList) {
+        viewModel.getDetail(idList.first())
     }
 
-    LaunchedEffect(uiState.value.type, id) {
-        viewModel.getDataList(id = id, category = category)
+    LaunchedEffect(uiState.value.type, idList) {
+        viewModel.getDataList(idList = idList, category = category)
     }
 
     Column(

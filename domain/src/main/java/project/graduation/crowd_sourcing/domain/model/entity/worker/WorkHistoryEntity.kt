@@ -1,7 +1,5 @@
 package project.graduation.crowd_sourcing.data.response.worker
 
-import project.graduation.crowd_sourcing.domain.model.Category
-import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.domain.model.WorkStatus
 import java.time.LocalDateTime
 

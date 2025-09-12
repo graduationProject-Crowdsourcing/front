@@ -4,14 +4,11 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import project.graduation.crowd_sourcing.domain.model.Category
-import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.domain.usecase.StatisticsUseCase
 import project.graduation.crowd_sourcing.domain.usecase.WorkerUseCase
 import javax.inject.Inject
@@ -22,7 +19,7 @@ class StatsViewModel @Inject constructor(
     private val workerUseCase: WorkerUseCase
 ) : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
-    private val _uiState = MutableStateFlow(StatsUiState.test())
+    private val _uiState = MutableStateFlow(StatsUiState.init())
 
     @RequiresApi(Build.VERSION_CODES.O)
     val uiState = _uiState.asStateFlow()
@@ -45,11 +42,11 @@ class StatsViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getDataList(id: Int, category: String) = viewModelScope.launch {
+    fun getDataList(idList: List<Int>, category: String) = viewModelScope.launch {
         when (uiState.value.type) {
             StatsType.MART -> {
                 statisticsUseCase.getMart(
-                    id, category
+                    idList, category
                 ).onSuccess { dataList ->
                     _uiState.update { prev ->
                         prev.copy(
@@ -65,7 +62,7 @@ class StatsViewModel @Inject constructor(
 
             StatsType.PRODUCT -> {
                 statisticsUseCase.getItem(
-                    id, category
+                    idList, category
                 ).onSuccess { dataList ->
                     _uiState.update { prev ->
                         prev.copy(

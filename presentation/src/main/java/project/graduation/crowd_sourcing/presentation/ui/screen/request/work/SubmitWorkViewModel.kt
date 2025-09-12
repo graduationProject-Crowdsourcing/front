@@ -99,7 +99,7 @@ class SubmitWorkViewModel @Inject constructor(
     fun locationVerified(lat: Double, lng: Double) {
         viewModelScope.launch {
             try {
-                val radius = 0.1 // 100미터 이내
+                val radius = 1.0 // 1000미터 이내
 
                 val marts = martSearchUseCase.searchMartByLocation(lat, lng, radius)
                 if (marts.map { it.martName }.contains(uiState.value.place)) {

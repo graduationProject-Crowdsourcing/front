@@ -1,9 +1,6 @@
 package project.graduation.crowd_sourcing.domain.model.entity.requester
 
-import project.graduation.crowd_sourcing.domain.model.Region
-import project.graduation.crowd_sourcing.domain.model.WorkStatus
 import java.time.LocalDateTime
-import java.util.Date
 
 /**
  * 의뢰 히스토리 정보 도메인 모델

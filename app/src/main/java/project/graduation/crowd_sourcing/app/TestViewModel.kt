@@ -5,23 +5,14 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.domain.local.TokenManager
-import project.graduation.crowd_sourcing.data.response.worker.WorkCountEntity
-import project.graduation.crowd_sourcing.data.response.worker.WorkHistoryEntity
-import project.graduation.crowd_sourcing.data.response.worker.WorkHourEntity
-import project.graduation.crowd_sourcing.data.response.worker.WorkMostEntity
-import project.graduation.crowd_sourcing.data.response.worker.WorkPointEntity
-import project.graduation.crowd_sourcing.domain.model.Region
-import project.graduation.crowd_sourcing.domain.model.WorkStatus
 import project.graduation.crowd_sourcing.domain.repository.MyRepository
 import project.graduation.crowd_sourcing.domain.repository.StatisticsRepository
 import project.graduation.crowd_sourcing.domain.repository.UserPointRepository
 import project.graduation.crowd_sourcing.domain.repository.WorkerRepository
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel

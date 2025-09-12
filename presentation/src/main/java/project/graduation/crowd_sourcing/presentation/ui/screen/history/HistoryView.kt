@@ -17,8 +17,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import project.graduation.crowd_sourcing.domain.model.Category
-import project.graduation.crowd_sourcing.domain.model.Region
 import project.graduation.crowd_sourcing.presentation.R
 import project.graduation.crowd_sourcing.presentation.ui.navigation.Screen
 import project.graduation.crowd_sourcing.presentation.ui.screen.history.component.HistoryList
@@ -32,7 +30,7 @@ fun HistoryView(
     val viewModel: HistoryViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState()
 
-    val listTitles: Pair<List<String>, (String, String, Int) -> Unit>
+    val listTitles: Pair<List<String>, (String, String, List<Int>) -> Unit>
     = if (historyType == HistoryType.WORK) {
         listOf("현재 작업 목록", "작업 기록") to {p1, p2, p3 -> }
     } else {
