@@ -51,7 +51,7 @@ class LocationWorker @AssistedInject  constructor(
                 alarmUseCase.updateLocation(lat, lng).onFailure {
                   sendNotification("updateLocation", it.toString())
                 }.onSuccess {
-                    sendNotification("updateLocation", "성공")
+//                    sendNotification("updateLocation", "성공")
                 }
 
                 Result.success()
