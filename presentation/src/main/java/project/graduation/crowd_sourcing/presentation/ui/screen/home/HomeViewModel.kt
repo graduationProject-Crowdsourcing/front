@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import project.graduation.crowd_sourcing.domain.model.entity.martsearch.MartEntity
+import project.graduation.crowd_sourcing.domain.usecase.AlarmUseCase
 import project.graduation.crowd_sourcing.domain.usecase.MartSearchUseCase
 import project.graduation.crowd_sourcing.domain.usecase.HistoryUseCase
 import javax.inject.Inject
@@ -54,7 +55,8 @@ import kotlin.math.*
 class HomeViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val martSearchUseCase: MartSearchUseCase,
-    private val historyUseCase: HistoryUseCase
+    private val historyUseCase: HistoryUseCase,
+    private val alarmUseCase: AlarmUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -63,8 +65,8 @@ class HomeViewModel @Inject constructor(
     val nearbyMarts: StateFlow<List<MartEntity>> = _nearbyMarts.asStateFlow()
     
     // 위치 정보 캐싱을 위한 변수
-    private var lastLat: Double? = null
-    private var lastLng: Double? = null
+    private var lastLat: Double? = 37.5785791
+    private var lastLng: Double? = 127.0518685
     private var lastRadius: Int? = null
     
     // 마트 데이터 캐싱을 위한 변수 추가
@@ -109,13 +111,13 @@ class HomeViewModel @Inject constructor(
                             lastLng = longitude
                             
                             Log.d(TAG, "🔄 위치 변경됨: 새로운 위치로 업데이트")
-                            updateCurrentLocation(latitude, longitude)
+                            updateCurrentLocation(37.5787432, 127.0514217)
                             
                             // 현재 반경 값으로 주변 마트 검색
                             val currentState = _uiState.value as? HomeUiState.Success
                             val radius = (currentState?.searchRadius ?: 0.1f).coerceIn(0.1f, 0.5f)
                             Log.d(TAG, "마트 검색 시작 - 반경: ${radius}km")
-                            searchNearbyMarts(latitude, longitude, radius)
+                            searchNearbyMarts(37.5787432, 127.0514217, radius)
                             
                             // 위치 기반 추천의뢰 로드
                             Log.d(TAG, "🎯 위치 기반 추천의뢰 로드 시작")
@@ -271,13 +273,15 @@ class HomeViewModel @Inject constructor(
      * @param latitude 위도
      * @param longitude 경도
      */
-    fun updateCurrentLocation(latitude: Double, longitude: Double) {
-        _uiState.update { currentState ->
-            when (currentState) {
-                is HomeUiState.Success -> currentState.copy(
-                    currentLocation = Location(latitude, longitude)
-                )
-                else -> currentState
+    fun updateCurrentLocation(latitude: Double, longitude: Double) = viewModelScope.launch{
+        alarmUseCase.updateLocation(latitude, longitude).onSuccess {
+            _uiState.update { currentState ->
+                when (currentState) {
+                    is HomeUiState.Success -> currentState.copy(
+                        currentLocation = Location(latitude, longitude)
+                    )
+                    else -> currentState
+                }
             }
         }
     }

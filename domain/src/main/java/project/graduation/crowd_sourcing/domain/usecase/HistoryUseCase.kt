@@ -60,7 +60,7 @@ class HistoryUseCase @Inject constructor(
                 Result.success(HistoryStats(
                     countOrHour = count,
                     point = point,
-                    completed = (completedList.size).coerceAtLeast(1),
+                    completed = (completedList.size).coerceAtLeast(0),
                     completedList = completedList.map {
                         WorkHistoryEntity(
                             id = it.id.toInt(),

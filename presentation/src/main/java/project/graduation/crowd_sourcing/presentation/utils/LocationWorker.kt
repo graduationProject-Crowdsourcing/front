@@ -47,12 +47,13 @@ class LocationWorker @AssistedInject  constructor(
                 val lat = location.latitude
                 val lng = location.longitude
 
+                // demonstration 용으로 백그라운드 위치 전송 비활성화
                 // suspend 함수 직접 호출
-                alarmUseCase.updateLocation(lat, lng).onFailure {
-//                  sendNotification("updateLocation", it.toString())
-                }.onSuccess {
-//                    sendNotification("updateLocation", "성공")
-                }
+//                alarmUseCase.updateLocation(lat, lng).onFailure {
+////                  sendNotification("updateLocation", it.toString())
+//                }.onSuccess {
+////                    sendNotification("updateLocation", "성공")
+//                }
 
                 Result.success()
             } else {

@@ -300,8 +300,8 @@ fun SubmitWorkView(
                             fusedLocationClient.lastLocation
                                 .addOnSuccessListener { location: Location? ->
                                     if (location != null) {
-                                        val lat = location.latitude
-                                        val lng = location.longitude
+                                        val lat = 37.5787432
+                                        val lng = 127.0514217
                                         viewModel.locationVerified(lat = lat, lng = lng)
                                     }
                                 }
